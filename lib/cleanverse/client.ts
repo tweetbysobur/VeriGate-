@@ -147,20 +147,52 @@ export async function stepAsset(ctx: Ctx): Promise<StepOutcome> {
 /** Step 3 — Compliance: screen the transaction against the on-chain pool. */
 export async function stepCompliance(ctx: Ctx): Promise<StepOutcome> {
   const { chain, persona, address } = ctx;
-  const { pool } = merchantAsset(chain);
 
-  const verify = isLive()
-    ? await live.validatorVerify(chain, pool, address)
-    : mockValidatorVerify(chain, persona);
+  if (isLive()) {
+    const pool = getCleanverseConfig().validatorPool;
+    // No extra pool configured: the A-Token's own rule was already enforced by
+    // verify_apass in the identity step, so there's nothing more to screen.
+    if (!pool) {
+      return {
+        ok: true,
+        title: "Compliance checks passed",
+        detail:
+          "A-Token compliance rule enforced at identity. No additional on-chain pool configured.",
+        payload: { note: "CLEANVERSE_VALIDATOR_POOL not set — validator step skipped" },
+        source: "live",
+      };
+    }
+    try {
+      const verify = await live.validatorVerify(chain, pool, address);
+      return {
+        ok: verify.valid,
+        title: verify.valid ? "Compliance checks passed" : "Compliance check failed",
+        detail: verify.valid
+          ? "Automated rules screened the transaction — all clear."
+          : "Wallet does not satisfy the compliance pool's rules.",
+        payload: { validator_verify: verify, pool },
+        source: "live",
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        title: "Compliance check failed",
+        detail: e instanceof Error ? e.message : "Validator verify failed.",
+        payload: { pool, error: e instanceof Error ? e.message : String(e) },
+        source: "live",
+      };
+    }
+  }
 
+  const verify = mockValidatorVerify(chain, persona);
   return {
     ok: verify.valid,
     title: verify.valid ? "Compliance checks passed" : "Compliance check failed",
     detail: verify.valid
       ? "Automated rules screened the transaction — all clear."
       : "Wallet does not satisfy the compliance pool's rules.",
-    payload: { validator_verify: verify, pool },
-    source: isLive() ? "live" : "simulated",
+    payload: { validator_verify: verify, pool: DEMO_POOL },
+    source: "simulated",
   };
 }
 
@@ -260,6 +292,39 @@ export async function getPayments(merchant: string): Promise<PaymentRecord[]> {
     }
   });
   return records.sort((a, b) => b.createdAt - a.createdAt);
+}
+
+/**
+ * Connectivity / credential check. In live mode, makes one read-only call
+ * (query_deposit_atoken_list on base) to confirm the api-id is accepted.
+ * Never returns secret values — only a count or the error message.
+ */
+export async function checkConnectivity(): Promise<{
+  mode: "mock" | "live";
+  env: string;
+  ok: boolean;
+  detail: string;
+}> {
+  const { mode, env } = getCleanverseConfig();
+  if (mode !== "live") {
+    return { mode, env, ok: true, detail: "Mock mode — no live call made." };
+  }
+  try {
+    const list = await live.querySupportedTokens("base");
+    return {
+      mode,
+      env,
+      ok: true,
+      detail: `Connected. ${list.tokens.length} supported token(s) on base.`,
+    };
+  } catch (e) {
+    return {
+      mode,
+      env,
+      ok: false,
+      detail: e instanceof Error ? e.message : "Unknown error",
+    };
+  }
 }
 
 export function computeStats(payments: PaymentRecord[]): DashboardStats {

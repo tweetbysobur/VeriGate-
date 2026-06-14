@@ -31,6 +31,8 @@ export function getCleanverseConfig() {
     baseUrl: BASE_URLS[env],
     apiId: process.env.CLEANVERSE_API_ID ?? "",
     apiKey: process.env.CLEANVERSE_API_KEY ?? "",
+    /** Optional registered validator compliance pool (live mode). */
+    validatorPool: process.env.CLEANVERSE_VALIDATOR_POOL ?? "",
   };
 }
 
