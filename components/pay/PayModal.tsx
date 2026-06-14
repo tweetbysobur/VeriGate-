@@ -25,6 +25,8 @@ interface Props {
   amount: number;
   currency: string;
   mode?: "mock" | "live";
+  /** When set, the settle step performs a real on-chain transfer via the wallet. */
+  settleOnChain?: () => Promise<{ txHash: string; blockNumber?: number }>;
 }
 
 export function PayModal({
@@ -37,7 +39,9 @@ export function PayModal({
   amount,
   currency,
   mode = "mock",
+  settleOnChain,
 }: Props) {
+  const realSettle = typeof settleOnChain === "function";
   const [phase, setPhase] = useState<Phase>("review");
   const [steps, setSteps] = useState<StepState[]>(initialSteps);
   const [receipt, setReceipt] = useState<ReceiptData | null>(null);
@@ -83,6 +87,39 @@ export function PayModal({
     let txHash = "0x0";
     try {
       for (const def of STEP_DEFS) {
+        // Real on-chain settlement via the connected wallet (Monad).
+        if (def.id === "settle" && realSettle && settleOnChain) {
+          patch("settle", {
+            status: "running",
+            title: "Settling on Monad",
+            detail: "Confirm the transfer in your wallet…",
+            source: "live",
+          });
+          try {
+            const res = await settleOnChain();
+            txHash = res.txHash;
+            patch("settle", {
+              status: "passed",
+              title: "Settled on Monad",
+              detail: `A-Token transferred${res.blockNumber ? ` · block ${res.blockNumber.toLocaleString()}` : ""}`,
+              source: "live",
+              payload: { txHash: res.txHash, blockNumber: res.blockNumber },
+            });
+          } catch (e) {
+            patch("settle", {
+              status: "failed",
+              title: "Settlement failed",
+              detail:
+                e instanceof Error ? e.message : "Wallet transaction failed.",
+              source: "live",
+            });
+            setPhase("failed");
+            runningRef.current = false;
+            return;
+          }
+          continue;
+        }
+
         patch(def.id, { status: "running" });
         const out = await callStep({
           step: def.id,
@@ -92,6 +129,7 @@ export function PayModal({
           amount: String(amount),
           merchant,
           txHash,
+          realSettle,
         });
 
         if (def.id === "settle" && out.txHash) txHash = out.txHash;

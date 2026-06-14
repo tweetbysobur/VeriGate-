@@ -256,15 +256,28 @@ export async function stepAudit(
   const { chain, address } = ctx;
 
   if (isLive() && !simulatedSettle) {
-    const report = await live.downloadTravelRule(chain, address, txHash);
-    return {
-      ok: true,
-      title: "Audit record written",
-      detail: `Travel Rule receipt generated · ${report.fileName}`,
-      payload: { travel_rule: report },
-      source: "live",
-      report,
-    };
+    try {
+      const report = await live.downloadTravelRule(chain, address, txHash);
+      return {
+        ok: true,
+        title: "Audit record written",
+        detail: `Travel Rule receipt generated · ${report.fileName}`,
+        payload: { travel_rule: report },
+        source: "live",
+        report,
+      };
+    } catch (e) {
+      // The transfer already settled on-chain — never fail the payment here.
+      // The receipt may not be indexed yet; it can be pulled later by txHash.
+      return {
+        ok: true,
+        title: "Settled — receipt pending",
+        detail: "Payment settled. Travel Rule receipt will be available shortly.",
+        payload: { txHash, error: e instanceof Error ? e.message : String(e) },
+        source: "live",
+        report: { downloadUrl: "", fileName: "" },
+      };
+    }
   }
 
   const report = mockTravelRule(chain, txHash);

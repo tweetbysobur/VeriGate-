@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { Chain, Persona } from "@/lib/cleanverse/types";
 import { PERSONAS } from "@/lib/cleanverse/mock";
 import { CHAINS, fmtUsd, isLikelyAddress, shortAddr } from "@/lib/demo";
+import {
+  ensureChain,
+  monadConfig,
+  sendAtokenTransfer,
+  settlementAtoken,
+  waitForReceipt,
+} from "@/lib/web3/monad";
 import { VeriGateMark } from "@/components/Logo";
 import { PayModal } from "./PayModal";
+import { useWallet } from "./useWallet";
 
 const PERSONA_ORDER: Persona[] = ["verified", "no-apass", "frozen", "low-tier"];
 
-/** Known sandbox wallets for one-click live testing. */
 const SAMPLE_WALLETS: { label: string; address: string }[] = [
   { label: "A-Pass wallet", address: "0x888895E314BF33CEeBCF5320279061aed3a5E2bd" },
   { label: "No A-Pass", address: "0x9bD2A7c41E0fF5630aB81C229d4477e5e2C1a8F0" },
@@ -27,59 +34,112 @@ export function PayWithVeriGate({
   mode?: "mock" | "live";
 }) {
   const live = mode === "live";
+  const wallet = useWallet();
   const [chain, setChain] = useState<Chain>("monad");
   const [persona, setPersona] = useState<Persona>("verified");
   const [address, setAddress] = useState("");
   const [open, setOpen] = useState(false);
 
-  const customer = live ? address.trim() : PERSONAS[persona].address;
-  const canPay = live ? isLikelyAddress(chain, address) : true;
+  // Customer = connected wallet (live) > manual address (live) > persona (mock).
+  const customer = live
+    ? wallet.account ?? address.trim()
+    : PERSONAS[persona].address;
+
+  // Real on-chain settlement only when a wallet is connected and chain is Monad.
+  const canSettleReal = live && !!wallet.account && chain === "monad";
+  const canPay = live ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) : true;
+
+  const settleOnChain = useCallback(async () => {
+    const cfg = monadConfig();
+    await ensureChain(cfg);
+    const { address: token, decimals } = settlementAtoken();
+    const txHash = await sendAtokenTransfer({
+      from: wallet.account!,
+      token,
+      to: merchant,
+      amount,
+      decimals,
+    });
+    const receipt = await waitForReceipt(txHash);
+    if (!receipt.success) {
+      throw new Error(
+        "Transfer reverted on-chain — compliance check failed or insufficient A-Token balance.",
+      );
+    }
+    return { txHash, blockNumber: receipt.blockNumber };
+  }, [wallet.account, merchant, amount]);
 
   return (
     <div className="space-y-4">
-      {/* Demo controls */}
+      {/* Demo / live controls */}
       <div className="rounded-xl border border-dashed border-brand-300/60 bg-brand-50/50 p-3">
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-brand-600">
           {live ? "Live · sandbox" : "Demo controls"}
         </p>
 
         {live ? (
-          /* ---- Live: real wallet address input ---- */
           <>
-            <label className="text-xs text-muted">Customer wallet address</label>
-            <input
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder={chain === "solana" ? "Solana address…" : "0x… (40 hex)"}
-              spellCheck={false}
-              autoComplete="off"
-              className={`mt-1 w-full rounded-lg border bg-card px-2.5 py-2 font-mono text-xs text-foreground outline-none transition focus:ring-2 ${
-                address && !canPay
-                  ? "border-danger/50 focus:ring-danger/30"
-                  : "border-border focus:ring-brand-300"
-              }`}
-            />
-            <div className="mt-1.5 flex items-center justify-between">
-              <span className="text-[10.5px] text-muted">
-                {address && !canPay
-                  ? "Doesn’t look like a valid address for this chain"
-                  : "Its real A-Pass status is checked live"}
-              </span>
-              <span className="flex gap-1">
-                {SAMPLE_WALLETS.map((s) => (
-                  <button
-                    key={s.label}
-                    onClick={() => setAddress(s.address)}
-                    className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 hover:bg-brand-200"
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </span>
-            </div>
+            {/* Wallet connect */}
+            {wallet.account ? (
+              <div className="flex items-center justify-between rounded-lg border border-verify-500/30 bg-verify-500/5 px-2.5 py-2">
+                <span className="inline-flex items-center gap-2 text-xs">
+                  <span className="size-2 rounded-full bg-verify-500" />
+                  <span className="font-mono text-foreground">
+                    {shortAddr(wallet.account)}
+                  </span>
+                </span>
+                <span className="text-[10.5px] font-medium text-verify-600">
+                  Wallet connected
+                </span>
+              </div>
+            ) : wallet.hasWallet ? (
+              <button
+                onClick={wallet.connect}
+                disabled={wallet.connecting}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand-400 bg-card px-3 py-2 text-xs font-semibold text-brand-600 transition hover:bg-brand-50 disabled:opacity-60"
+              >
+                {wallet.connecting ? "Connecting…" : "Connect wallet"}
+              </button>
+            ) : (
+              <p className="rounded-lg border border-border bg-card px-2.5 py-2 text-[11px] text-muted">
+                No browser wallet detected. Install MetaMask to settle on Monad,
+                or paste an address below to check its A-Pass.
+              </p>
+            )}
+
+            {/* Manual address fallback (read-only checks when no wallet) */}
+            {!wallet.account && (
+              <div className="mt-2">
+                <label className="text-xs text-muted">
+                  Or check any wallet address
+                </label>
+                <input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder={chain === "solana" ? "Solana address…" : "0x…"}
+                  spellCheck={false}
+                  autoComplete="off"
+                  className={`mt-1 w-full rounded-lg border bg-card px-2.5 py-2 font-mono text-xs text-foreground outline-none transition focus:ring-2 ${
+                    address && !isLikelyAddress(chain, address)
+                      ? "border-danger/50 focus:ring-danger/30"
+                      : "border-border focus:ring-brand-300"
+                  }`}
+                />
+                <div className="mt-1.5 flex justify-end gap-1">
+                  {SAMPLE_WALLETS.map((s) => (
+                    <button
+                      key={s.label}
+                      onClick={() => setAddress(s.address)}
+                      className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 hover:bg-brand-200"
+                    >
+                      {s.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </>
         ) : (
-          /* ---- Mock: persona selector ---- */
           <>
             <label className="text-xs text-muted">Test identity</label>
             <div className="mt-1 grid grid-cols-2 gap-1.5">
@@ -126,20 +186,27 @@ export function PayWithVeriGate({
             );
           })}
         </div>
-      </div>
 
-      {/* Connected wallet preview */}
-      <div className="flex items-center justify-between rounded-xl border border-border bg-background/50 px-3 py-2.5 text-xs">
-        <span className="text-muted">Wallet</span>
-        {customer ? (
-          <span className="inline-flex items-center gap-2 font-mono text-foreground">
-            <span className={`size-2 rounded-full ${canPay ? "bg-verify-500" : "bg-warn"}`} />
-            {shortAddr(customer)}
-          </span>
-        ) : (
-          <span className="text-muted">Enter an address above</span>
+        {wallet.error && (
+          <p className="mt-2 text-[11px] text-danger">{wallet.error}</p>
         )}
       </div>
+
+      {/* Settlement mode hint */}
+      {live && (
+        <div className="flex items-center gap-2 rounded-xl border border-border bg-background/50 px-3 py-2 text-[11px]">
+          <span
+            className={`size-2 rounded-full ${canSettleReal ? "bg-verify-500" : "bg-warn"}`}
+          />
+          <span className="text-muted">
+            {canSettleReal
+              ? `Real settlement on ${monadConfig().name}`
+              : wallet.account
+                ? "Connect on Monad for real settlement (other chains simulate)"
+                : "Simulated settlement — connect a wallet on Monad to settle for real"}
+          </span>
+        </div>
+      )}
 
       {/* The button */}
       <button
@@ -165,6 +232,7 @@ export function PayWithVeriGate({
           amount={amount}
           currency={currency}
           mode={mode}
+          settleOnChain={canSettleReal ? settleOnChain : undefined}
         />
       )}
     </div>

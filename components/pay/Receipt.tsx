@@ -75,33 +75,44 @@ export function Receipt({ data }: { data: ReceiptData }) {
         </Field>
       </div>
 
-      {/* Audit receipt download */}
-      <a
-        href={data.report.downloadUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 flex items-center gap-3 rounded-xl border border-verify-500/30 bg-verify-500/5 px-4 py-3 transition hover:bg-verify-500/10"
-      >
-        <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-verify-500/15 text-verify-600">
-          <svg viewBox="0 0 24 24" className="size-5" fill="none">
-            <path
-              d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </span>
-        <span className="min-w-0">
-          <span className="block text-sm font-medium text-foreground">
-            Download Travel Rule receipt
+      {/* Audit receipt download (or pending state) */}
+      {data.report.downloadUrl ? (
+        <a
+          href={data.report.downloadUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 flex items-center gap-3 rounded-xl border border-verify-500/30 bg-verify-500/5 px-4 py-3 transition hover:bg-verify-500/10"
+        >
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-verify-500/15 text-verify-600">
+            <svg viewBox="0 0 24 24" className="size-5" fill="none">
+              <path
+                d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </span>
-          <span className="block truncate font-mono text-[11px] text-muted">
-            {data.report.fileName}
+          <span className="min-w-0">
+            <span className="block text-sm font-medium text-foreground">
+              Download Travel Rule receipt
+            </span>
+            <span className="block truncate font-mono text-[11px] text-muted">
+              {data.report.fileName}
+            </span>
           </span>
-        </span>
-      </a>
+        </a>
+      ) : (
+        <div className="mt-3 flex items-center gap-3 rounded-xl border border-border bg-background/60 px-4 py-3">
+          <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-100 text-brand-600">
+            <span className="size-4 rounded-full border-2 border-brand-300 border-t-brand-500 vg-spin" />
+          </span>
+          <span className="text-sm text-muted">
+            Travel Rule receipt pending — available shortly via the transaction.
+          </span>
+        </div>
+      )}
     </div>
   );
 }

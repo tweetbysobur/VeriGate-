@@ -80,6 +80,8 @@ export async function callStep(args: {
   amount?: string;
   merchant?: string;
   txHash?: string;
+  /** When true, the audit step pulls a real Travel Rule receipt for the txHash. */
+  realSettle?: boolean;
 }): Promise<ServerOutcome> {
   const res = await fetch("/api/pay", {
     method: "POST",

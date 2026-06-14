@@ -27,6 +27,7 @@ interface Body {
   amount?: string;
   merchant?: string;
   txHash?: string;
+  realSettle?: boolean;
 }
 
 export async function POST(req: NextRequest) {
@@ -68,7 +69,9 @@ export async function POST(req: NextRequest) {
           await stepSettle(ctx, body.amount ?? "0", body.merchant ?? ""),
         );
       case "audit":
-        return NextResponse.json(await stepAudit(ctx, body.txHash ?? "0x0"));
+        return NextResponse.json(
+          await stepAudit(ctx, body.txHash ?? "0x0", !body.realSettle),
+        );
       default:
         return NextResponse.json({ error: "Unknown step" }, { status: 400 });
     }
