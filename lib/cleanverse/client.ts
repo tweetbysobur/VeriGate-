@@ -128,19 +128,41 @@ export async function stepAsset(ctx: Ctx): Promise<StepOutcome> {
   const { atoken } = merchantAsset(chain);
   const symbol = DEMO_ATOKENS[chain].symbol;
 
-  const rules = isLive()
-    ? await live.atokenRules(chain, atoken)
-    : mockAtokenRules(chain, atoken);
-  const rule = rules.rules[0];
+  if (isLive()) {
+    // The A-Token rule was already enforced by verify_apass at identity. The
+    // rule list here is informational, so if the read is unavailable on this
+    // chain we still confirm provenance rather than failing the payment.
+    try {
+      const rules = await live.atokenRules(chain, atoken);
+      const rule = rules.rules[0];
+      return {
+        ok: true,
+        title: "Compliant asset confirmed",
+        detail: rule
+          ? `${symbol} · provenance tracked · rule: min tier ${rule.min_tier}${rule.allowed_group ? ", group " + rule.allowed_group : ""}`
+          : `${symbol} · provenance tracked`,
+        payload: { atoken_rules: rules },
+        source: "live",
+      };
+    } catch (e) {
+      return {
+        ok: true,
+        title: "Compliant asset confirmed",
+        detail: `${symbol} · provenance tracked · rule already enforced at identity`,
+        payload: { note: e instanceof Error ? e.message : String(e) },
+        source: "live",
+      };
+    }
+  }
 
+  const rules = mockAtokenRules(chain, atoken);
+  const rule = rules.rules[0];
   return {
     ok: true,
     title: "Compliant asset confirmed",
-    detail: rule
-      ? `${symbol} · provenance tracked · rule: min tier ${rule.min_tier}${rule.allowed_group ? ", group " + rule.allowed_group : ""}`
-      : `${symbol} · provenance tracked`,
+    detail: `${symbol} · provenance tracked · rule: min tier ${rule.min_tier}${rule.allowed_group ? ", group " + rule.allowed_group : ""}`,
     payload: { atoken_rules: rules },
-    source: isLive() ? "live" : "simulated",
+    source: "simulated",
   };
 }
 

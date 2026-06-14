@@ -37,6 +37,7 @@ export function getCleanverseConfig() {
 }
 
 export const SUPPORTED_CHAINS = [
+  "monad",
   "base",
   "solana",
   "polygon",

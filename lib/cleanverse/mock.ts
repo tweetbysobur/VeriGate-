@@ -24,6 +24,11 @@ const ICON = "https://images.cleanverse.com/app/token_icon";
 
 /** Per-chain demo A-Token (aUSDC) the merchant accepts. */
 export const DEMO_ATOKENS: Record<Chain, { atoken: string; origin: string; symbol: string }> = {
+  monad: {
+    atoken: "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
+    origin: "0x534b2f3A21130d7a60830c2Df862319e593943A3",
+    symbol: "aUSDC",
+  },
   base: {
     atoken: "0xaC0893567D43C3E7e6e35a72803df05416C1f20D",
     origin: "0x543b96420d072BF587B63C41C0B0922762E986Ce",

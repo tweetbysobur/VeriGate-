@@ -45,6 +45,13 @@ export interface ChainMeta {
 
 export const CHAINS: ChainMeta[] = [
   {
+    id: "monad",
+    name: "Monad",
+    short: "MON",
+    tint: "bg-purple-500/10 text-purple-600 ring-purple-500/30",
+    explorerTx: (h) => `https://monadexplorer.com/tx/${h}`,
+  },
+  {
     id: "base",
     name: "Base",
     short: "BASE",

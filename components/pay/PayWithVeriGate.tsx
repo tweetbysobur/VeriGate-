@@ -27,7 +27,7 @@ export function PayWithVeriGate({
   mode?: "mock" | "live";
 }) {
   const live = mode === "live";
-  const [chain, setChain] = useState<Chain>("base");
+  const [chain, setChain] = useState<Chain>("monad");
   const [persona, setPersona] = useState<Persona>("verified");
   const [address, setAddress] = useState("");
   const [open, setOpen] = useState(false);

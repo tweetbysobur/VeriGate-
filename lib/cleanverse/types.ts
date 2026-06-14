@@ -4,6 +4,7 @@
  */
 
 export type Chain =
+  | "monad"
   | "solana"
   | "base"
   | "polygon"
