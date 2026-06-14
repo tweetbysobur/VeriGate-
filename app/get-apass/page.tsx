@@ -1,0 +1,75 @@
+import { SiteHeader } from "@/components/SiteHeader";
+import { GetApassForm } from "@/components/apass/GetApassForm";
+import { getCleanverseConfig } from "@/lib/cleanverse/config";
+
+export const dynamic = "force-dynamic";
+
+const STEPS = [
+  { t: "Tell us who you are", d: "Enter your wallet and a few identity details." },
+  { t: "Get your A-Pass", d: "We verify and mint your on-chain identity pass." },
+  { t: "Grab test tokens", d: "Receive test aUSDC so you have something to spend." },
+  { t: "Pay with VeriGate", d: "Make a fully compliant, auditable payment." },
+];
+
+export default function GetApassPage() {
+  const { mode } = getCleanverseConfig();
+
+  return (
+    <div className="flex min-h-full flex-col bg-grid">
+      <SiteHeader active="apass" mode={mode} />
+
+      <main className="mx-auto grid w-full max-w-5xl flex-1 gap-8 px-5 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:py-14">
+        {/* Left — explainer + steps */}
+        <section>
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-brand-600">
+            Verified identity
+          </span>
+          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
+            Get your A-Pass
+          </h1>
+          <p className="mt-3 text-balance text-muted">
+            An <strong className="text-foreground">A-Pass</strong> is your verified
+            identity on-chain — it proves your wallet belongs to a real, checked
+            participant. Wallets without one can&apos;t send or receive compliant
+            payments. Getting one takes about a minute.
+          </p>
+
+          <ol className="mt-8 space-y-4">
+            {STEPS.map((s, i) => (
+              <li key={s.t} className="flex items-start gap-3">
+                <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-500/10 text-xs font-bold text-brand-600">
+                  {i + 1}
+                </span>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{s.t}</p>
+                  <p className="text-xs text-muted">{s.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-8 rounded-xl border border-border bg-card/60 p-4 text-xs text-muted">
+            <p className="font-medium text-foreground">Why we ask for ID</p>
+            <p className="mt-1">
+              Compliance requires a verified identity behind every payment. Your
+              details are sent encrypted to Cleanverse to mint your A-Pass — VeriGate
+              never stores them.
+            </p>
+          </div>
+        </section>
+
+        {/* Right — the form */}
+        <section className="lg:pt-12">
+          <GetApassForm mode={mode} />
+        </section>
+      </main>
+
+      <footer className="border-t border-border py-5">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted sm:flex-row">
+          <span>Built by Gentlesoul HUB · Powered by Cleanverse A-Pass + A-Token</span>
+          <span className="font-mono">VeriGate · {mode === "live" ? "live · sandbox" : "demo mode"}</span>
+        </div>
+      </footer>
+    </div>
+  );
+}

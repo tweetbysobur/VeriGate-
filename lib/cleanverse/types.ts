@@ -164,3 +164,44 @@ export interface DashboardStats {
   /** settled / total, 0..1 */
   verifiedRate: number;
 }
+
+/* ---- A-Pass issuance (generate_apass) ---- */
+
+export type IdType =
+  | "NID"
+  | "PASSPORT"
+  | "DRIVER_LICENSE"
+  | "HK_MACAO_TAIWAN_PASS"
+  | "OTHER";
+
+export interface ApassIssueInput {
+  chain: Chain;
+  address: string;
+  fullName: string;
+  idType: IdType;
+  idNumber?: string;
+  issuingCountryISO2: string;
+}
+
+export interface ApassIssueResult {
+  customerId: string;
+  cvRecordId: string;
+  tier: string;
+  wallet: {
+    operate?: string;
+    address: string;
+    chain: string;
+    txHash?: string;
+    depositUSDCWallet?: string;
+    depositUSDTWallet?: string;
+    [k: string]: unknown;
+  };
+}
+
+export interface FaucetResult {
+  chain: string;
+  symbol: string;
+  deposit_address: string;
+  amount: string;
+  tx_hash: string;
+}

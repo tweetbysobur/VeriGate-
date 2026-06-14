@@ -26,7 +26,15 @@ import {
   mockVerifyApass,
 } from "./mock";
 import * as live from "./live";
-import type { Chain, DashboardStats, PaymentRecord, Persona } from "./types";
+import type {
+  ApassIssueInput,
+  ApassIssueResult,
+  Chain,
+  DashboardStats,
+  FaucetResult,
+  PaymentRecord,
+  Persona,
+} from "./types";
 import { VerifyCode } from "./types";
 
 export interface StepOutcome {
@@ -82,7 +90,7 @@ function fromVerify(
       detail: "This wallet has no A-Pass. Identity must be verified before payment.",
       payload,
       source,
-      action: { label: "Register an A-Pass", href: verify.magickLink },
+      action: { label: "Get an A-Pass", href: "/get-apass" },
     };
   }
   if (verify.code === VerifyCode.ATOKEN_NOT_FOUND) {
@@ -361,6 +369,41 @@ export async function checkConnectivity(): Promise<{
       detail: e instanceof Error ? e.message : "Unknown error",
     };
   }
+}
+
+/* ---- A-Pass issuance (Issue Member) ---- */
+
+export async function issueApass(
+  input: ApassIssueInput,
+): Promise<ApassIssueResult> {
+  if (!isLive()) {
+    // Mock: pretend-mint so the flow is demoable offline.
+    return {
+      customerId: `VGmock${Date.now()}`,
+      cvRecordId: String(Math.floor(Math.random() * 9999)),
+      tier: "50",
+      wallet: {
+        operate: "update",
+        address: input.address,
+        chain: input.chain,
+        txHash: "0xmocktxhash",
+        depositUSDCWallet: input.address,
+      },
+    };
+  }
+  return live.generateApass(input);
+}
+
+export async function requestFaucet(
+  chain: Chain,
+  symbol: string,
+  depositAddress: string,
+  amount: string,
+): Promise<FaucetResult> {
+  if (!isLive()) {
+    return { chain, symbol, deposit_address: depositAddress, amount, tx_hash: "0xmock" };
+  }
+  return live.faucet(chain, symbol, depositAddress, amount);
 }
 
 export function computeStats(payments: PaymentRecord[]): DashboardStats {

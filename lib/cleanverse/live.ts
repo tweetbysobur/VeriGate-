@@ -17,9 +17,12 @@ import { getCleanverseConfig } from "./config";
 import { encryptBody } from "./crypto";
 import type {
   ApassInfo,
+  ApassIssueInput,
+  ApassIssueResult,
   AtokenRules,
   Chain,
   CvResponse,
+  FaucetResult,
   SupportedTokenList,
   TravelRuleReport,
   TxRecord,
@@ -180,5 +183,44 @@ export function queryTxs(
     chain,
     address,
     ...opts,
+  });
+}
+
+/* ---- Issue Member writes ---- */
+
+/** Mint an A-Pass to a wallet. Encrypted endpoint (uses the api-key). */
+export function generateApass(input: ApassIssueInput): Promise<ApassIssueResult> {
+  const threeYears = Math.floor(Date.now() / 1000) + 3 * 365 * 24 * 3600;
+  const body = {
+    customerId: `VG${Date.now()}${Math.floor(Math.random() * 1000)}`, // ≥12 chars, unique
+    subTier: 50,
+    subGroup: "CD",
+    override: false,
+    expirationTime: threeYears,
+    wallet: { address: input.address, chain: input.chain },
+    identityDataList: [
+      {
+        idType: input.idType,
+        fullName: input.fullName,
+        ...(input.idNumber ? { idNumber: input.idNumber } : {}),
+        issuingCountryISO2: input.issuingCountryISO2,
+      },
+    ],
+  };
+  return cvRequest<ApassIssueResult>("/generate_apass", body, { encrypted: true });
+}
+
+/** Request test tokens to a deposit address. Plain endpoint. */
+export function faucet(
+  chain: Chain,
+  symbol: string,
+  depositAddress: string,
+  amount: string,
+): Promise<FaucetResult> {
+  return cvRequest<FaucetResult>("/faucet", {
+    chain,
+    symbol,
+    depositAddress,
+    amount,
   });
 }
