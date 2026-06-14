@@ -207,9 +207,10 @@ export async function stepSettle(
   amount: string,
   merchant: string,
 ): Promise<StepOutcome & { txHash: string }> {
-  const { chain, persona } = ctx;
+  const { chain, persona, address } = ctx;
   const settle = mockSettle(chain);
   const tx = mockTx(chain, persona, amount, settle.tx_hash, merchant);
+  if (address) tx.from_address = address; // real wallet in live mode
   return {
     ok: true,
     title: "Settled on-chain",

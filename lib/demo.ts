@@ -87,6 +87,13 @@ export function fmtUsd(n: number): string {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
+/** Loose client-side address validation per chain (EVM hex vs Solana base58). */
+export function isLikelyAddress(chain: Chain, addr: string): boolean {
+  const a = addr.trim();
+  if (chain === "solana") return /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(a);
+  return /^0x[a-fA-F0-9]{40}$/.test(a);
+}
+
 export function timeAgo(unixSeconds: number): string {
   const diff = Math.max(0, Math.floor(Date.now() / 1000) - unixSeconds);
   if (diff < 60) return "just now";
