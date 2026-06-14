@@ -1,65 +1,316 @@
-import Image from "next/image";
+import Link from "next/link";
+import { SiteHeader } from "@/components/SiteHeader";
+import { VeriGateMark } from "@/components/Logo";
+import { STEP_DEFS } from "@/components/pay/pipeline";
+import { getCleanverseConfig } from "@/lib/cleanverse/config";
 
-export default function Home() {
+const PROBLEMS = [
+  {
+    t: "No verified identity",
+    d: "Wallets are anonymous. Businesses can't confirm who they're paid by or who they pay.",
+  },
+  {
+    t: "No asset provenance",
+    d: "Tokens carry no record of origin. Funds can come from unknown or sanctioned sources.",
+  },
+  {
+    t: "No audit trail",
+    d: "Regulators ask for proof. Most crypto rails produce nothing an auditor accepts.",
+  },
+  {
+    t: "Locked-out institutions",
+    d: "Banks and fintechs avoid digital assets because they can't meet their own rules.",
+  },
+];
+
+const PILLARS = [
+  {
+    n: "1",
+    t: "Verify identity",
+    d: "A-Pass confirms both merchant and customer are real, verified participants.",
+  },
+  {
+    n: "2",
+    t: "Move compliant assets",
+    d: "A-Token carries provenance and regulatory controls inside each transaction.",
+  },
+  {
+    n: "3",
+    t: "Prove it happened",
+    d: "Every payment runs automated checks and writes an auditable record.",
+  },
+];
+
+const LAYERS = [
+  { t: "A-Pass", s: "Verified identity layer", d: "Only verified merchants and customers reach the payment network." },
+  { t: "A-Token", s: "Compliant asset layer", d: "Stablecoin payments carry built-in provenance and regulatory controls." },
+  { t: "Monad", s: "Execution layer", d: "Fast, low-cost, secure processing for global commerce." },
+];
+
+const COMPARE: Array<[string, string, string]> = [
+  ["Identity", "Anonymous wallets", "Verified with A-Pass"],
+  ["Asset origin", "Unknown provenance", "Tracked with A-Token"],
+  ["Compliance", "Manual or none", "Automated on every payment"],
+  ["Audit", "No usable record", "Auditable receipt per transaction"],
+  ["Institutions", "Locked out", "Able to participate"],
+];
+
+const AUDIENCE = [
+  { t: "Merchants", d: "Accept stablecoin payments without taking on compliance risk." },
+  { t: "Fintechs", d: "Add compliant digital-asset rails to existing products." },
+  { t: "Regulated institutions", d: "Move funds with identity and audit proof built in." },
+];
+
+const ROADMAP = [
+  { p: "Phase 1 · Build", d: "Integrate A-Pass and A-Token. Ship the core gateway on Monad." },
+  { p: "Phase 2 · Pilot", d: "Onboard first merchants and fintech partners. Prove the compliance flow." },
+  { p: "Phase 3 · Scale", d: "Expand to regulated institutions and cross-border commerce." },
+];
+
+export default function LandingPage() {
+  const { mode } = getCleanverseConfig();
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex min-h-full flex-col">
+      <SiteHeader active="home" mode={mode} />
+
+      {/* Hero */}
+      <section className="relative overflow-hidden bg-grid">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-brand-500/10 to-transparent" />
+        <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-28">
+          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted">
+            <VeriGateMark size={15} />
+            Compliance-first payments · built on Monad
+          </span>
+          <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            Compliant stablecoin payments,{" "}
+            <span className="text-brand-500">finally usable.</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+          <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-muted">
+            VeriGate checks identity and asset compliance before money moves, then
+            records proof — verified participants and compliant assets in, an
+            auditable receipt out.
+          </p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/checkout"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <VeriGateMark size={18} />
+              Try the Pay with VeriGate demo
+            </Link>
+            <Link
+              href="/dashboard"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
             >
-              Learning
-            </a>{" "}
-            center.
+              View merchant dashboard
+            </Link>
+          </div>
+          <p className="mt-4 text-xs text-muted">
+            Powered by Cleanverse A-Pass + A-Token
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Problem */}
+      <section className="border-t border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Why most stablecoin payments fail compliance
+          </h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {PROBLEMS.map((p) => (
+              <div key={p.t} className="rounded-2xl border border-border bg-card p-5">
+                <span className="grid size-8 place-items-center rounded-lg bg-danger/10 text-danger">
+                  <svg viewBox="0 0 24 24" className="size-4" fill="none">
+                    <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
+                  </svg>
+                </span>
+                <h3 className="mt-3 text-sm font-semibold text-foreground">{p.t}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-muted">{p.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </main>
+      </section>
+
+      {/* Solution pillars */}
+      <section className="mx-auto max-w-5xl px-5 py-16">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Every payment verified and auditable
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted">
+          A payment gateway that checks identity and asset compliance before money
+          moves, then records proof.
+        </p>
+        <div className="mt-8 grid gap-4 lg:grid-cols-3">
+          {PILLARS.map((p) => (
+            <div key={p.t} className="rounded-2xl border border-border bg-card p-6">
+              <span className="grid size-9 place-items-center rounded-xl bg-brand-500/10 text-sm font-bold text-brand-600">
+                {p.n}
+              </span>
+              <h3 className="mt-4 text-base font-semibold text-foreground">{p.t}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted">{p.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works — 5 steps */}
+      <section className="border-y border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            How a payment moves through VeriGate
+          </h2>
+          <p className="mt-2 text-sm text-muted">
+            Verified participants and compliant assets in. Proof out. No step is skipped.
+          </p>
+          <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {STEP_DEFS.map((s, i) => (
+              <li key={s.id} className="relative rounded-2xl border border-border bg-card p-5">
+                <span className="text-xs font-semibold uppercase tracking-wide text-brand-500">
+                  Step {i + 1}
+                </span>
+                <h3 className="mt-2 text-sm font-semibold text-foreground">{s.label}</h3>
+                <p className="mt-1 text-xs leading-relaxed text-muted">{s.blurb}</p>
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-muted/70">
+                  {s.endpoint}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* Built on */}
+      <section className="mx-auto max-w-5xl px-5 py-16">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Built on Cleanverse and Monad
+        </h2>
+        <div className="mt-8 grid gap-4 lg:grid-cols-3">
+          {LAYERS.map((l) => (
+            <div key={l.t} className="rounded-2xl border border-border bg-card p-6">
+              <h3 className="text-lg font-semibold text-foreground">{l.t}</h3>
+              <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
+                {l.s}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-muted">{l.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Comparison */}
+      <section className="border-y border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Standard crypto rails vs VeriGate
+          </h2>
+          <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border text-left">
+                  <th className="px-5 py-3 font-medium text-muted"></th>
+                  <th className="px-5 py-3 font-medium text-muted">Standard crypto rails</th>
+                  <th className="px-5 py-3 font-semibold text-brand-600">VeriGate</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {COMPARE.map(([k, a, b]) => (
+                  <tr key={k}>
+                    <td className="px-5 py-3 font-medium text-foreground">{k}</td>
+                    <td className="px-5 py-3 text-muted">{a}</td>
+                    <td className="px-5 py-3">
+                      <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+                        <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
+                          <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        {b}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Audience + opportunity */}
+      <section className="mx-auto max-w-5xl px-5 py-16">
+        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+              Built for businesses that answer to regulators
+            </h2>
+            <div className="mt-6 space-y-3">
+              {AUDIENCE.map((a) => (
+                <div key={a.t} className="flex items-start gap-3">
+                  <svg viewBox="0 0 24 24" className="mt-0.5 size-5 shrink-0 text-verify-500" fill="none">
+                    <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <p className="text-sm text-foreground">
+                    <span className="font-semibold">{a.t}</span> — {a.d}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-500/10 to-transparent p-8 text-center">
+            <p className="text-4xl font-bold tracking-tight text-brand-600">$250B+</p>
+            <p className="mt-2 text-sm text-muted">
+              in stablecoins in circulation, but most businesses can&apos;t touch it
+              without compliance rails. VeriGate is the rail that lets them.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Roadmap */}
+      <section className="border-t border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Where VeriGate goes next
+          </h2>
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
+            {ROADMAP.map((r) => (
+              <div key={r.p} className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="text-sm font-semibold text-brand-600">{r.p}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted">{r.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="mx-auto max-w-5xl px-5 py-20 text-center">
+        <h2 className="mx-auto max-w-2xl text-balance text-3xl font-semibold tracking-tight text-foreground">
+          Compliant payments, finally usable.
+        </h2>
+        <p className="mx-auto mt-4 max-w-xl text-balance text-muted">
+          Verified identity, compliant assets, and audit-ready proof on every
+          payment.
+        </p>
+        <div className="mt-8 flex justify-center">
+          <Link
+            href="/checkout"
+            className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
+          >
+            <VeriGateMark size={18} />
+            Try the demo
+          </Link>
+        </div>
+      </section>
+
+      <footer className="border-t border-border py-6">
+        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted sm:flex-row">
+          <span>Built by Gentlesoul HUB · Powered by Cleanverse A-Pass + A-Token</span>
+          <span className="font-mono">
+            VeriGate · {mode === "live" ? "live · sandbox" : "demo mode"}
+          </span>
+        </div>
+      </footer>
     </div>
   );
 }

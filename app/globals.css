@@ -1,26 +1,140 @@
 @import "tailwindcss";
 
+/*
+  VeriGate design system
+  Compliance-first payments — trust blue + verified emerald, on near-black ink.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f7fb;
+  --foreground: #0b1020;
+
+  /* Brand */
+  --brand-50: #eef0ff;
+  --brand-100: #e0e3ff;
+  --brand-200: #c4caff;
+  --brand-300: #9fa8ff;
+  --brand-400: #7b84fb;
+  --brand-500: #5b5bd6;
+  --brand-600: #4a43c4;
+  --brand-700: #3c34a0;
+  --brand-800: #2c2774;
+  --brand-900: #1d1a4d;
+  --brand-ink: #0b0a1f;
+
+  /* Verified / success */
+  --verify-400: #34d399;
+  --verify-500: #10b981;
+  --verify-600: #059669;
+
+  /* Status */
+  --warn: #f59e0b;
+  --danger: #ef4444;
+
+  /* Surfaces */
+  --card: #ffffff;
+  --muted: #6b7280;
+  --border: #e6e8f0;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+  --color-brand-ink: var(--brand-ink);
+
+  --color-verify-400: var(--verify-400);
+  --color-verify-500: var(--verify-500);
+  --color-verify-600: var(--verify-600);
+
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #07070f;
+    --foreground: #e9eaf3;
+    --card: #11121d;
+    --muted: #9aa0b4;
+    --border: #232539;
   }
+}
+
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Utilities */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--border) 60%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--border) 60%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.text-balance { text-wrap: balance; }
+
+/* Animations */
+@keyframes vg-spin { to { transform: rotate(360deg); } }
+@keyframes vg-pulse-ring {
+  0% { transform: scale(0.85); opacity: 0.7; }
+  70% { transform: scale(1.3); opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes vg-pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes vg-rise {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+@keyframes vg-bar {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+@keyframes vg-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.vg-spin { animation: vg-spin 0.8s linear infinite; }
+.vg-pop { animation: vg-pop 0.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.vg-rise { animation: vg-rise 0.45s ease both; }
+.vg-indeterminate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 40%;
+  background: linear-gradient(90deg, transparent, var(--brand-400), transparent);
+  animation: vg-bar 1.1s ease-in-out infinite;
+}
+.vg-check path {
+  stroke-dasharray: 28;
+  stroke-dashoffset: 28;
+  animation: vg-draw 0.4s ease 0.05s forwards;
 }
