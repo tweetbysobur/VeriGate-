@@ -205,3 +205,24 @@ export interface FaucetResult {
   amount: string;
   tx_hash: string;
 }
+
+/* ---- Merchant invoices ---- */
+
+export type InvoiceStatus = "open" | "paid" | "expired";
+
+export interface Invoice {
+  id: string;
+  merchantName: string;
+  merchantWallet: string;
+  item: string;
+  amount: number;
+  currency: string;
+  chain: Chain;
+  status: InvoiceStatus;
+  createdAt: number;
+  paidAt?: number;
+  customer?: string;
+  apassTier?: string;
+  txHash?: string;
+  receipt?: { fileName: string; downloadUrl: string };
+}

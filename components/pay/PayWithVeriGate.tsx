@@ -29,11 +29,15 @@ export function PayWithVeriGate({
   currency,
   merchant,
   mode = "mock",
+  invoiceId,
+  invoiceItem,
 }: {
   amount: number;
   currency: string;
   merchant: string;
   mode?: "mock" | "live";
+  invoiceId?: string;
+  invoiceItem?: string;
 }) {
   const live = mode === "live";
   const wallet = useWallet();
@@ -305,6 +309,8 @@ export function PayWithVeriGate({
           currency={currency}
           mode={mode}
           settleOnChain={canSettleReal ? settleOnChain : undefined}
+          invoiceId={invoiceId}
+          invoiceItem={invoiceItem}
         />
       )}
     </div>

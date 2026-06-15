@@ -23,6 +23,47 @@ function StatusBadge({ p }: { p: PaymentRecord }) {
   );
 }
 
+function exportCsv(rows: PaymentRecord[]) {
+  const header = [
+    "id",
+    "timestamp_utc",
+    "status",
+    "customer",
+    "apass_tier",
+    "block_reason",
+    "amount",
+    "currency",
+    "chain",
+    "tx_hash",
+    "receipt",
+  ];
+  const lines = rows.map((p) =>
+    [
+      p.id,
+      new Date(p.createdAt * 1000).toISOString(),
+      p.status,
+      p.customer,
+      p.apassTier ?? "",
+      p.blockReason ?? "",
+      p.amount,
+      p.currency,
+      p.chain,
+      p.txHash ?? "",
+      p.receipt?.fileName ?? "",
+    ]
+      .map((v) => `"${String(v).replace(/"/g, '""')}"`)
+      .join(","),
+  );
+  const csv = [header.join(","), ...lines].join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `verigate-settlement-report-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
   const [filter, setFilter] = useState<Filter>("all");
   const rows = payments.filter((p) => filter === "all" || p.status === filter);
@@ -37,22 +78,35 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
     <div className="rounded-2xl border border-border bg-card shadow-sm">
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-        <h2 className="text-sm font-semibold text-foreground">Payments</h2>
-        <div className="flex gap-1 rounded-lg bg-background p-0.5">
-          {(["all", "settled", "blocked"] as Filter[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium capitalize transition ${
-                filter === f
-                  ? "bg-card text-foreground shadow-sm ring-1 ring-border"
-                  : "text-muted hover:text-foreground"
-              }`}
-            >
-              {f}{" "}
-              <span className="text-muted">{counts[f]}</span>
-            </button>
-          ))}
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Compliance &amp; settlement log</h2>
+          <p className="text-[11px] text-muted">Auditable record of every payment attempt</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 rounded-lg bg-background p-0.5">
+            {(["all", "settled", "blocked"] as Filter[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium capitalize transition ${
+                  filter === f
+                    ? "bg-card text-foreground shadow-sm ring-1 ring-border"
+                    : "text-muted hover:text-foreground"
+                }`}
+              >
+                {f} <span className="text-muted">{counts[f]}</span>
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => exportCsv(rows)}
+            className="hidden items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground transition hover:bg-background sm:inline-flex"
+          >
+            <svg viewBox="0 0 24 24" className="size-3.5" fill="none">
+              <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Export CSV
+          </button>
         </div>
       </div>
 

@@ -1,8 +1,10 @@
 import { SiteHeader } from "@/components/SiteHeader";
+import { InvoicePanel } from "@/components/dashboard/InvoicePanel";
 import { PaymentsTable } from "@/components/dashboard/PaymentsTable";
 import { computeStats, getPayments } from "@/lib/cleanverse/client";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 import { MERCHANT, fmtUsd } from "@/lib/demo";
+import { listInvoices } from "@/lib/invoices";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +38,7 @@ export default async function DashboardPage() {
   const { mode } = getCleanverseConfig();
   const payments = await getPayments(MERCHANT.wallet);
   const stats = computeStats(payments);
+  const invoices = listInvoices();
 
   return (
     <div className="flex min-h-full flex-col bg-grid">
@@ -45,7 +48,15 @@ export default async function DashboardPage() {
         {/* Heading */}
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <h1 className="text-xl font-semibold text-foreground">{MERCHANT.name}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold text-foreground">{MERCHANT.name}</h1>
+              <span className="inline-flex items-center gap-1 rounded-full bg-verify-500/10 px-2 py-0.5 text-[11px] font-semibold text-verify-600 ring-1 ring-verify-500/20">
+                <svg viewBox="0 0 24 24" className="size-3" fill="none">
+                  <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                Verified merchant
+              </span>
+            </div>
             <p className="text-sm text-muted">Compliance &amp; settlement overview</p>
           </div>
           <span className="hidden font-mono text-xs text-muted sm:block">
@@ -78,6 +89,11 @@ export default async function DashboardPage() {
             sub="Settled ÷ total attempts"
             accent="brand"
           />
+        </div>
+
+        {/* Invoices */}
+        <div className="mt-6">
+          <InvoicePanel initial={invoices} />
         </div>
 
         {/* Compliance note */}

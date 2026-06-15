@@ -46,6 +46,9 @@ interface Props {
   mode?: "mock" | "live";
   /** When set, the settle step performs a real on-chain transfer via the wallet. */
   settleOnChain?: () => Promise<{ txHash: string; blockNumber?: number }>;
+  /** When set, a successful payment marks this invoice paid. */
+  invoiceId?: string;
+  invoiceItem?: string;
 }
 
 export function PayModal({
@@ -59,6 +62,8 @@ export function PayModal({
   currency,
   mode = "mock",
   settleOnChain,
+  invoiceId,
+  invoiceItem,
 }: Props) {
   const realSettle = typeof settleOnChain === "function";
   const [phase, setPhase] = useState<Phase>("review");
@@ -215,6 +220,21 @@ export function PayModal({
         txHash: txHash !== "0x0" ? txHash : undefined,
         receipt: report,
       });
+      if (invoiceId) {
+        fetch(`/api/invoices/${invoiceId}/pay`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            customer,
+            apassTier,
+            txHash: txHash !== "0x0" ? txHash : undefined,
+            receipt: report,
+            item: invoiceItem,
+            amount,
+            currency,
+          }),
+        }).catch(() => {});
+      }
       setPhase("success");
     } catch (err) {
       setNetError(err instanceof Error ? err.message : "Network error");
