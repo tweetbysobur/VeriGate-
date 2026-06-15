@@ -81,17 +81,38 @@ async function cvRequest<T>(
     }
   }
 
+  // Fetch with a fast timeout + one retry, so a transient blip degrades
+  // gracefully instead of hanging or failing the whole flow.
+  const TIMEOUT_MS = 9000;
+  const fetchOnce = async (): Promise<Response> => {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), TIMEOUT_MS);
+    try {
+      return await fetch(url, {
+        method,
+        headers,
+        body: payload,
+        cache: "no-store",
+        signal: ctrl.signal,
+      });
+    } finally {
+      clearTimeout(t);
+    }
+  };
+
   let res: Response;
   try {
-    res = await fetch(url, {
-      method,
-      headers,
-      body: payload,
-      cache: "no-store",
-    });
+    try {
+      res = await fetchOnce();
+    } catch {
+      // one retry after a short backoff
+      await new Promise((r) => setTimeout(r, 600));
+      res = await fetchOnce();
+    }
   } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
     throw new CleanverseError(
-      `Network error reaching Cleanverse: ${e instanceof Error ? e.message : e}`,
+      `Network error reaching Cleanverse: ${msg === "The operation was aborted." ? "request timed out" : msg}`,
     );
   }
 
