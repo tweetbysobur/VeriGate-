@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
+import { MobileNav } from "./MobileNav";
 
 export function SiteHeader({
   active,
@@ -39,18 +40,21 @@ export function SiteHeader({
             ))}
           </nav>
         </div>
-        <span
-          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${
-            mode === "live"
-              ? "bg-verify-500/10 text-verify-600 ring-verify-500/20"
-              : "bg-brand-100 text-brand-600 ring-brand-200"
-          }`}
-        >
+        <div className="flex items-center gap-2">
           <span
-            className={`size-1.5 rounded-full ${mode === "live" ? "bg-verify-500" : "bg-brand-500"}`}
-          />
-          {mode === "live" ? "Live · sandbox" : "Demo mode"}
-        </span>
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${
+              mode === "live"
+                ? "bg-verify-500/10 text-verify-600 ring-verify-500/20"
+                : "bg-brand-100 text-brand-600 ring-brand-200"
+            }`}
+          >
+            <span
+              className={`size-1.5 rounded-full ${mode === "live" ? "bg-verify-500" : "bg-brand-500"}`}
+            />
+            {mode === "live" ? "Live · sandbox" : "Demo mode"}
+          </span>
+          <MobileNav tabs={tabs} active={active} />
+        </div>
       </div>
     </header>
   );
