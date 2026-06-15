@@ -28,7 +28,9 @@ export function getCleanverseConfig() {
   return {
     mode,
     env,
-    baseUrl: BASE_URLS[env],
+    // CLEANVERSE_BASE_URL overrides the env default — set it once Cleanverse
+    // confirms the real production cooperate API URL.
+    baseUrl: process.env.CLEANVERSE_BASE_URL || BASE_URLS[env],
     apiId: process.env.CLEANVERSE_API_ID ?? "",
     apiKey: process.env.CLEANVERSE_API_KEY ?? "",
     /** Optional registered validator compliance pool (live mode). */
