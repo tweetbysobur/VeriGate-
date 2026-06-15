@@ -200,6 +200,8 @@ export function PayModal({
             merchant,
             txHash,
             report: out.report,
+            apassTier,
+            assetSymbol: "aUSDC",
           });
         }
       }

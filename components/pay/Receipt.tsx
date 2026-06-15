@@ -11,6 +11,9 @@ export interface ReceiptData {
   merchant: string;
   txHash: string;
   report: { downloadUrl: string; fileName: string };
+  /** Compliance proof surfaced on the receipt. */
+  apassTier?: string;
+  assetSymbol?: string;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -46,7 +49,29 @@ export function Receipt({ data }: { data: ReceiptData }) {
         </p>
       </div>
 
-      <div className="mt-5 divide-y divide-border rounded-xl border border-border bg-background/60 px-4">
+      {/* Compliance proof — what was checked before money moved */}
+      <div className="mt-5 rounded-xl border border-verify-500/25 bg-verify-500/5 p-3">
+        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-verify-600">
+          Compliance proof
+        </p>
+        <ul className="space-y-1.5">
+          {[
+            `Identity verified — A-Pass${data.apassTier ? ` · tier ${data.apassTier}` : ""}`,
+            `Compliant asset — ${data.assetSymbol ?? "A-Token"} provenance tracked`,
+            "Transaction screened against the A-Token compliance rule",
+            "Auditable Travel Rule receipt written",
+          ].map((t) => (
+            <li key={t} className="flex items-start gap-2 text-xs text-foreground">
+              <svg viewBox="0 0 24 24" className="mt-0.5 size-3.5 shrink-0 text-verify-500" fill="none">
+                <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {t}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-3 divide-y divide-border rounded-xl border border-border bg-background/60 px-4">
         <Field label="Amount">
           {fmtUsd(data.amount)} {data.currency}
         </Field>

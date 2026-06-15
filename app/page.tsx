@@ -270,6 +270,55 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Developer / merchant integration */}
+      <section className="border-t border-border">
+        <div className="mx-auto grid max-w-5xl gap-8 px-5 py-16 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+              Add compliant payments in 3 lines
+            </h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted">
+              Drop the <span className="font-medium text-foreground">Pay with VeriGate</span>{" "}
+              button into any checkout. Your customers get verified, your funds
+              arrive compliant, and every payment ships with an audit-ready
+              receipt — no compliance team required.
+            </p>
+            <ul className="mt-5 space-y-2">
+              {[
+                "Identity + asset checks handled for you",
+                "Travel Rule receipt on every transaction",
+                "Works on Monad and major chains",
+              ].map((t) => (
+                <li key={t} className="flex items-start gap-2 text-sm text-foreground">
+                  <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-verify-500" fill="none">
+                    <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-border bg-brand-ink shadow-lg">
+            <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-2.5">
+              <span className="size-2.5 rounded-full bg-white/20" />
+              <span className="size-2.5 rounded-full bg-white/20" />
+              <span className="size-2.5 rounded-full bg-white/20" />
+              <span className="ml-2 font-mono text-[11px] text-brand-200">checkout.html</span>
+            </div>
+            <pre className="overflow-x-auto p-4 font-mono text-[12px] leading-relaxed text-brand-100">
+{`<script src="https://paywithverigate.com/sdk.js"></script>
+
+<button data-verigate
+        data-amount="209.00"
+        data-token="aUSDC"
+        data-chain="monad">
+  Pay with VeriGate
+</button>`}
+            </pre>
+          </div>
+        </div>
+      </section>
+
       {/* Roadmap */}
       <section className="border-t border-border bg-card/40">
         <div className="mx-auto max-w-5xl px-5 py-16">
