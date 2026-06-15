@@ -15,6 +15,25 @@ import {
 
 type Phase = "review" | "running" | "success" | "failed";
 
+/** Fire-and-forget: record the payment outcome to the merchant ledger. */
+function recordAttempt(body: {
+  customer: string;
+  chain: Chain;
+  amount: number;
+  currency: string;
+  status: "settled" | "blocked";
+  blockReason?: string;
+  apassTier?: string;
+  txHash?: string;
+  receipt?: { fileName: string; downloadUrl: string };
+}) {
+  fetch("/api/attempts", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  }).catch(() => {});
+}
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -85,6 +104,8 @@ export function PayModal({
     setSteps(initialSteps());
 
     let txHash = "0x0";
+    let apassTier: string | undefined;
+    let report: { fileName: string; downloadUrl: string } | undefined;
     try {
       for (const def of STEP_DEFS) {
         // Real on-chain settlement via the connected wallet (Monad).
@@ -143,9 +164,22 @@ export function PayModal({
             source: out.source,
             action: out.action,
           });
+          recordAttempt({
+            customer,
+            chain,
+            amount,
+            currency,
+            status: "blocked",
+            blockReason: out.title,
+            apassTier,
+          });
           setPhase("failed");
           runningRef.current = false;
           return;
+        }
+
+        if (def.id === "identity") {
+          apassTier = out.detail.match(/tier (\d+)/i)?.[1];
         }
 
         patch(def.id, {
@@ -157,6 +191,7 @@ export function PayModal({
         });
 
         if (def.id === "audit" && out.report) {
+          report = out.report;
           setReceipt({
             amount,
             currency,
@@ -168,6 +203,16 @@ export function PayModal({
           });
         }
       }
+      recordAttempt({
+        customer,
+        chain,
+        amount,
+        currency,
+        status: "settled",
+        apassTier,
+        txHash: txHash !== "0x0" ? txHash : undefined,
+        receipt: report,
+      });
       setPhase("success");
     } catch (err) {
       setNetError(err instanceof Error ? err.message : "Network error");

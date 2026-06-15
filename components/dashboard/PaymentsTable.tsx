@@ -56,8 +56,65 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Mobile: stacked cards */}
+      <ul className="divide-y divide-border sm:hidden">
+        {rows.map((p) => {
+          const meta = chainMeta(p.chain);
+          return (
+            <li key={p.id} className="p-4">
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-mono text-xs text-foreground">{p.id}</p>
+                  <p className="text-[11px] text-muted">{timeAgo(p.createdAt)}</p>
+                </div>
+                <StatusBadge p={p} />
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <span className="font-mono text-xs text-muted">
+                  {p.customer.includes("…") ? p.customer : shortAddr(p.customer)}
+                </span>
+                <span className="text-sm font-semibold text-foreground">
+                  {fmtUsd(p.amount)}
+                  <span className="ml-1 text-[11px] font-normal text-muted">{p.currency}</span>
+                </span>
+              </div>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-2">
+                  <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ring-1 ${meta.tint}`}>
+                    {meta.name}
+                  </span>
+                  {p.status === "settled" ? (
+                    <span className="text-[11px] text-muted">
+                      A-Pass{p.apassTier ? ` · t${p.apassTier}` : ""}
+                    </span>
+                  ) : (
+                    <span className="text-[11px] text-danger">{p.blockReason}</span>
+                  )}
+                </span>
+                {p.receipt && (
+                  <a
+                    href={p.receipt.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-medium text-brand-500 hover:underline"
+                  >
+                    <svg viewBox="0 0 24 24" className="size-3.5" fill="none">
+                      <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    PDF
+                  </a>
+                )}
+              </div>
+            </li>
+          );
+        })}
+        {rows.length === 0 && (
+          <li className="px-4 py-10 text-center text-sm text-muted">No {filter} payments.</li>
+        )}
+      </ul>
+
+      {/* Desktop: table */}
+      <div className="hidden overflow-x-auto sm:block">
         <table className="w-full min-w-[640px] text-sm">
           <thead>
             <tr className="border-b border-border text-left text-[11px] uppercase tracking-wide text-muted">

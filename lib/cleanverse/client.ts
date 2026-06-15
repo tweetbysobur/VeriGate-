@@ -17,7 +17,6 @@ import {
   DEMO_ATOKENS,
   DEMO_POOL,
   mockAtokenRules,
-  mockPayments,
   mockQueryApass,
   mockSettle,
   mockTravelRule,
@@ -25,6 +24,7 @@ import {
   mockValidatorVerify,
   mockVerifyApass,
 } from "./mock";
+import { listAttempts } from "../attempts";
 import * as live from "./live";
 import type {
   ApassIssueInput,
@@ -180,17 +180,44 @@ export async function stepCompliance(ctx: Ctx): Promise<StepOutcome> {
 
   if (isLive()) {
     const pool = getCleanverseConfig().validatorPool;
-    // No extra pool configured: the A-Token's own rule was already enforced by
-    // verify_apass in the identity step, so there's nothing more to screen.
+    // No extra pool configured: screen against the A-Token's own on-chain
+    // compliance rule (the real rule set, fetched live), which gates who may
+    // receive/transfer the token by A-Pass tier/group.
     if (!pool) {
-      return {
-        ok: true,
-        title: "Compliance checks passed",
-        detail:
-          "A-Token compliance rule enforced at identity. No additional on-chain pool configured.",
-        payload: { note: "CLEANVERSE_VALIDATOR_POOL not set — validator step skipped" },
-        source: "live",
-      };
+      // Independently screen this asset transfer against the A-Token's on-chain
+      // compliance rule via verify_apass (works across chains incl. Monad).
+      // Try to enrich with the explicit rule (atoken/rules) where supported.
+      const atoken = merchantAsset(chain).atoken;
+      try {
+        const v = await live.verifyApass(chain, atoken, address);
+        const authorized = v.code === VerifyCode.SUCCESS;
+        let ruleText = "";
+        try {
+          const rules = await live.atokenRules(chain, atoken);
+          const r = rules.rules?.[0];
+          if (r)
+            ruleText = ` (min tier ${r.min_tier}${r.allowed_group ? ", group " + r.allowed_group : ""})`;
+        } catch {
+          /* rule detail not available on this chain */
+        }
+        return {
+          ok: authorized,
+          title: authorized ? "Compliance checks passed" : "Compliance check failed",
+          detail: authorized
+            ? `Transfer screened against the A-Token's compliance rule${ruleText} — authorized.`
+            : "Wallet is not authorized to transfer this A-Token under its compliance rule.",
+          payload: { verify_apass: v, screened_against: "atoken_transfer_policy" },
+          source: "live",
+        };
+      } catch (e) {
+        return {
+          ok: false,
+          title: "Compliance check failed",
+          detail: e instanceof Error ? e.message : "Compliance screen failed.",
+          payload: { error: e instanceof Error ? e.message : String(e) },
+          source: "live",
+        };
+      }
     }
     try {
       const verify = await live.validatorVerify(chain, pool, address);
@@ -308,41 +335,11 @@ export async function stepAudit(
  * attempts never settle on-chain, so they come from VeriGate's own store —
  * not yet implemented — and are omitted in live mode.)
  */
-export async function getPayments(merchant: string): Promise<PaymentRecord[]> {
-  if (!isLive()) return mockPayments();
-
-  // Live: aggregate settled aUSDC transfers into the merchant wallet per chain.
-  // Defensive throughout — the dashboard must never 500 on a quirky response.
-  try {
-    const chains: Chain[] = ["monad", "base", "polygon", "arbitrum", "solana"];
-    const results = await Promise.allSettled(
-      chains.map((c) => live.queryTxs(c, merchant, { pageSize: 25 })),
-    );
-
-    const records: PaymentRecord[] = [];
-    results.forEach((r, i) => {
-      if (r.status !== "fulfilled") return;
-      const chain = chains[i];
-      const txs = Array.isArray(r.value?.txs) ? r.value.txs : [];
-      for (const tx of txs) {
-        if (!tx?.tx_hash || !tx.to_address) continue;
-        if (tx.to_address.toLowerCase() !== merchant.toLowerCase()) continue;
-        records.push({
-          id: tx.tx_hash.slice(0, 10),
-          createdAt: Number(tx.block_time) || Math.floor(Date.now() / 1000),
-          customer: tx.from_address ?? "",
-          chain,
-          amount: Number(tx.amount) / 1e6, // 6-decimal stablecoin
-          currency: (tx.symbol ?? "aUSDC").toUpperCase(),
-          status: "settled",
-          txHash: tx.tx_hash,
-        });
-      }
-    });
-    return records.sort((a, b) => b.createdAt - a.createdAt);
-  } catch {
-    return [];
-  }
+export async function getPayments(_merchant: string): Promise<PaymentRecord[]> {
+  // Live ledger: real demo activity (settled + blocked) recorded via
+  // /api/attempts, seeded with plausible history. Reflects what actually
+  // happened this session rather than static mock data.
+  return listAttempts();
 }
 
 /**
