@@ -20,7 +20,7 @@ export const MONAD_MAINNET: EvmChainConfig = {
   chainId: 143,
   chainIdHex: "0x8f",
   name: "Monad",
-  rpcUrls: ["https://rpc.monad.xyz"],
+  rpcUrls: ["https://rpc.monad.xyz", "https://monad-mainnet.drpc.org"],
   explorerUrl: "https://monadexplorer.com",
   explorerTx: (h) => `https://monadexplorer.com/tx/${h}`,
   nativeCurrency: { name: "Monad", symbol: "MON", decimals: 18 },
@@ -36,11 +36,11 @@ export const MONAD_TESTNET: EvmChainConfig = {
   nativeCurrency: { name: "Monad", symbol: "MON", decimals: 18 },
 };
 
-/** Active Monad network — set NEXT_PUBLIC_MONAD_NETWORK=mainnet to go live. */
+/** Active Monad network — mainnet by default; set NEXT_PUBLIC_MONAD_NETWORK=testnet to switch. */
 export function monadConfig(): EvmChainConfig {
-  return process.env.NEXT_PUBLIC_MONAD_NETWORK === "mainnet"
-    ? MONAD_MAINNET
-    : MONAD_TESTNET;
+  return process.env.NEXT_PUBLIC_MONAD_NETWORK === "testnet"
+    ? MONAD_TESTNET
+    : MONAD_MAINNET;
 }
 
 /** The A-Token the customer pays with on Monad (override for mainnet). */
