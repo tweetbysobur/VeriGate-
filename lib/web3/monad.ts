@@ -161,6 +161,43 @@ export async function sendAtokenTransfer(params: {
   return txHash;
 }
 
+/** Send a pre-built transaction (e.g. 0x swap calldata). Returns the tx hash. */
+export async function sendTransaction(tx: {
+  from: string;
+  to: string;
+  data: string;
+  value?: string; // hex wei
+  gas?: string;
+}): Promise<string> {
+  const p = getProvider();
+  if (!p) throw new Error("No wallet found.");
+  const params: Record<string, string> = {
+    from: tx.from,
+    to: tx.to,
+    data: tx.data,
+    value: tx.value && tx.value !== "0" ? toHex(tx.value) : "0x0",
+  };
+  if (tx.gas) params.gas = toHex(tx.gas);
+  return (await p.request({
+    method: "eth_sendTransaction",
+    params: [params],
+  })) as string;
+}
+
+/** Decimal-or-hex string → 0x hex. */
+function toHex(v: string): string {
+  if (v.startsWith("0x")) return v;
+  return `0x${BigInt(v).toString(16)}`;
+}
+
+/** Format base units (bigint string) to a human decimal string. */
+export function formatUnits(baseUnits: string, decimals: number): string {
+  const s = BigInt(baseUnits).toString().padStart(decimals + 1, "0");
+  const whole = s.slice(0, s.length - decimals);
+  const frac = s.slice(s.length - decimals).replace(/0+$/, "");
+  return frac ? `${whole}.${frac}` : whole;
+}
+
 /** Poll for a transaction receipt. Resolves with success/failure + receipt. */
 export async function waitForReceipt(
   txHash: string,
