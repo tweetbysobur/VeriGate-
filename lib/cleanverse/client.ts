@@ -312,30 +312,37 @@ export async function getPayments(merchant: string): Promise<PaymentRecord[]> {
   if (!isLive()) return mockPayments();
 
   // Live: aggregate settled aUSDC transfers into the merchant wallet per chain.
-  const chains: Chain[] = ["base", "polygon", "arbitrum", "solana"];
-  const results = await Promise.allSettled(
-    chains.map((c) => live.queryTxs(c, merchant, { pageSize: 25 })),
-  );
+  // Defensive throughout — the dashboard must never 500 on a quirky response.
+  try {
+    const chains: Chain[] = ["monad", "base", "polygon", "arbitrum", "solana"];
+    const results = await Promise.allSettled(
+      chains.map((c) => live.queryTxs(c, merchant, { pageSize: 25 })),
+    );
 
-  const records: PaymentRecord[] = [];
-  results.forEach((r, i) => {
-    if (r.status !== "fulfilled") return;
-    const chain = chains[i];
-    for (const tx of r.value.txs) {
-      if (tx.to_address.toLowerCase() !== merchant.toLowerCase()) continue;
-      records.push({
-        id: tx.tx_hash.slice(0, 10),
-        createdAt: tx.block_time,
-        customer: tx.from_address,
-        chain,
-        amount: Number(tx.amount) / 1e6, // 6-decimal stablecoin
-        currency: tx.symbol.toUpperCase(),
-        status: "settled",
-        txHash: tx.tx_hash,
-      });
-    }
-  });
-  return records.sort((a, b) => b.createdAt - a.createdAt);
+    const records: PaymentRecord[] = [];
+    results.forEach((r, i) => {
+      if (r.status !== "fulfilled") return;
+      const chain = chains[i];
+      const txs = Array.isArray(r.value?.txs) ? r.value.txs : [];
+      for (const tx of txs) {
+        if (!tx?.tx_hash || !tx.to_address) continue;
+        if (tx.to_address.toLowerCase() !== merchant.toLowerCase()) continue;
+        records.push({
+          id: tx.tx_hash.slice(0, 10),
+          createdAt: Number(tx.block_time) || Math.floor(Date.now() / 1000),
+          customer: tx.from_address ?? "",
+          chain,
+          amount: Number(tx.amount) / 1e6, // 6-decimal stablecoin
+          currency: (tx.symbol ?? "aUSDC").toUpperCase(),
+          status: "settled",
+          txHash: tx.tx_hash,
+        });
+      }
+    });
+    return records.sort((a, b) => b.createdAt - a.createdAt);
+  } catch {
+    return [];
+  }
 }
 
 /**
