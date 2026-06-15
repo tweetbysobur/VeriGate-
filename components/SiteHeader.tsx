@@ -6,7 +6,7 @@ export function SiteHeader({
   active,
   mode = "mock",
 }: {
-  active: "home" | "checkout" | "dashboard" | "apass" | "swap";
+  active: "home" | "checkout" | "dashboard" | "apass" | "swap" | "institutions";
   mode?: "mock" | "live";
 }) {
   const tabs = [
@@ -15,6 +15,7 @@ export function SiteHeader({
     { id: "swap", label: "Swap", href: "/swap" },
     { id: "checkout", label: "Checkout", href: "/checkout" },
     { id: "dashboard", label: "Dashboard", href: "/dashboard" },
+    { id: "institutions", label: "Institutions", href: "/institutions" },
   ] as const;
 
   return (

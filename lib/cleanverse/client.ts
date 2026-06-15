@@ -16,7 +16,9 @@ import { getCleanverseConfig } from "./config";
 import {
   DEMO_ATOKENS,
   DEMO_POOL,
+  type InstitutionRecord,
   mockAtokenRules,
+  mockInstitutions,
   mockQueryApass,
   mockSettle,
   mockTravelRule,
@@ -451,6 +453,54 @@ export async function requestFaucet(
     return { chain, symbol, deposit_address: depositAddress, amount, tx_hash: "0xmock" };
   }
   return live.faucet(chain, symbol, depositAddress, amount);
+}
+
+/**
+ * Whitelisted licensed institutions. Live: query_institution_white_list across
+ * chains, flattened/deduped by entity. Falls back to a curated representative
+ * set when live data is empty/unavailable.
+ */
+export async function getInstitutions(): Promise<InstitutionRecord[]> {
+  if (!isLive()) return mockInstitutions();
+  try {
+    const chains: Chain[] = ["monad", "base"];
+    const results = await Promise.allSettled(
+      chains.map((c) => live.queryInstitutionWhitelist(c)),
+    );
+    const byEntity = new Map<string, InstitutionRecord>();
+    results.forEach((r, i) => {
+      if (r.status !== "fulfilled") return;
+      const chain = chains[i];
+      const tw = Array.isArray(r.value?.token_whitelist) ? r.value.token_whitelist : [];
+      for (const t of tw) {
+        const asset = (t.origin_symbol ?? "").toUpperCase();
+        for (const inst of t.whitelist ?? []) {
+          const key = inst.entity_name || inst.service_name;
+          if (!key) continue;
+          // Skip obvious sandbox test entries.
+          if (/^(test|demo|faucet|usdc_faucet|lulu)$/i.test(key.trim())) continue;
+          if (key.trim().length < 4 && key === key.toLowerCase()) continue;
+          const ex =
+            byEntity.get(key) ??
+            ({
+              entityName: inst.entity_name || key,
+              serviceName: inst.service_name || key,
+              category: inst.category || "Institution",
+              license: "",
+              chains: [],
+              assets: [],
+            } as InstitutionRecord);
+          if (!ex.chains.includes(chain)) ex.chains.push(chain);
+          if (asset && !ex.assets.includes(asset)) ex.assets.push(asset);
+          byEntity.set(key, ex);
+        }
+      }
+    });
+    const list = [...byEntity.values()];
+    return list.length ? list : mockInstitutions();
+  } catch {
+    return mockInstitutions();
+  }
 }
 
 export function computeStats(payments: PaymentRecord[]): DashboardStats {

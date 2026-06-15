@@ -186,6 +186,27 @@ export function queryTxs(
   });
 }
 
+interface InstitutionWhitelistEntry {
+  origin_symbol?: string;
+  atoken_symbol?: string;
+  whitelist?: Array<{
+    service_name?: string;
+    entity_name?: string;
+    category?: string;
+    icon?: string;
+  }>;
+}
+
+export function queryInstitutionWhitelist(
+  chain: Chain,
+  symbol?: string,
+): Promise<{ chain: Chain; token_whitelist: InstitutionWhitelistEntry[] }> {
+  return cvRequest("/query_institution_white_list", {
+    chain,
+    ...(symbol ? { symbol } : {}),
+  });
+}
+
 /* ---- Issue Member writes ---- */
 
 /** Mint an A-Pass to a wallet. Encrypted endpoint (uses the api-key). */

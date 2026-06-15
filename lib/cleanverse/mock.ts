@@ -271,6 +271,27 @@ export function mockTravelRule(chain: Chain, hash: string): TravelRuleReport {
   };
 }
 
+export interface InstitutionRecord {
+  entityName: string;
+  serviceName: string;
+  category: string;
+  license: string;
+  chains: Chain[];
+  assets: string[];
+}
+
+/** Whitelisted licensed institutions (query_institution_white_list shape, flattened). */
+export function mockInstitutions(): InstitutionRecord[] {
+  return [
+    { entityName: "Zero Hash LLC", serviceName: "Zero Hash", category: "Payments", license: "NMLS #1791- MSB", chains: ["monad", "base"], assets: ["USDC", "USDT"] },
+    { entityName: "Circle Internet Financial", serviceName: "Circle Mint", category: "Issuer", license: "NYDFS BitLicense", chains: ["monad", "ethereum", "base"], assets: ["USDC"] },
+    { entityName: "Coinbase Custody Trust", serviceName: "Coinbase Prime", category: "Custody", license: "NY Trust Charter", chains: ["base", "ethereum"], assets: ["USDC"] },
+    { entityName: "Fireblocks Ltd.", serviceName: "Fireblocks Network", category: "Custody", license: "SOC 2 Type II", chains: ["monad", "polygon"], assets: ["USDC", "USDT"] },
+    { entityName: "Ramp Network", serviceName: "Ramp", category: "On/Off-ramp", license: "FCA EMD Agent", chains: ["base", "polygon"], assets: ["USDC"] },
+    { entityName: "Sygnum Bank AG", serviceName: "Sygnum", category: "Bank", license: "FINMA Banking License", chains: ["ethereum"], assets: ["USDC"] },
+  ];
+}
+
 const HOUR = 3600;
 const DAY = 86400;
 
