@@ -8,7 +8,8 @@ import type {
   FaucetResult,
   IdType,
 } from "@/lib/cleanverse/types";
-import { CHAINS, shortAddr } from "@/lib/demo";
+import { shortAddr } from "@/lib/demo";
+import { NetworkBadge } from "@/components/MonadMark";
 import { useWallet } from "@/components/pay/useWallet";
 
 const ID_TYPES: { value: IdType; label: string }[] = [
@@ -27,7 +28,7 @@ type Phase = "form" | "issuing" | "issued" | "done";
 
 export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
   const wallet = useWallet();
-  const [chain, setChain] = useState<Chain>("monad");
+  const chain: Chain = "monad";
   const [address, setAddress] = useState("");
   const [fullName, setFullName] = useState("");
   const [idType, setIdType] = useState<IdType>("PASSPORT");
@@ -42,9 +43,8 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
 
   const effectiveAddress = (wallet.account ?? address).trim();
   const canSubmit =
-    /^0x[a-fA-F0-9]{40}$/.test(effectiveAddress) || chain === "solana"
-      ? effectiveAddress.length > 30 && fullName.trim().length > 1
-      : false;
+    /^0x[a-fA-F0-9]{40}$/.test(effectiveAddress) &&
+    fullName.trim().length > 1;
 
   async function issue() {
     setPhase("issuing");
@@ -209,7 +209,7 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
           <input
             value={address}
             onChange={(e) => setAddress(e.target.value)}
-            placeholder={chain === "solana" ? "Solana address…" : "0x…"}
+            placeholder="0x… (Monad wallet address)"
             spellCheck={false}
             className="mt-1 w-full rounded-lg border border-border bg-card px-3 py-2 font-mono text-xs text-foreground outline-none focus:ring-2 focus:ring-brand-300"
           />
@@ -250,21 +250,11 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
         </Field>
       </div>
 
-      {/* Chain */}
+      {/* Network — Monad only */}
       <div className="mt-4">
         <label className="text-xs text-muted">Network</label>
-        <div className="mt-1 flex flex-wrap gap-1.5">
-          {CHAINS.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setChain(c.id)}
-              className={`rounded-lg px-2.5 py-1 text-xs font-semibold ring-1 transition ${
-                c.id === chain ? c.tint : "bg-card text-muted ring-border hover:ring-brand-300"
-              }`}
-            >
-              {c.name}
-            </button>
-          ))}
+        <div className="mt-1">
+          <NetworkBadge />
         </div>
       </div>
 
