@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import type { Chain, Persona } from "@/lib/cleanverse/types";
 import { PERSONAS } from "@/lib/cleanverse/mock";
-import { CHAINS, fmtUsd, isLikelyAddress, shortAddr } from "@/lib/demo";
+import { fmtUsd, isLikelyAddress, shortAddr } from "@/lib/demo";
 import {
   ensureChain,
   monadConfig,
@@ -13,6 +13,7 @@ import {
   waitForReceipt,
 } from "@/lib/web3/monad";
 import { VeriGateMark } from "@/components/Logo";
+import { NetworkBadge } from "@/components/MonadMark";
 import { PayModal } from "./PayModal";
 import { useWallet } from "./useWallet";
 
@@ -36,7 +37,7 @@ export function PayWithVeriGate({
 }) {
   const live = mode === "live";
   const wallet = useWallet();
-  const [chain, setChain] = useState<Chain>("monad");
+  const chain: Chain = "monad";
   const [persona, setPersona] = useState<Persona>("verified");
   const [address, setAddress] = useState("");
   const [open, setOpen] = useState(false);
@@ -46,8 +47,8 @@ export function PayWithVeriGate({
     ? wallet.account ?? address.trim()
     : PERSONAS[persona].address;
 
-  // Real on-chain settlement only when a wallet is connected and chain is Monad.
-  const canSettleReal = live && !!wallet.account && chain === "monad";
+  // Real on-chain settlement only when a wallet is connected (Monad-only app).
+  const canSettleReal = live && !!wallet.account;
   const canPay = live ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) : true;
 
   // Inline A-Pass status for the active wallet (live mode).
@@ -152,7 +153,7 @@ export function PayWithVeriGate({
                 <input
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={chain === "solana" ? "Solana address…" : "0x…"}
+                  placeholder="0x… (Monad wallet address)"
                   spellCheck={false}
                   autoComplete="off"
                   className={`mt-1 w-full rounded-lg border bg-card px-2.5 py-2 font-mono text-xs text-foreground outline-none transition focus:ring-2 ${
@@ -204,23 +205,10 @@ export function PayWithVeriGate({
           </>
         )}
 
-        {/* Chain */}
+        {/* Network — Monad only */}
         <label className="mt-3 block text-xs text-muted">Network</label>
-        <div className="mt-1 flex flex-wrap gap-1.5">
-          {CHAINS.map((c) => {
-            const sel = c.id === chain;
-            return (
-              <button
-                key={c.id}
-                onClick={() => setChain(c.id)}
-                className={`rounded-lg px-2.5 py-1 text-xs font-semibold ring-1 transition ${
-                  sel ? c.tint : "bg-card text-muted ring-border hover:ring-brand-300"
-                }`}
-              >
-                {c.name}
-              </button>
-            );
-          })}
+        <div className="mt-1">
+          <NetworkBadge />
         </div>
 
         {wallet.error && (

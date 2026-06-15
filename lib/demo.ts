@@ -43,6 +43,7 @@ export interface ChainMeta {
   explorerTx: (hash: string) => string;
 }
 
+// Monad is the only supported chain for VeriGate.
 export const CHAINS: ChainMeta[] = [
   {
     id: "monad",
@@ -50,34 +51,6 @@ export const CHAINS: ChainMeta[] = [
     short: "MON",
     tint: "bg-purple-500/10 text-purple-600 ring-purple-500/30",
     explorerTx: (h) => `https://monadexplorer.com/tx/${h}`,
-  },
-  {
-    id: "base",
-    name: "Base",
-    short: "BASE",
-    tint: "bg-blue-500/10 text-blue-600 ring-blue-500/30",
-    explorerTx: (h) => `https://basescan.org/tx/${h}`,
-  },
-  {
-    id: "polygon",
-    name: "Polygon",
-    short: "POL",
-    tint: "bg-violet-500/10 text-violet-600 ring-violet-500/30",
-    explorerTx: (h) => `https://polygonscan.com/tx/${h}`,
-  },
-  {
-    id: "arbitrum",
-    name: "Arbitrum",
-    short: "ARB",
-    tint: "bg-sky-500/10 text-sky-600 ring-sky-500/30",
-    explorerTx: (h) => `https://arbiscan.io/tx/${h}`,
-  },
-  {
-    id: "solana",
-    name: "Solana",
-    short: "SOL",
-    tint: "bg-emerald-500/10 text-emerald-600 ring-emerald-500/30",
-    explorerTx: (h) => `https://solscan.io/tx/${h}`,
   },
 ];
 

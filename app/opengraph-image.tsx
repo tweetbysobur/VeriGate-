@@ -26,17 +26,17 @@ export default function OpengraphImage() {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "64px",
-              height: "64px",
-              borderRadius: "18px",
+              width: "72px",
+              height: "72px",
+              borderRadius: "20px",
               background: "linear-gradient(135deg, #7b84fb, #4a43c4)",
             }}
           >
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
+            <svg width="40" height="40" viewBox="0 0 36 36" fill="none">
               <path
-                d="m5 13 4 4L19 7"
+                d="M10.5 18.6l4.7 4.7L25.7 12.4"
                 stroke="#ffffff"
-                strokeWidth="2.6"
+                strokeWidth="3.4"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
