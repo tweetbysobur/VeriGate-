@@ -1,23 +1,37 @@
 /**
- * In-process payment-attempt ledger. Seeded with plausible history so the
- * dashboard looks alive, then real demo activity (settled + blocked) is
- * prepended at runtime by /api/attempts. This makes the dashboard reflect what
- * actually happened during a session rather than static mock data.
- *
- * Note: per-instance memory — fine for a demo session; swap for Vercel KV /
- * Upstash for durable multi-instance persistence.
+ * Payment-attempt ledger. Durable via KV when provisioned (Vercel KV / Upstash),
+ * otherwise in-process memory. Seeded with plausible history so the dashboard
+ * looks alive; real demo activity (settled + blocked) is prepended at runtime.
  */
 import "server-only";
 import type { PaymentRecord } from "./cleanverse/types";
 import { mockPayments } from "./cleanverse/mock";
+import { kvEnabled, kvGetJson, kvSetJson } from "./kv";
 
 const MAX = 60;
-let store: PaymentRecord[] = mockPayments();
+const KEY = "verigate:attempts";
 
-export function recordAttempt(rec: PaymentRecord): void {
-  store = [rec, ...store].slice(0, MAX);
+let mem: PaymentRecord[] | null = null;
+
+async function load(): Promise<PaymentRecord[]> {
+  if (kvEnabled) {
+    let arr = await kvGetJson<PaymentRecord[]>(KEY);
+    if (!arr) {
+      arr = mockPayments();
+      await kvSetJson(KEY, arr);
+    }
+    return arr;
+  }
+  if (mem === null) mem = mockPayments();
+  return mem;
 }
 
-export function listAttempts(): PaymentRecord[] {
-  return store;
+export async function recordAttempt(rec: PaymentRecord): Promise<void> {
+  const next = [rec, ...(await load())].slice(0, MAX);
+  if (kvEnabled) await kvSetJson(KEY, next);
+  else mem = next;
+}
+
+export async function listAttempts(): Promise<PaymentRecord[]> {
+  return load();
 }

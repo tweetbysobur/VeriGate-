@@ -1,13 +1,14 @@
 /**
- * In-process invoice store. Seeded with a couple of examples so the dashboard
- * looks alive. Payment links also carry the core fields as query params, so the
- * /pay/[id] page still works even if a cold serverless instance doesn't have the
- * invoice in memory. Swap for Vercel KV / Upstash for durable persistence.
+ * Invoice store. Durable via KV when provisioned, otherwise in-process memory.
+ * Payment links also carry the core fields as query params, so /pay/[id] works
+ * even before KV is set up and across cold starts.
  */
 import "server-only";
 import type { Chain, Invoice, InvoiceStatus } from "./cleanverse/types";
 import { MERCHANT } from "./demo";
+import { kvEnabled, kvGetJson, kvSetJson } from "./kv";
 
+const KEY = "verigate:invoices";
 const HOUR = 3600;
 const now = () => Math.floor(Date.now() / 1000);
 
@@ -15,34 +16,57 @@ function newId(): string {
   return `iv_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
-let store: Invoice[] = [
-  {
-    id: "iv_seedpaid01",
-    merchantName: MERCHANT.name,
-    merchantWallet: MERCHANT.wallet,
-    item: "Wholesale order #4471",
-    amount: 1340,
-    currency: "USDC",
-    chain: "monad",
-    status: "paid",
-    createdAt: now() - 6 * HOUR,
-    paidAt: now() - 5 * HOUR,
-    customer: "0x888895E314BF33CEeBCF5320279061aed3a5E2bd",
-    apassTier: "40",
-    txHash: "0x" + "a3f9c2".repeat(10) + "ab12",
-  },
-  {
-    id: "iv_seedopen01",
-    merchantName: MERCHANT.name,
-    merchantWallet: MERCHANT.wallet,
-    item: "Priority restock — keyboards",
-    amount: 512,
-    currency: "USDC",
-    chain: "monad",
-    status: "open",
-    createdAt: now() - 40 * 60,
-  },
-];
+function seed(): Invoice[] {
+  return [
+    {
+      id: "iv_seedpaid01",
+      merchantName: MERCHANT.name,
+      merchantWallet: MERCHANT.wallet,
+      item: "Wholesale order #4471",
+      amount: 1340,
+      currency: "USDC",
+      chain: "monad",
+      status: "paid",
+      createdAt: now() - 6 * HOUR,
+      paidAt: now() - 5 * HOUR,
+      customer: "0x888895E314BF33CEeBCF5320279061aed3a5E2bd",
+      apassTier: "40",
+      txHash: "0x" + "a3f9c2".repeat(10) + "ab12",
+    },
+    {
+      id: "iv_seedopen01",
+      merchantName: MERCHANT.name,
+      merchantWallet: MERCHANT.wallet,
+      item: "Priority restock — keyboards",
+      amount: 512,
+      currency: "USDC",
+      chain: "monad",
+      status: "open",
+      createdAt: now() - 40 * 60,
+    },
+  ];
+}
+
+let mem: Invoice[] | null = null;
+
+async function load(): Promise<Invoice[]> {
+  if (kvEnabled) {
+    let arr = await kvGetJson<Invoice[]>(KEY);
+    if (!arr) {
+      arr = seed();
+      await kvSetJson(KEY, arr);
+    }
+    return arr;
+  }
+  if (mem === null) mem = seed();
+  return mem;
+}
+
+async function save(list: Invoice[]): Promise<void> {
+  const next = list.slice(0, 100);
+  if (kvEnabled) await kvSetJson(KEY, next);
+  else mem = next;
+}
 
 export interface CreateInvoiceInput {
   item: string;
@@ -51,7 +75,7 @@ export interface CreateInvoiceInput {
   chain?: Chain;
 }
 
-export function createInvoice(input: CreateInvoiceInput): Invoice {
+export async function createInvoice(input: CreateInvoiceInput): Promise<Invoice> {
   const inv: Invoice = {
     id: newId(),
     merchantName: MERCHANT.name,
@@ -63,19 +87,19 @@ export function createInvoice(input: CreateInvoiceInput): Invoice {
     status: "open",
     createdAt: now(),
   };
-  store = [inv, ...store].slice(0, 100);
+  await save([inv, ...(await load())]);
   return inv;
 }
 
-export function getInvoice(id: string): Invoice | undefined {
-  return store.find((i) => i.id === id);
+export async function getInvoice(id: string): Promise<Invoice | undefined> {
+  return (await load()).find((i) => i.id === id);
 }
 
-export function listInvoices(): Invoice[] {
-  return store;
+export async function listInvoices(): Promise<Invoice[]> {
+  return load();
 }
 
-export function markPaid(
+export async function markPaid(
   id: string,
   data: {
     customer?: string;
@@ -83,8 +107,9 @@ export function markPaid(
     txHash?: string;
     receipt?: { fileName: string; downloadUrl: string };
   },
-): Invoice | undefined {
-  const inv = store.find((i) => i.id === id);
+): Promise<Invoice | undefined> {
+  const list = await load();
+  const inv = list.find((i) => i.id === id);
   if (!inv) return undefined;
   inv.status = "paid" as InvoiceStatus;
   inv.paidAt = now();
@@ -92,18 +117,19 @@ export function markPaid(
   inv.apassTier = data.apassTier ?? inv.apassTier;
   inv.txHash = data.txHash ?? inv.txHash;
   inv.receipt = data.receipt ?? inv.receipt;
+  await save(list);
   return inv;
 }
 
 /** Upsert a transient invoice reconstructed from a payment link's query params. */
-export function ensureInvoice(partial: {
+export async function ensureInvoice(partial: {
   id: string;
   item: string;
   amount: number;
   currency?: string;
   chain?: Chain;
-}): Invoice {
-  const existing = getInvoice(partial.id);
+}): Promise<Invoice> {
+  const existing = await getInvoice(partial.id);
   if (existing) return existing;
   const inv: Invoice = {
     id: partial.id,
@@ -116,6 +142,6 @@ export function ensureInvoice(partial: {
     status: "open",
     createdAt: now(),
   };
-  store = [inv, ...store].slice(0, 100);
+  await save([inv, ...(await load())]);
   return inv;
 }

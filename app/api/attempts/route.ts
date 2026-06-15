@@ -3,7 +3,7 @@ import { listAttempts, recordAttempt } from "@/lib/attempts";
 import type { Chain, PaymentRecord, PaymentStatus } from "@/lib/cleanverse/types";
 
 export async function GET() {
-  return NextResponse.json({ attempts: listAttempts() });
+  return NextResponse.json({ attempts: await listAttempts() });
 }
 
 interface Body {
@@ -39,6 +39,6 @@ export async function POST(req: NextRequest) {
     txHash: b.txHash,
     receipt: b.receipt,
   };
-  recordAttempt(rec);
+  await recordAttempt(rec);
   return NextResponse.json({ ok: true, id: rec.id });
 }

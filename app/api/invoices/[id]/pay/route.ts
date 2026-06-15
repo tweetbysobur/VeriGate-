@@ -26,7 +26,7 @@ export async function POST(
 
   // Ensure the invoice exists (cold-instance resilience via link params).
   if (body.item && body.amount) {
-    ensureInvoice({
+    await ensureInvoice({
       id,
       item: body.item,
       amount: body.amount,
@@ -35,7 +35,7 @@ export async function POST(
     });
   }
 
-  const inv = markPaid(id, {
+  const inv = await markPaid(id, {
     customer: body.customer,
     apassTier: body.apassTier,
     txHash: body.txHash,

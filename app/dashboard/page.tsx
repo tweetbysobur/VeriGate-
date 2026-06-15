@@ -38,7 +38,7 @@ export default async function DashboardPage() {
   const { mode } = getCleanverseConfig();
   const payments = await getPayments(MERCHANT.wallet);
   const stats = computeStats(payments);
-  const invoices = listInvoices();
+  const invoices = await listInvoices();
 
   return (
     <div className="flex min-h-full flex-col bg-grid">

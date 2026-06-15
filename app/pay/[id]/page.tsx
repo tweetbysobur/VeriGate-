@@ -9,11 +9,11 @@ import { getInvoice } from "@/lib/invoices";
 
 export const dynamic = "force-dynamic";
 
-function buildInvoice(
+async function buildInvoice(
   id: string,
   sp: { amt?: string; item?: string },
-): Invoice | null {
-  const stored = getInvoice(id);
+): Promise<Invoice | null> {
+  const stored = await getInvoice(id);
   if (stored) return stored;
   // Reconstruct from link query params (cold-instance resilience).
   const amount = Number(sp.amt);
@@ -41,7 +41,7 @@ export default async function PayInvoicePage({
   const { id } = await params;
   const sp = await searchParams;
   const { mode } = getCleanverseConfig();
-  const invoice = buildInvoice(id, sp);
+  const invoice = await buildInvoice(id, sp);
 
   return (
     <div className="flex min-h-full flex-col bg-grid">

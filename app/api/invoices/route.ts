@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createInvoice, listInvoices } from "@/lib/invoices";
 
 export async function GET() {
-  return NextResponse.json({ invoices: listInvoices() });
+  return NextResponse.json({ invoices: await listInvoices() });
 }
 
 export async function POST(req: NextRequest) {
@@ -19,6 +19,6 @@ export async function POST(req: NextRequest) {
       { status: 400 },
     );
   }
-  const invoice = createInvoice({ item: String(body.item), amount });
+  const invoice = await createInvoice({ item: String(body.item), amount });
   return NextResponse.json({ ok: true, invoice });
 }
