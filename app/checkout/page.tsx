@@ -70,7 +70,7 @@ export default function CheckoutPage() {
           </div>
 
           {/* Guarantees */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3 max-[360px]:grid-cols-1">
             {[
               { t: "Verified identity", d: "A-Pass checks both parties" },
               { t: "Compliant assets", d: "A-Token carries provenance" },

@@ -270,6 +270,65 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* For both sides */}
+      <section className="border-t border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            One rail, both sides verified
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            Compliance only works when everyone is accountable. VeriGate verifies
+            the merchant and the customer — every payment, both ends.
+          </p>
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
+                For merchants
+              </span>
+              <ul className="mt-4 space-y-3">
+                {[
+                  ["Create an invoice", "Generate a compliant payment link in seconds."],
+                  ["Get paid, compliantly", "Only verified customers can pay — no compliance risk."],
+                  ["Audit-ready by default", "Every payment ships with a Travel Rule receipt + exportable log."],
+                ].map(([t, d]) => (
+                  <li key={t} className="flex items-start gap-3">
+                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-500/10 text-[11px] font-bold text-brand-600">
+                      ✓
+                    </span>
+                    <span>
+                      <span className="block text-sm font-medium text-foreground">{t}</span>
+                      <span className="block text-xs text-muted">{d}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-border bg-card p-6">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-verify-500/10 px-2.5 py-1 text-xs font-semibold text-verify-600">
+                For customers
+              </span>
+              <ul className="mt-4 space-y-3">
+                {[
+                  ["Verify once with A-Pass", "A one-time on-chain identity, minted in about a minute."],
+                  ["Pay anywhere on VeriGate", "Your A-Pass travels with your wallet across every merchant."],
+                  ["Your funds stay compliant", "A-Tokens carry provenance — no frozen-asset surprises."],
+                ].map(([t, d]) => (
+                  <li key={t} className="flex items-start gap-3">
+                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-verify-500/10 text-[11px] font-bold text-verify-600">
+                      ✓
+                    </span>
+                    <span>
+                      <span className="block text-sm font-medium text-foreground">{t}</span>
+                      <span className="block text-xs text-muted">{d}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Developer / merchant integration */}
       <section className="border-t border-border">
         <div className="mx-auto grid max-w-5xl gap-8 px-5 py-16 lg:grid-cols-[1fr_1.1fr] lg:items-center">
