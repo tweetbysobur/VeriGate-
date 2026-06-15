@@ -394,6 +394,49 @@ export async function issueApass(
   return live.generateApass(input);
 }
 
+export type ApassStatus = "verified" | "none" | "restricted" | "unknown";
+
+/**
+ * Authoritative A-Pass status for a wallet against the merchant's A-Token,
+ * via verify_apass (more reliable than query_apass on some chains). Drives the
+ * inline checkout prompt.
+ */
+export async function checkApass(
+  chain: Chain,
+  address: string,
+): Promise<{ status: ApassStatus; tier?: string }> {
+  if (!isLive()) return { status: "verified", tier: "26" };
+
+  const atoken = DEMO_ATOKENS[chain].atoken;
+  try {
+    const v = await live.verifyApass(chain, atoken, address);
+    let status: ApassStatus;
+    switch (v.code) {
+      case VerifyCode.SUCCESS:
+        status = "verified";
+        break;
+      case VerifyCode.NO_APASS:
+        status = "none";
+        break;
+      case VerifyCode.CANNOT_TRANSFER:
+        status = "restricted";
+        break;
+      default:
+        status = "unknown";
+    }
+    // Best-effort tier (non-fatal if unavailable on this chain).
+    let tier: string | undefined;
+    try {
+      tier = (await live.queryApass(chain, address))?.tier;
+    } catch {
+      /* ignore */
+    }
+    return { status, tier };
+  } catch {
+    return { status: "unknown" };
+  }
+}
+
 export async function requestFaucet(
   chain: Chain,
   symbol: string,

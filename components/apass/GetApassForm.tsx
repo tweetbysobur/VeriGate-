@@ -91,7 +91,12 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
       setFaucet(j.result as FaucetResult);
       setPhase("done");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Faucet failed");
+      const raw = e instanceof Error ? e.message : "Faucet failed";
+      // The sandbox faucet can be out of gas — A-Pass is already issued, so
+      // this is non-blocking; the user can still proceed to checkout.
+      setError(
+        `Test-token faucet is temporarily unavailable (${raw}). Your A-Pass is issued — you can continue.`,
+      );
     } finally {
       setFauceting(false);
     }

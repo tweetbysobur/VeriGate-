@@ -93,21 +93,25 @@ export default function LandingPage() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/checkout"
+              href="/get-apass"
               className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
             >
               <VeriGateMark size={18} />
-              Try the Pay with VeriGate demo
+              Get your A-Pass
             </Link>
             <Link
-              href="/dashboard"
+              href="/checkout"
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
             >
-              View merchant dashboard
+              Try the payment demo
             </Link>
           </div>
           <p className="mt-4 text-xs text-muted">
-            Powered by Cleanverse A-Pass + A-Token
+            New here? Start by getting your A-Pass — verified identity in about a
+            minute. ·{" "}
+            <Link href="/dashboard" className="text-brand-500 hover:underline">
+              Merchant dashboard
+            </Link>
           </p>
         </div>
       </section>

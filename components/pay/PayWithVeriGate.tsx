@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Link from "next/link";
 import type { Chain, Persona } from "@/lib/cleanverse/types";
 import { PERSONAS } from "@/lib/cleanverse/mock";
 import { CHAINS, fmtUsd, isLikelyAddress, shortAddr } from "@/lib/demo";
@@ -48,6 +49,41 @@ export function PayWithVeriGate({
   // Real on-chain settlement only when a wallet is connected and chain is Monad.
   const canSettleReal = live && !!wallet.account && chain === "monad";
   const canPay = live ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) : true;
+
+  // Inline A-Pass status for the active wallet (live mode).
+  type ApassStatus = "verified" | "none" | "restricted" | "unknown";
+  const [apass, setApass] = useState<{
+    checking: boolean;
+    status: ApassStatus | null;
+    tier?: string;
+  }>({ checking: false, status: null });
+
+  useEffect(() => {
+    if (!live || !customer || !isLikelyAddress(chain, customer)) {
+      setApass({ checking: false, status: null });
+      return;
+    }
+    let cancelled = false;
+    setApass((s) => ({ ...s, checking: true }));
+    const t = setTimeout(async () => {
+      try {
+        const res = await fetch("/api/apass/status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ chain, address: customer }),
+        });
+        const j = await res.json();
+        if (!cancelled)
+          setApass({ checking: false, status: j.status ?? "unknown", tier: j.tier });
+      } catch {
+        if (!cancelled) setApass({ checking: false, status: null });
+      }
+    }, 500);
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
+  }, [live, chain, customer]);
 
   const settleOnChain = useCallback(async () => {
     const cfg = monadConfig();
@@ -191,6 +227,54 @@ export function PayWithVeriGate({
           <p className="mt-2 text-[11px] text-danger">{wallet.error}</p>
         )}
       </div>
+
+      {/* Inline A-Pass status — makes getting one easy, in context */}
+      {live && (apass.status === "none" || apass.status === "restricted") && (
+        <div className="vg-rise rounded-xl border border-warn/40 bg-warn/5 p-3">
+          <div className="flex items-start gap-2">
+            <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-warn" fill="none">
+              <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <div>
+              <p className="text-xs font-semibold text-foreground">
+                {apass.status === "none"
+                  ? "This wallet has no A-Pass yet"
+                  : "A-Pass can’t transfer this asset"}
+              </p>
+              <p className="mt-0.5 text-[11px] text-muted">
+                {apass.status === "none"
+                  ? "An A-Pass (verified identity) is required to pay. It takes about a minute."
+                  : `This A-Pass is frozen or below the asset’s tier rule${apass.tier ? ` (tier ${apass.tier})` : ""}.`}
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/get-apass"
+            className="mt-2 flex w-full items-center justify-center gap-1 rounded-lg bg-brand-500 px-3 py-2 text-xs font-semibold text-white hover:bg-brand-600"
+          >
+            Get your A-Pass →
+          </Link>
+        </div>
+      )}
+      {live && (apass.checking || apass.status === "verified") && (
+        <div className="flex items-center gap-2 rounded-xl border border-verify-500/30 bg-verify-500/5 px-3 py-2 text-xs">
+          {apass.checking ? (
+            <>
+              <span className="size-3.5 rounded-full border-2 border-brand-200 border-t-brand-500 vg-spin" />
+              <span className="text-muted">Checking A-Pass…</span>
+            </>
+          ) : (
+            <>
+              <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
+                <path d="M9 12.5l2 2 4-4.5M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <span className="text-foreground">
+                A-Pass verified{apass.tier ? ` · tier ${apass.tier}` : ""}
+              </span>
+            </>
+          )}
+        </div>
+      )}
 
       {/* Settlement mode hint */}
       {live && (
