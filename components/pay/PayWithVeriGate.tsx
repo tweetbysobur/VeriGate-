@@ -45,6 +45,7 @@ export function PayWithVeriGate({
   const [persona, setPersona] = useState<Persona>("verified");
   const [address, setAddress] = useState("");
   const [open, setOpen] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Customer = connected wallet (live) > manual address (live) > persona (mock).
   const customer = live
@@ -112,24 +113,30 @@ export function PayWithVeriGate({
 
   return (
     <div className="space-y-4">
-      {/* Demo / live controls */}
-      <div className="rounded-xl border border-dashed border-brand-300/60 bg-brand-50/50 p-3">
+      {/* Controls: wallet-first in live, persona in demo */}
+      <div
+        className={
+          live
+            ? "rounded-xl border border-border bg-background/50 p-3"
+            : "rounded-xl border border-dashed border-brand-300/60 bg-brand-50/50 p-3"
+        }
+      >
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-brand-600">
-          {live ? "Live · sandbox" : "Demo controls"}
+          {live ? "Pay with your wallet" : "Demo controls"}
         </p>
 
         {live ? (
           <>
-            {/* Wallet connect */}
+            {/* Wallet is the primary path */}
             {wallet.account ? (
-              <div className="flex items-center justify-between rounded-lg border border-verify-500/30 bg-verify-500/5 px-2.5 py-2">
-                <span className="inline-flex items-center gap-2 text-xs">
+              <div className="flex items-center justify-between rounded-lg border border-verify-500/30 bg-verify-500/5 px-3 py-2.5">
+                <span className="inline-flex items-center gap-2 text-sm">
                   <span className="size-2 rounded-full bg-verify-500" />
                   <span className="font-mono text-foreground">
                     {shortAddr(wallet.account)}
                   </span>
                 </span>
-                <span className="text-[10.5px] font-medium text-verify-600">
+                <span className="text-[11px] font-medium text-verify-600">
                   Wallet connected
                 </span>
               </div>
@@ -137,48 +144,60 @@ export function PayWithVeriGate({
               <button
                 onClick={wallet.connect}
                 disabled={wallet.connecting}
-                className="flex w-full items-center justify-center gap-2 rounded-lg border border-brand-400 bg-card px-3 py-2 text-xs font-semibold text-brand-600 transition hover:bg-brand-50 disabled:opacity-60"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 px-3 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-600 disabled:opacity-60"
               >
-                {wallet.connecting ? "Connecting…" : "Connect wallet"}
+                {wallet.connecting ? "Connecting…" : "Connect wallet to pay"}
               </button>
             ) : (
-              <p className="rounded-lg border border-border bg-card px-2.5 py-2 text-[11px] text-muted">
-                No browser wallet detected. Install MetaMask to settle on Monad,
-                or paste an address below to check its A-Pass.
+              <p className="rounded-lg border border-border bg-card px-3 py-2.5 text-[11px] text-muted">
+                No browser wallet detected. Open this page in your wallet&apos;s
+                in-app browser (e.g. MetaMask Mobile), or install a Monad-compatible
+                wallet to pay.
               </p>
             )}
 
-            {/* Manual address fallback (read-only checks when no wallet) */}
-            {!wallet.account && (
-              <div className="mt-2">
-                <label className="text-xs text-muted">
-                  Or check any wallet address
-                </label>
-                <input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="0x… (Monad wallet address)"
-                  spellCheck={false}
-                  autoComplete="off"
-                  className={`mt-1 w-full rounded-lg border bg-card px-2.5 py-2 font-mono text-xs text-foreground outline-none transition focus:ring-2 ${
-                    address && !isLikelyAddress(chain, address)
-                      ? "border-danger/50 focus:ring-danger/30"
-                      : "border-border focus:ring-brand-300"
-                  }`}
-                />
-                <div className="mt-1.5 flex justify-end gap-1">
-                  {SAMPLE_WALLETS.map((s) => (
-                    <button
-                      key={s.label}
-                      onClick={() => setAddress(s.address)}
-                      className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 hover:bg-brand-200"
-                    >
-                      {s.label}
-                    </button>
-                  ))}
+            {/* Secondary, clearly-labeled read-only preview */}
+            {!wallet.account &&
+              (!showPreview ? (
+                <button
+                  onClick={() => setShowPreview(true)}
+                  className="mt-2 text-[11px] font-medium text-muted hover:text-foreground"
+                >
+                  Preview an A-Pass by address →
+                </button>
+              ) : (
+                <div className="mt-2">
+                  <label className="flex items-center justify-between text-xs text-muted">
+                    <span>Preview an address</span>
+                    <span className="text-[10px] font-medium text-warn">
+                      read-only · won&apos;t settle
+                    </span>
+                  </label>
+                  <input
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="0x… (Monad wallet address)"
+                    spellCheck={false}
+                    autoComplete="off"
+                    className={`mt-1 w-full rounded-lg border bg-card px-2.5 py-2 font-mono text-xs text-foreground outline-none transition focus:ring-2 ${
+                      address && !isLikelyAddress(chain, address)
+                        ? "border-danger/50 focus:ring-danger/30"
+                        : "border-border focus:ring-brand-300"
+                    }`}
+                  />
+                  <div className="mt-1.5 flex justify-end gap-1">
+                    {SAMPLE_WALLETS.map((s) => (
+                      <button
+                        key={s.label}
+                        onClick={() => setAddress(s.address)}
+                        className="rounded-md bg-brand-100 px-1.5 py-0.5 text-[10px] font-medium text-brand-600 hover:bg-brand-200"
+                      >
+                        {s.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
           </>
         ) : (
           <>
