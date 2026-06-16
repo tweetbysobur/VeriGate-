@@ -7,7 +7,7 @@ every payment verifies identity and asset compliance *before* money moves, then
 writes an audit-ready receipt. Built on **Cleanverse** A-Pass + A-Token, settling
 on **Monad**.
 
-🔗 **Live demo:** https://verigate-theta.vercel.app
+🔗 **Live demo:** https://paywithverigate.vercel.app
 🏗️ Built by Gentlesoul HUB · Powered by [Cleanverse](https://cleanverse.com)
 
 ---
