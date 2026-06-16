@@ -149,7 +149,7 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
               disabled={fauceting}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:opacity-60"
             >
-              {fauceting ? "Requesting test tokens…" : "Get 100 test aUSDC"}
+              {fauceting ? "Requesting test tokens…" : "Get test aUSDC"}
             </button>
             <Link
               href="/checkout"

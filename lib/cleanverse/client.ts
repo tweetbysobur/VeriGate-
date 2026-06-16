@@ -158,7 +158,7 @@ export async function stepAsset(ctx: Ctx): Promise<StepOutcome> {
       return {
         ok: true,
         title: "Compliant asset confirmed",
-        detail: `${symbol} · provenance tracked · rule already enforced at identity`,
+        detail: `${symbol} · provenance tracked · transfer rule enforced on-chain by the A-Token`,
         payload: { note: e instanceof Error ? e.message : String(e) },
         source: "live",
       };

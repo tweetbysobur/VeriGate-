@@ -25,6 +25,7 @@ function recordAttempt(body: {
   blockReason?: string;
   apassTier?: string;
   txHash?: string;
+  onChain?: boolean;
   receipt?: { fileName: string; downloadUrl: string };
 }) {
   fetch("/api/attempts", {
@@ -208,6 +209,7 @@ export function PayModal({
             apassTier,
             assetSymbol: "aUSDC",
             invoiceId,
+            onChain: realSettle && txHash !== "0x0",
           });
         }
       }
@@ -219,6 +221,7 @@ export function PayModal({
         status: "settled",
         apassTier,
         txHash: txHash !== "0x0" ? txHash : undefined,
+        onChain: realSettle && txHash !== "0x0",
         receipt: report,
       });
       if (invoiceId) {
@@ -229,6 +232,7 @@ export function PayModal({
             customer,
             apassTier,
             txHash: txHash !== "0x0" ? txHash : undefined,
+            onChain: realSettle && txHash !== "0x0",
             receipt: report,
             item: invoiceItem,
             amount,

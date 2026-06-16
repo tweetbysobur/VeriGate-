@@ -18,6 +18,7 @@ interface ReceiptView {
   apassTier?: string;
   chain: Chain;
   txHash?: string;
+  onChain?: boolean;
   item: string;
   at: number;
   receipt?: { fileName: string; downloadUrl: string };
@@ -39,6 +40,7 @@ async function resolve(
       apassTier: inv.apassTier,
       chain: inv.chain,
       txHash: inv.txHash,
+      onChain: inv.onChain,
       item: inv.item,
       at: inv.paidAt ?? inv.createdAt,
       receipt: inv.receipt,
@@ -56,6 +58,7 @@ async function resolve(
       apassTier: rec.apassTier,
       chain: rec.chain,
       txHash: rec.txHash,
+      onChain: rec.onChain,
       item: "Payment",
       at: rec.createdAt,
       receipt: rec.receipt,
@@ -72,6 +75,7 @@ async function resolve(
       apassTier: sp.tier,
       chain: (sp.chain as Chain) ?? "monad",
       txHash: sp.tx,
+      onChain: sp.oc === "1",
       item: sp.item ? decodeURIComponent(sp.item) : "Payment",
       at: sp.at ? Number(sp.at) : Math.floor(Date.now() / 1000),
       receipt:
@@ -189,8 +193,8 @@ export default async function ReceiptPage({
               <Row label="Network">
                 <NetworkBadge />
               </Row>
-              {r.txHash && (
-                <Row label="Transaction">
+              <Row label="Transaction">
+                {r.onChain && r.txHash ? (
                   <a
                     href={meta.explorerTx(r.txHash)}
                     target="_blank"
@@ -199,8 +203,10 @@ export default async function ReceiptPage({
                   >
                     {shortAddr(r.txHash, 8, 6)} ↗
                   </a>
-                </Row>
-              )}
+                ) : (
+                  <span className="font-mono text-xs text-muted">demo settlement</span>
+                )}
+              </Row>
               <Row label="Date">
                 {new Date(r.at * 1000).toLocaleString()}
               </Row>

@@ -17,6 +17,8 @@ export interface ReceiptData {
   assetSymbol?: string;
   /** When set, links to the permanent receipt page /receipt/[invoiceId]. */
   invoiceId?: string;
+  /** True only for a real on-chain settlement (controls the explorer link). */
+  onChain?: boolean;
 }
 
 function fullReceiptHref(data: ReceiptData): string {
@@ -28,6 +30,7 @@ function fullReceiptHref(data: ReceiptData): string {
     chain: data.chain,
     ...(data.apassTier ? { tier: data.apassTier } : {}),
     ...(data.txHash && data.txHash !== "0x0" ? { tx: data.txHash } : {}),
+    ...(data.onChain ? { oc: "1" } : {}),
     ...(data.report?.downloadUrl
       ? { file: data.report.fileName, url: data.report.downloadUrl }
       : {}),
@@ -108,14 +111,20 @@ export function Receipt({ data }: { data: ReceiptData }) {
           <span className="font-mono text-xs">{shortAddr(data.merchant)}</span>
         </Field>
         <Field label="Transaction">
-          <a
-            href={meta.explorerTx(data.txHash)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-mono text-xs text-brand-500 hover:underline"
-          >
-            {shortAddr(data.txHash, 8, 6)} ↗
-          </a>
+          {data.onChain && data.txHash && data.txHash !== "0x0" ? (
+            <a
+              href={meta.explorerTx(data.txHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-xs text-brand-500 hover:underline"
+            >
+              {shortAddr(data.txHash, 8, 6)} ↗
+            </a>
+          ) : (
+            <span className="font-mono text-xs text-muted">
+              demo settlement
+            </span>
+          )}
         </Field>
       </div>
 

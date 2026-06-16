@@ -11,6 +11,7 @@ export async function POST(
     customer?: string;
     apassTier?: string;
     txHash?: string;
+    onChain?: boolean;
     receipt?: { fileName: string; downloadUrl: string };
     // fallback fields to reconstruct a transient invoice if not in memory
     item?: string;
@@ -39,6 +40,7 @@ export async function POST(
     customer: body.customer,
     apassTier: body.apassTier,
     txHash: body.txHash,
+    onChain: body.onChain,
     receipt: body.receipt,
   });
   if (!inv) {

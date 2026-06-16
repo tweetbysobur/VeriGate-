@@ -154,6 +154,8 @@ export interface PaymentRecord {
   /** A-Pass tier at time of payment (when known). */
   apassTier?: string;
   txHash?: string;
+  /** True only when settled by a real on-chain wallet transfer (not simulated). */
+  onChain?: boolean;
   receipt?: { fileName: string; downloadUrl: string };
 }
 
@@ -224,5 +226,7 @@ export interface Invoice {
   customer?: string;
   apassTier?: string;
   txHash?: string;
+  /** True only when settled by a real on-chain wallet transfer (not simulated). */
+  onChain?: boolean;
   receipt?: { fileName: string; downloadUrl: string };
 }

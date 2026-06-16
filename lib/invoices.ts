@@ -105,6 +105,7 @@ export async function markPaid(
     customer?: string;
     apassTier?: string;
     txHash?: string;
+    onChain?: boolean;
     receipt?: { fileName: string; downloadUrl: string };
   },
 ): Promise<Invoice | undefined> {
@@ -116,6 +117,7 @@ export async function markPaid(
   inv.customer = data.customer ?? inv.customer;
   inv.apassTier = data.apassTier ?? inv.apassTier;
   inv.txHash = data.txHash ?? inv.txHash;
+  inv.onChain = data.onChain ?? inv.onChain;
   inv.receipt = data.receipt ?? inv.receipt;
   await save(list);
   return inv;

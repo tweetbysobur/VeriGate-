@@ -15,6 +15,7 @@ interface Body {
   blockReason?: string;
   apassTier?: string;
   txHash?: string;
+  onChain?: boolean;
   receipt?: { fileName: string; downloadUrl: string };
 }
 
@@ -37,6 +38,7 @@ export async function POST(req: NextRequest) {
     blockReason: b.blockReason,
     apassTier: b.apassTier,
     txHash: b.txHash,
+    onChain: b.onChain,
     receipt: b.receipt,
   };
   await recordAttempt(rec);
