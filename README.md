@@ -65,8 +65,8 @@ Create invoice → Payment link → Customer opens checkout
 | `/checkout` | Pay with VeriGate demo |
 | `/pay/[id]` | Hosted checkout for a specific invoice (payment link) |
 | `/dashboard` | Create invoices, payment ledger, audit log + CSV export |
+| `/receipt/[id]` | Standalone shareable compliance receipt |
 | `/institutions` | Whitelisted licensed institutions + deposit/mint flow |
-| `/swap` | MON ↔ USDC swap (0x) |
 | `/api/health` | Cleanverse connectivity check |
 
 ## 3-minute demo script
@@ -80,7 +80,7 @@ Create invoice → Payment link → Customer opens checkout
 ## Stack
 
 Next.js 16 (App Router) · TypeScript · Tailwind v4 · dependency-free EVM wallet
-helpers (Monad mainnet, chainId 143) · optional Vercel KV (in-memory fallback).
+helpers (Monad testnet, chainId 10143) · optional Vercel KV (in-memory fallback).
 
 ## Running locally
 
@@ -99,20 +99,20 @@ npm run dev                  # http://localhost:3000
 | `CLEANVERSE_API_ID` | Cleanverse api-id (header) — required for live |
 | `CLEANVERSE_API_KEY` | Base64 api-key — **server-side only**, AES-encrypts write bodies, never sent to the browser |
 | `CLEANVERSE_BASE_URL` | Optional override for the production cooperate API URL |
-| `NEXT_PUBLIC_MONAD_NETWORK` | `mainnet` (default) or `testnet` |
-| `NEXT_PUBLIC_MONAD_USDC` | Monad mainnet USDC address |
+| `NEXT_PUBLIC_MONAD_NETWORK` | `testnet` (default) or `mainnet` |
+| `NEXT_PUBLIC_MONAD_ATOKEN` | aUSDC A-Token address on Monad |
 | `NEXT_PUBLIC_SITE_URL` | Canonical + social metadata |
 | `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Optional — durable invoice/ledger storage (Vercel KV / Upstash). Falls back to in-memory. |
 
 The read-only checkout pipeline needs only `CLEANVERSE_API_ID`.
 
-## Status & honesty
+## Status
 
-- **Live now:** sandbox Cleanverse integration end-to-end; A-Pass minting,
-  verification, institution whitelist, Travel Rule receipts all use real API calls.
-- **Monad mainnet:** the wallet / settlement / swap layer targets Monad mainnet.
-  Full mainnet *compliance* awaits Cleanverse **production** API access (their
-  production cooperate endpoint isn't yet available); cutover is env-only.
+- **Fully real end-to-end on Monad testnet + Cleanverse sandbox:** A-Pass minting,
+  identity/asset/compliance verification, the aUSDC faucet, on-chain A-Token
+  settlement, and Travel Rule receipts all use real API + on-chain calls.
+- **Mainnet:** flip `NEXT_PUBLIC_MONAD_NETWORK=mainnet` + point Cleanverse at
+  production once production API access is granted — cutover is env-only.
 - **Storage:** in-memory by default (fine for a demo session); set the KV env
   vars for durable persistence.
 
@@ -121,6 +121,6 @@ The read-only checkout pipeline needs only `CLEANVERSE_API_ID`.
 - `lib/cleanverse/` — typed client, `mock`/`live` split, AES helper (`crypto.ts`), live REST client (`live.ts`)
 - `lib/invoices.ts`, `lib/attempts.ts`, `lib/kv.ts` — invoice + ledger stores (KV or memory)
 - `lib/web3/monad.ts` — dependency-free EVM wallet / settlement helpers
-- `app/api/` — pay pipeline, A-Pass issuance, invoices, health, swap
-- `components/` — pay flow, dashboard, A-Pass onboarding, swap
+- `app/api/` — pay pipeline, A-Pass issuance, invoices, attempts, health
+- `components/` — pay flow, dashboard, A-Pass onboarding, receipt
 - `docs/cleanverse-api-v5.md` — Cleanverse Cooperate API integration reference

@@ -36,11 +36,11 @@ export const MONAD_TESTNET: EvmChainConfig = {
   nativeCurrency: { name: "Monad", symbol: "MON", decimals: 18 },
 };
 
-/** Active Monad network — mainnet by default; set NEXT_PUBLIC_MONAD_NETWORK=testnet to switch. */
+/** Active Monad network — testnet by default; set NEXT_PUBLIC_MONAD_NETWORK=mainnet to switch. */
 export function monadConfig(): EvmChainConfig {
-  return process.env.NEXT_PUBLIC_MONAD_NETWORK === "testnet"
-    ? MONAD_TESTNET
-    : MONAD_MAINNET;
+  return process.env.NEXT_PUBLIC_MONAD_NETWORK === "mainnet"
+    ? MONAD_MAINNET
+    : MONAD_TESTNET;
 }
 
 /** The A-Token the customer pays with on Monad (override for mainnet). */

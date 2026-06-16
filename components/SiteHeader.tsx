@@ -6,13 +6,12 @@ export function SiteHeader({
   active,
   mode = "mock",
 }: {
-  active: "home" | "checkout" | "dashboard" | "apass" | "swap" | "institutions";
+  active: "home" | "checkout" | "dashboard" | "apass" | "institutions";
   mode?: "mock" | "live";
 }) {
   const tabs = [
     { id: "home", label: "Overview", href: "/" },
     { id: "apass", label: "Get A-Pass", href: "/get-apass" },
-    { id: "swap", label: "Swap", href: "/swap" },
     { id: "checkout", label: "Checkout", href: "/checkout" },
     { id: "dashboard", label: "Dashboard", href: "/dashboard" },
     { id: "institutions", label: "Institutions", href: "/institutions" },
