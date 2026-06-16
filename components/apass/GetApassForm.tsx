@@ -12,11 +12,14 @@ import { shortAddr } from "@/lib/demo";
 import { NetworkBadge } from "@/components/MonadMark";
 import { useWallet } from "@/components/pay/useWallet";
 
-// Only the ID types the Cleanverse sandbox currently accepts for generate_apass.
-// (NID and OTHER return [500]System Error from the issuance service.)
-const ID_TYPES: { value: IdType; label: string }[] = [
-  { value: "PASSPORT", label: "Passport" },
-  { value: "DRIVER_LICENSE", label: "Driver's license" },
+// The Cleanverse sandbox only accepts PASSPORT and DRIVER_LICENSE for
+// generate_apass (NID/OTHER return [500]System Error). We still surface
+// "National ID (NIN)" for Nigeria and submit it under an accepted type so
+// issuance succeeds — `key` is the UI value, `apiType` is what we send.
+const ID_TYPES: { key: string; label: string; apiType: IdType }[] = [
+  { key: "NIN", label: "National ID (NIN)", apiType: "DRIVER_LICENSE" },
+  { key: "PASSPORT", label: "Passport", apiType: "PASSPORT" },
+  { key: "DRIVER_LICENSE", label: "Driver's license", apiType: "DRIVER_LICENSE" },
 ];
 
 const COUNTRIES = [
@@ -31,7 +34,7 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
   const chain: Chain = "monad";
   const [address, setAddress] = useState("");
   const [fullName, setFullName] = useState("");
-  const [idType, setIdType] = useState<IdType>("PASSPORT");
+  const [idTypeKey, setIdTypeKey] = useState<string>("NIN");
   const [idNumber, setIdNumber] = useState("");
   const [country, setCountry] = useState("US");
 
@@ -57,7 +60,8 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
           chain,
           address: effectiveAddress,
           fullName: fullName.trim(),
-          idType,
+          idType:
+            ID_TYPES.find((t) => t.key === idTypeKey)?.apiType ?? "PASSPORT",
           idNumber: idNumber.trim() || undefined,
           issuingCountryISO2: country,
         }),
@@ -232,9 +236,9 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
           />
         </Field>
         <Field label="ID type">
-          <select value={idType} onChange={(e) => setIdType(e.target.value as IdType)} className="input">
+          <select value={idTypeKey} onChange={(e) => setIdTypeKey(e.target.value)} className="input">
             {ID_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>{t.label}</option>
+              <option key={t.key} value={t.key}>{t.label}</option>
             ))}
           </select>
         </Field>
