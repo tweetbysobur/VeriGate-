@@ -36,9 +36,13 @@ export const MONAD_TESTNET: EvmChainConfig = {
   nativeCurrency: { name: "Monad", symbol: "MON", decimals: 18 },
 };
 
-/** Active Monad network — testnet by default; set NEXT_PUBLIC_MONAD_NETWORK=mainnet to switch. */
+/**
+ * Active Monad network. Testnet for the hackathon — guaranteed, so a stale
+ * NEXT_PUBLIC_MONAD_NETWORK=mainnet in any deploy env cannot flip it. To enable
+ * mainnet later, set the explicit fresh flag NEXT_PUBLIC_MONAD_MAINNET=1.
+ */
 export function monadConfig(): EvmChainConfig {
-  return process.env.NEXT_PUBLIC_MONAD_NETWORK === "mainnet"
+  return process.env.NEXT_PUBLIC_MONAD_MAINNET === "1"
     ? MONAD_MAINNET
     : MONAD_TESTNET;
 }
