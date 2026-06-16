@@ -12,11 +12,11 @@ import { shortAddr } from "@/lib/demo";
 import { NetworkBadge } from "@/components/MonadMark";
 import { useWallet } from "@/components/pay/useWallet";
 
+// Only the ID types the Cleanverse sandbox currently accepts for generate_apass.
+// (NID and OTHER return [500]System Error from the issuance service.)
 const ID_TYPES: { value: IdType; label: string }[] = [
   { value: "PASSPORT", label: "Passport" },
-  { value: "NID", label: "National ID" },
   { value: "DRIVER_LICENSE", label: "Driver's license" },
-  { value: "OTHER", label: "Other" },
 ];
 
 const COUNTRIES = [
