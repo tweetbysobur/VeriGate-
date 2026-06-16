@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { PaymentRecord, PaymentStatus } from "@/lib/cleanverse/types";
 import { chainMeta, fmtUsd, shortAddr, timeAgo } from "@/lib/demo";
 
@@ -145,18 +146,13 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
                     <span className="text-[11px] text-danger">{p.blockReason}</span>
                   )}
                 </span>
-                {p.receipt && (
-                  <a
-                    href={p.receipt.downloadUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                {p.status === "settled" && (
+                  <Link
+                    href={`/receipt/${p.id}`}
                     className="inline-flex items-center gap-1 text-xs font-medium text-brand-500 hover:underline"
                   >
-                    <svg viewBox="0 0 24 24" className="size-3.5" fill="none">
-                      <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    PDF
-                  </a>
+                    Receipt ↗
+                  </Link>
                 )}
               </div>
             </li>
@@ -218,18 +214,13 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
                     <StatusBadge p={p} />
                   </td>
                   <td className="px-4 py-3">
-                    {p.receipt ? (
-                      <a
-                        href={p.receipt.downloadUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    {p.status === "settled" ? (
+                      <Link
+                        href={`/receipt/${p.id}`}
                         className="inline-flex items-center gap-1 text-xs font-medium text-brand-500 hover:underline"
                       >
-                        <svg viewBox="0 0 24 24" className="size-3.5" fill="none">
-                          <path d="M12 3v12m0 0 4-4m-4 4-4-4M5 19h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        PDF
-                      </a>
+                        Receipt ↗
+                      </Link>
                     ) : (
                       <span className="text-xs text-muted">—</span>
                     )}

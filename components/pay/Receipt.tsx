@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
 import type { Chain } from "@/lib/cleanverse/types";
 
@@ -14,6 +15,24 @@ export interface ReceiptData {
   /** Compliance proof surfaced on the receipt. */
   apassTier?: string;
   assetSymbol?: string;
+  /** When set, links to the permanent receipt page /receipt/[invoiceId]. */
+  invoiceId?: string;
+}
+
+function fullReceiptHref(data: ReceiptData): string {
+  if (data.invoiceId) return `/receipt/${data.invoiceId}`;
+  const q = new URLSearchParams({
+    amt: String(data.amount),
+    cur: data.currency,
+    cust: data.customer,
+    chain: data.chain,
+    ...(data.apassTier ? { tier: data.apassTier } : {}),
+    ...(data.txHash && data.txHash !== "0x0" ? { tx: data.txHash } : {}),
+    ...(data.report?.downloadUrl
+      ? { file: data.report.fileName, url: data.report.downloadUrl }
+      : {}),
+  });
+  return `/receipt/r?${q.toString()}`;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
@@ -138,6 +157,14 @@ export function Receipt({ data }: { data: ReceiptData }) {
           </span>
         </div>
       )}
+
+      <Link
+        href={fullReceiptHref(data)}
+        target="_blank"
+        className="mt-2 block text-center text-xs font-medium text-brand-500 hover:underline"
+      >
+        View full receipt ↗
+      </Link>
     </div>
   );
 }

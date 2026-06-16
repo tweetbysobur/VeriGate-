@@ -207,6 +207,7 @@ export function PayModal({
             report: out.report,
             apassTier,
             assetSymbol: "aUSDC",
+            invoiceId,
           });
         }
       }
