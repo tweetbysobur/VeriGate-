@@ -7,6 +7,23 @@ import { chainMeta, fmtUsd, shortAddr, timeAgo } from "@/lib/demo";
 
 type Filter = "all" | PaymentStatus;
 
+/** Receipt link that carries params, so it renders even on a cold instance. */
+function receiptHref(p: PaymentRecord): string {
+  const q = new URLSearchParams({
+    amt: String(p.amount),
+    cur: p.currency,
+    cust: p.customer,
+    chain: p.chain,
+    ...(p.apassTier ? { tier: p.apassTier } : {}),
+    ...(p.txHash ? { tx: p.txHash } : {}),
+    ...(p.onChain ? { oc: "1" } : {}),
+    ...(p.receipt
+      ? { file: p.receipt.fileName, url: p.receipt.downloadUrl }
+      : {}),
+  });
+  return `/receipt/${p.id}?${q.toString()}`;
+}
+
 function StatusBadge({ p }: { p: PaymentRecord }) {
   if (p.status === "settled") {
     return (
@@ -148,7 +165,7 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
                 </span>
                 {p.status === "settled" && (
                   <Link
-                    href={`/receipt/${p.id}`}
+                    href={receiptHref(p)}
                     className="inline-flex items-center gap-1 text-xs font-medium text-brand-500 hover:underline"
                   >
                     Receipt ↗
@@ -216,7 +233,7 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
                   <td className="px-4 py-3">
                     {p.status === "settled" ? (
                       <Link
-                        href={`/receipt/${p.id}`}
+                        href={receiptHref(p)}
                         className="inline-flex items-center gap-1 text-xs font-medium text-brand-500 hover:underline"
                       >
                         Receipt ↗

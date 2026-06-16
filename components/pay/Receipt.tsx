@@ -22,7 +22,10 @@ export interface ReceiptData {
 }
 
 function fullReceiptHref(data: ReceiptData): string {
-  if (data.invoiceId) return `/receipt/${data.invoiceId}`;
+  // Always carry params so the receipt renders even on a cold serverless
+  // instance that never saw the invoice (the page tries the store first, then
+  // falls back to these). Use the invoice id as the path id when available.
+  const id = data.invoiceId ?? "r";
   const q = new URLSearchParams({
     amt: String(data.amount),
     cur: data.currency,
@@ -35,7 +38,7 @@ function fullReceiptHref(data: ReceiptData): string {
       ? { file: data.report.fileName, url: data.report.downloadUrl }
       : {}),
   });
-  return `/receipt/r?${q.toString()}`;
+  return `/receipt/${id}?${q.toString()}`;
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
