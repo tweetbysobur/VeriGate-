@@ -11,7 +11,19 @@ export default function CheckoutPage() {
     <div className="flex min-h-full flex-col bg-grid">
       <SiteHeader active="checkout" mode={mode} />
 
-      <main className="mx-auto grid w-full max-w-5xl flex-1 gap-6 px-5 py-8 lg:grid-cols-[1.1fr_0.9fr] lg:py-12">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-8 lg:py-12">
+        <div className="mb-6 flex items-center gap-2 rounded-xl border border-dashed border-brand-300/60 bg-brand-50/50 px-4 py-2.5 text-xs text-muted">
+          <span className="rounded-full bg-brand-500/10 px-2 py-0.5 font-semibold text-brand-600">
+            Sample payment
+          </span>
+          Try the Pay with VeriGate flow on a demo order. Merchants generate real
+          payment links from the{" "}
+          <a href="/dashboard" className="font-medium text-brand-500 hover:underline">
+            dashboard
+          </a>
+          .
+        </div>
+        <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
         {/* Left — merchant + order */}
         <section className="space-y-6">
           {/* Merchant */}
@@ -115,6 +127,7 @@ export default function CheckoutPage() {
             />
           </div>
         </section>
+        </div>
       </main>
 
       <footer className="border-t border-border py-5">

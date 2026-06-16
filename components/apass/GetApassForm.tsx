@@ -168,6 +168,11 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
                 {faucet?.amount} test aUSDC sent to your wallet.
               </span>
             </div>
+            {wallet.account && (
+              <p className="text-center text-[11px] text-muted">
+                Your connected wallet will settle for real on Monad.
+              </p>
+            )}
             <Link
               href="/checkout"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-sm font-semibold text-background transition hover:opacity-90"

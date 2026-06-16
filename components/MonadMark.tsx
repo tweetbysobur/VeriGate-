@@ -1,3 +1,5 @@
+import { monadConfig } from "@/lib/web3/monad";
+
 /**
  * Monad chain mark — geometric badge in Monad purple (#836EF9).
  * Swap in the official Monad SVG asset here if you have the brand kit.
@@ -21,12 +23,12 @@ export function MonadMark({ size = 16 }: { size?: number }) {
   );
 }
 
-/** Static "Monad" network indicator (Monad is the only supported chain). */
+/** Network indicator — reflects the active Monad network (testnet/mainnet). */
 export function NetworkBadge() {
   return (
     <span className="inline-flex items-center gap-1.5 rounded-lg bg-purple-500/10 px-2.5 py-1 text-xs font-semibold text-purple-600 ring-1 ring-purple-500/30">
       <MonadMark size={14} />
-      Monad
+      {monadConfig().name}
     </span>
   );
 }
