@@ -170,6 +170,9 @@ export default async function ReceiptPage({
 
             {/* Details */}
             <div className="mt-3 divide-y divide-border rounded-xl border border-border bg-background/60 px-4">
+              <Row label="Invoice ID">
+                <span className="font-mono text-xs">{id}</span>
+              </Row>
               <Row label="Item">{r.item}</Row>
               <Row label="Amount">
                 {fmtUsd(r.amount)} {r.currency}

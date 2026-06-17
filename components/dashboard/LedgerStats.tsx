@@ -39,27 +39,28 @@ export function LedgerStats() {
   const blocked = list.filter((x) => x.status === "blocked");
   const volume = settled.reduce((s, x) => s + x.amount, 0);
   const rate = list.length ? Math.round((settled.length / list.length) * 100) : 0;
+  const total = list.length;
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-      <StatCard label="Settled volume" value={fmtUsd(volume)} sub="Your payments" />
+      <StatCard label="Total volume" value={fmtUsd(volume)} sub="All settled payments" />
       <StatCard
-        label="Payments settled"
+        label="Total transactions"
+        value={String(total)}
+        sub="Settled + blocked"
+        accent="brand"
+      />
+      <StatCard
+        label="Verified payments"
         value={String(settled.length)}
-        sub="Verified & auditable"
+        sub="Passed all checks"
         accent="verify"
       />
       <StatCard
-        label="Blocked attempts"
-        value={String(blocked.length)}
-        sub="Stopped pre-settlement"
-        accent="danger"
-      />
-      <StatCard
-        label="Verified rate"
+        label="Compliance rate"
         value={`${rate}%`}
-        sub="Settled ÷ total"
-        accent="brand"
+        sub="Success ÷ attempts"
+        accent={rate >= 90 ? "verify" : rate >= 70 ? "brand" : "danger"}
       />
     </div>
   );

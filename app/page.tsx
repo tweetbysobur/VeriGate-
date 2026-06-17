@@ -415,12 +415,51 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border py-6">
-        <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted sm:flex-row">
-          <span>Built by Gentlesoul HUB · Powered by Cleanverse A-Pass + A-Token</span>
-          <span className="font-mono">
-            VeriGate · {mode === "live" ? "live · sandbox" : "demo mode"}
-          </span>
+      <footer className="border-t border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-12">
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
+            <div>
+              <p className="text-xs font-semibold text-foreground">Product</p>
+              <ul className="mt-3 space-y-2 text-xs text-muted">
+                <li><Link href="/dashboard" className="hover:text-foreground">Dashboard</Link></li>
+                <li><Link href="/transactions" className="hover:text-foreground">Transactions</Link></li>
+                <li><Link href="/get-apass" className="hover:text-foreground">Get A-Pass</Link></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Built with</p>
+              <ul className="mt-3 space-y-2 text-xs text-muted">
+                <li><a href="https://monad.xyz" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Monad ↗</a></li>
+                <li><a href="https://cleanverse.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Cleanverse ↗</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Connect</p>
+              <ul className="mt-3 space-y-2 text-xs text-muted">
+                <li><a href="https://github.com/tweetbysobur/VeriGate-" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">GitHub ↗</a></li>
+                <li><a href="https://x.com/tweetbysobur" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">X / Twitter ↗</a></li>
+                <li><a href="mailto:tweetbysobur@gmail.com" className="hover:text-foreground">Email</a></li>
+              </ul>
+            </div>
+            <div>
+              <p className="text-xs font-semibold text-foreground">Legal</p>
+              <ul className="mt-3 space-y-2 text-xs text-muted">
+                <li><Link href="/" className="hover:text-foreground">Privacy</Link></li>
+                <li><Link href="/" className="hover:text-foreground">Terms</Link></li>
+              </ul>
+            </div>
+            <div className="flex items-end">
+              <div>
+                <p className="text-[11px] font-semibold text-foreground">VeriGate</p>
+                <p className="text-[10px] text-muted">Compliance-first payments</p>
+                <p className="mt-2 text-[10px] text-muted">{mode === "live" ? "Live · Sandbox" : "Demo mode"}</p>
+              </div>
+            </div>
+          </div>
+          <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted">
+            <p>Built by Gentlesoul HUB · Powered by Cleanverse A-Pass + A-Token</p>
+            <p className="mt-1">© 2026 VeriGate. All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </div>
