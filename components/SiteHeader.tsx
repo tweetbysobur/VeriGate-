@@ -25,7 +25,7 @@ export function SiteHeader({
           <Link href="/">
             <Logo />
           </Link>
-          <nav className="hidden items-center gap-1 sm:flex">
+          <nav className="hidden items-center gap-1 lg:flex">
             {tabs.map((t) => (
               <Link
                 key={t.id}
@@ -43,7 +43,7 @@ export function SiteHeader({
         </div>
         <div className="flex items-center gap-2">
           <span
-            className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 sm:inline-flex ${
+            className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 lg:inline-flex ${
               mode === "live"
                 ? "bg-verify-500/10 text-verify-600 ring-verify-500/20"
                 : "bg-brand-100 text-brand-600 ring-brand-200"

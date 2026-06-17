@@ -1,8 +1,8 @@
 import { monadConfig } from "@/lib/web3/monad";
 
 /**
- * Monad chain mark — geometric badge in Monad purple (#836EF9).
- * Swap in the official Monad SVG asset here if you have the brand kit.
+ * Monad brand mark — the official rounded diamond with a circular counter
+ * ("coin") in Monad purple #836EF9.
  */
 export function MonadMark({ size = 16 }: { size?: number }) {
   return (
@@ -13,11 +13,19 @@ export function MonadMark({ size = 16 }: { size?: number }) {
       fill="none"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="11" fill="#836EF9" />
-      <path
-        d="M12 4.6c-2.1 2-3.7 4.6-3.7 7.4S9.9 17.4 12 19.4c2.1-2 3.7-4.6 3.7-7.4S14.1 6.6 12 4.6Z"
-        fill="#ffffff"
-        fillOpacity="0.92"
+      <mask id="monad-counter">
+        <rect width="24" height="24" fill="#fff" />
+        <circle cx="12" cy="12" r="2.9" fill="#000" />
+      </mask>
+      <rect
+        x="4.8"
+        y="4.8"
+        width="14.4"
+        height="14.4"
+        rx="3.6"
+        transform="rotate(45 12 12)"
+        fill="#836EF9"
+        mask="url(#monad-counter)"
       />
     </svg>
   );

@@ -48,7 +48,7 @@ export function MobileNav({
   }, [open]);
 
   return (
-    <div className="sm:hidden">
+    <div className="lg:hidden">
       <button
         ref={btnRef}
         onClick={() => setOpen(true)}
