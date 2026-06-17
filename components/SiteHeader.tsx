@@ -1,19 +1,20 @@
 import Link from "next/link";
 import { Logo } from "./Logo";
 import { MobileNav } from "./MobileNav";
+import { WalletButton } from "./WalletButton";
 
 export function SiteHeader({
   active,
   mode = "mock",
 }: {
-  active: "home" | "checkout" | "dashboard" | "apass" | "institutions";
+  active: "home" | "dashboard" | "apass" | "transactions" | "institutions";
   mode?: "mock" | "live";
 }) {
   const tabs = [
     { id: "home", label: "Overview", href: "/" },
-    { id: "apass", label: "Get A-Pass", href: "/get-apass" },
-    { id: "checkout", label: "Checkout", href: "/checkout" },
     { id: "dashboard", label: "Dashboard", href: "/dashboard" },
+    { id: "apass", label: "Get A-Pass", href: "/get-apass" },
+    { id: "transactions", label: "Transactions", href: "/transactions" },
     { id: "institutions", label: "Institutions", href: "/institutions" },
   ] as const;
 
@@ -42,7 +43,7 @@ export function SiteHeader({
         </div>
         <div className="flex items-center gap-2">
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 ${
+            className={`hidden items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium ring-1 sm:inline-flex ${
               mode === "live"
                 ? "bg-verify-500/10 text-verify-600 ring-verify-500/20"
                 : "bg-brand-100 text-brand-600 ring-brand-200"
@@ -53,6 +54,7 @@ export function SiteHeader({
             />
             {mode === "live" ? "Live · sandbox" : "Demo mode"}
           </span>
+          <WalletButton />
           <MobileNav tabs={tabs} active={active} />
         </div>
       </div>

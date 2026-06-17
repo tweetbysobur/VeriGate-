@@ -5,24 +5,20 @@
  */
 import "server-only";
 import type { PaymentRecord } from "./cleanverse/types";
-import { mockPayments } from "./cleanverse/mock";
 import { kvEnabled, kvGetJson, kvSetJson } from "./kv";
 
 const MAX = 60;
 const KEY = "verigate:attempts";
 
+// Real activity only — no seeded demo data. Records are appended as real
+// payments (settled/blocked) happen on the site.
 let mem: PaymentRecord[] | null = null;
 
 async function load(): Promise<PaymentRecord[]> {
   if (kvEnabled) {
-    let arr = await kvGetJson<PaymentRecord[]>(KEY);
-    if (!arr) {
-      arr = mockPayments();
-      await kvSetJson(KEY, arr);
-    }
-    return arr;
+    return (await kvGetJson<PaymentRecord[]>(KEY)) ?? [];
   }
-  if (mem === null) mem = mockPayments();
+  if (mem === null) mem = [];
   return mem;
 }
 

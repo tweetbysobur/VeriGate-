@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import {
   connect as connectWallet,
   currentAccount,
+  disconnect as disconnectWallet,
   getProvider,
 } from "@/lib/web3/monad";
 
@@ -13,6 +14,7 @@ export interface UseWallet {
   hasWallet: boolean;
   error: string | null;
   connect: () => Promise<void>;
+  disconnect: () => Promise<void>;
 }
 
 export function useWallet(): UseWallet {
@@ -49,5 +51,10 @@ export function useWallet(): UseWallet {
     }
   }, []);
 
-  return { account, connecting, hasWallet, error, connect };
+  const disconnect = useCallback(async () => {
+    await disconnectWallet();
+    setAccount(null);
+  }, []);
+
+  return { account, connecting, hasWallet, error, connect, disconnect };
 }

@@ -1,6 +1,5 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { InvoicePanel } from "@/components/dashboard/InvoicePanel";
-import { PaymentsTable } from "@/components/dashboard/PaymentsTable";
 import { computeStats, getPayments } from "@/lib/cleanverse/client";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 import { MERCHANT, fmtUsd } from "@/lib/demo";
@@ -111,20 +110,20 @@ export default async function DashboardPage() {
           <InvoicePanel initial={invoices} />
         </div>
 
-        {/* Compliance note */}
-        <div className="my-6 flex items-start gap-3 rounded-xl border border-verify-500/25 bg-verify-500/5 px-4 py-3">
-          <svg viewBox="0 0 24 24" className="mt-0.5 size-5 shrink-0 text-verify-600" fill="none">
-            <path d="M9 12.5l2 2 4-4.5M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+        {/* Link to full transaction history */}
+        <div className="mt-6 flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
           <p className="text-xs text-muted">
-            Every settled payment carries a verified A-Pass identity and an
-            auditable Travel Rule receipt. Blocked attempts never moved funds —
-            VeriGate screens identity and asset compliance <em>before</em> settlement.
+            {payments.length > 0
+              ? `${payments.length} real transaction${payments.length === 1 ? "" : "s"} recorded.`
+              : "No transactions yet — paid invoices appear in your history."}
           </p>
+          <a
+            href="/transactions"
+            className="text-xs font-semibold text-brand-500 hover:underline"
+          >
+            View transaction history →
+          </a>
         </div>
-
-        {/* Table */}
-        <PaymentsTable payments={payments} />
       </main>
 
       <footer className="border-t border-border py-5">

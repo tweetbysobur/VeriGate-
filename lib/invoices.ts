@@ -9,42 +9,15 @@ import { MERCHANT } from "./demo";
 import { kvEnabled, kvGetJson, kvSetJson } from "./kv";
 
 const KEY = "verigate:invoices";
-const HOUR = 3600;
 const now = () => Math.floor(Date.now() / 1000);
 
 function newId(): string {
   return `iv_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 }
 
+// Real invoices only — created by the merchant on the site. No demo seed.
 function seed(): Invoice[] {
-  return [
-    {
-      id: "iv_seedpaid01",
-      merchantName: MERCHANT.name,
-      merchantWallet: MERCHANT.wallet,
-      item: "Wholesale order #4471",
-      amount: 1340,
-      currency: "USDC",
-      chain: "monad",
-      status: "paid",
-      createdAt: now() - 6 * HOUR,
-      paidAt: now() - 5 * HOUR,
-      customer: "0x888895E314BF33CEeBCF5320279061aed3a5E2bd",
-      apassTier: "40",
-      txHash: "0x" + "a3f9c2".repeat(10) + "ab12",
-    },
-    {
-      id: "iv_seedopen01",
-      merchantName: MERCHANT.name,
-      merchantWallet: MERCHANT.wallet,
-      item: "Priority restock — keyboards",
-      amount: 512,
-      currency: "USDC",
-      chain: "monad",
-      status: "open",
-      createdAt: now() - 40 * 60,
-    },
-  ];
+  return [];
 }
 
 let mem: Invoice[] | null = null;

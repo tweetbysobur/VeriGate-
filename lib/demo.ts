@@ -60,6 +60,9 @@ export function chainMeta(id: Chain): ChainMeta {
   return CHAINS.find((c) => c.id === id) ?? CHAINS[0];
 }
 
+/** Where to get test funds on Monad testnet. */
+export const MONAD_GAS_FAUCET = "https://faucet.monad.xyz";
+
 export function shortAddr(addr: string, head = 6, tail = 4): string {
   if (addr.length <= head + tail) return addr;
   return `${addr.slice(0, head)}…${addr.slice(-tail)}`;

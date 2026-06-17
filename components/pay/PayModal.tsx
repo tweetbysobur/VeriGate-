@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Chain, PaymentStepId, Persona } from "@/lib/cleanverse/types";
-import { chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
+import { MONAD_GAS_FAUCET, chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
 import { Logo } from "@/components/Logo";
 import { Receipt, type ReceiptData } from "./Receipt";
 import { StepRow } from "./StepRow";
@@ -325,6 +325,24 @@ export function PayModal({
                               "The on-chain transfer didn’t go through. No funds moved."
                             : "No funds moved. VeriGate stops a payment the moment a check fails — nothing settles unless every gate passes.")}
                       </p>
+                      {isSettle && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <a
+                            href={MONAD_GAS_FAUCET}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-lg bg-purple-500/10 px-2.5 py-1 text-[11px] font-semibold text-purple-600 ring-1 ring-purple-500/30 hover:bg-purple-500/20"
+                          >
+                            Get test MON (gas) ↗
+                          </a>
+                          <a
+                            href="/get-apass"
+                            className="rounded-lg bg-brand-500/10 px-2.5 py-1 text-[11px] font-semibold text-brand-600 ring-1 ring-brand-300 hover:bg-brand-500/20"
+                          >
+                            Get test aUSDC →
+                          </a>
+                        </div>
+                      )}
                     </div>
                   );
                 })()}

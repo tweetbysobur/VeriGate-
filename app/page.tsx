@@ -100,10 +100,10 @@ export default function LandingPage() {
               Get your A-Pass
             </Link>
             <Link
-              href="/checkout"
+              href="/dashboard"
               className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
             >
-              Try the payment demo
+              Open the dashboard
             </Link>
           </div>
           <p className="mt-4 text-xs text-muted">
@@ -406,7 +406,7 @@ export default function LandingPage() {
         </p>
         <div className="mt-8 flex justify-center">
           <Link
-            href="/checkout"
+            href="/dashboard"
             className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
           >
             <VeriGateMark size={18} />

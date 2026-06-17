@@ -89,6 +89,20 @@ export async function currentAccount(): Promise<string | null> {
   return accounts?.[0] ?? null;
 }
 
+/** Best-effort disconnect — revokes the dApp's account permission where supported. */
+export async function disconnect(): Promise<void> {
+  const p = getProvider();
+  if (!p) return;
+  try {
+    await p.request({
+      method: "wallet_revokePermissions",
+      params: [{ eth_accounts: {} }],
+    });
+  } catch {
+    /* not supported by this wallet — the UI clears local state regardless */
+  }
+}
+
 /** Ensure the wallet is on the given chain; add it if unknown. */
 export async function ensureChain(cfg: EvmChainConfig): Promise<void> {
   const p = getProvider();

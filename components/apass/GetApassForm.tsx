@@ -156,10 +156,10 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
               {fauceting ? "Requesting test tokens…" : "Get test aUSDC"}
             </button>
             <Link
-              href="/checkout"
+              href="/dashboard"
               className="mt-2 block text-center text-xs font-medium text-muted hover:text-foreground"
             >
-              Skip — go to checkout →
+              Skip — go to dashboard →
             </Link>
           </div>
         ) : (
@@ -178,7 +178,7 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
               </p>
             )}
             <Link
-              href="/checkout"
+              href="/dashboard"
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-foreground py-3 text-sm font-semibold text-background transition hover:opacity-90"
             >
               Go make a payment →
