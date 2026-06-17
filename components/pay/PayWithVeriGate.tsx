@@ -134,16 +134,24 @@ export function PayWithVeriGate({
           <>
             {/* Wallet is the primary path */}
             {wallet.account ? (
-              <div className="flex items-center justify-between rounded-lg border border-verify-500/30 bg-verify-500/5 px-3 py-2.5">
-                <span className="inline-flex items-center gap-2 text-sm">
-                  <span className="size-2 rounded-full bg-verify-500" />
-                  <span className="font-mono text-foreground">
-                    {shortAddr(wallet.account)}
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex-1 rounded-lg border border-verify-500/30 bg-verify-500/5 px-3 py-2.5">
+                  <span className="inline-flex items-center gap-2 text-sm">
+                    <span className="size-2 rounded-full bg-verify-500" />
+                    <span className="font-mono text-foreground">
+                      {shortAddr(wallet.account)}
+                    </span>
                   </span>
-                </span>
-                <span className="text-[11px] font-medium text-verify-600">
-                  Wallet connected
-                </span>
+                  <p className="mt-1 text-[11px] font-medium text-verify-600">
+                    Wallet connected
+                  </p>
+                </div>
+                <button
+                  onClick={wallet.disconnect}
+                  className="rounded-lg border border-border bg-card px-2.5 py-2.5 text-[11px] font-medium text-muted hover:text-foreground hover:border-brand-300 transition"
+                >
+                  Disconnect
+                </button>
               </div>
             ) : wallet.hasWallet ? (
               <button
