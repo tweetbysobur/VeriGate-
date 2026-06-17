@@ -11,6 +11,7 @@ import {
   sendAtokenTransfer,
   settlementAtoken,
   waitForReceipt,
+  walletErrorMessage,
 } from "@/lib/web3/monad";
 import { VeriGateMark } from "@/components/Logo";
 import { NetworkBadge } from "@/components/MonadMark";
@@ -93,7 +94,11 @@ export function PayWithVeriGate({
 
   const settleOnChain = useCallback(async () => {
     const cfg = monadConfig();
-    await ensureChain(cfg);
+    try {
+      await ensureChain(cfg);
+    } catch (e) {
+      throw new Error(walletErrorMessage(e));
+    }
     const { address: token, decimals } = settlementAtoken();
     const txHash = await sendAtokenTransfer({
       from: wallet.account!,

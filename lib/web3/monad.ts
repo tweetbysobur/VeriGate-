@@ -140,6 +140,22 @@ export function toBaseUnits(amount: number, decimals: number): bigint {
   return BigInt(`${whole}${fracPadded}`);
 }
 
+/** Turn a raw wallet/RPC error into a clear, actionable message. */
+export function walletErrorMessage(e: unknown): string {
+  const err = e as { code?: number; message?: string; data?: { message?: string } };
+  const raw = (err?.data?.message || err?.message || "").toLowerCase();
+  if (err?.code === 4001 || raw.includes("user rejected") || raw.includes("user denied")) {
+    return "Transaction rejected in your wallet.";
+  }
+  if (raw.includes("insufficient funds") || raw.includes("insufficient balance for gas") || raw.includes("gas required exceeds")) {
+    return "Not enough MON for gas. Get test MON from the Monad testnet faucet, then try again.";
+  }
+  if (raw.includes("revert") || raw.includes("execution reverted")) {
+    return "Transfer reverted on-chain — check the wallet has an A-Pass and enough aUSDC.";
+  }
+  return err?.message || "Wallet transaction failed.";
+}
+
 /**
  * Send an A-Token (ERC-20) transfer from the connected account to `to`.
  * Returns the transaction hash. The A-Token contract enforces compliance
@@ -158,11 +174,14 @@ export async function sendAtokenTransfer(params: {
     params.to,
     toBaseUnits(params.amount, params.decimals),
   );
-  const txHash = (await p.request({
-    method: "eth_sendTransaction",
-    params: [{ from: params.from, to: params.token, data, value: "0x0" }],
-  })) as string;
-  return txHash;
+  try {
+    return (await p.request({
+      method: "eth_sendTransaction",
+      params: [{ from: params.from, to: params.token, data, value: "0x0" }],
+    })) as string;
+  } catch (e) {
+    throw new Error(walletErrorMessage(e));
+  }
 }
 
 /** Send a pre-built transaction (e.g. 0x swap calldata). Returns the tx hash. */

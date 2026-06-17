@@ -305,17 +305,29 @@ export function PayModal({
                   />
                 ))}
               </ol>
-              {phase === "failed" && (
-                <div className="vg-rise rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm">
-                  <p className="font-medium text-danger">
-                    {netError ? "Couldn’t complete payment" : "Payment blocked by compliance"}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted">
-                    {netError ??
-                      "No funds moved. VeriGate stops a payment the moment a check fails — nothing settles unless every gate passes."}
-                  </p>
-                </div>
-              )}
+              {phase === "failed" &&
+                (() => {
+                  const failed = steps.find((s) => s.status === "failed");
+                  const isSettle = failed?.id === "settle";
+                  return (
+                    <div className="vg-rise rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm">
+                      <p className="font-medium text-danger">
+                        {netError
+                          ? "Couldn’t complete payment"
+                          : isSettle
+                            ? "Settlement couldn’t complete"
+                            : "Payment blocked by compliance"}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted">
+                        {netError ??
+                          (isSettle
+                            ? failed?.detail ??
+                              "The on-chain transfer didn’t go through. No funds moved."
+                            : "No funds moved. VeriGate stops a payment the moment a check fails — nothing settles unless every gate passes.")}
+                      </p>
+                    </div>
+                  );
+                })()}
             </>
           )}
         </div>
