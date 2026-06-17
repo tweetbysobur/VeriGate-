@@ -6,7 +6,7 @@ import { fmtUsd, timeAgo } from "@/lib/demo";
 
 function payLink(inv: Invoice): string {
   const origin = typeof window !== "undefined" ? window.location.origin : "";
-  return `${origin}/pay/${inv.id}?amt=${inv.amount}&item=${encodeURIComponent(inv.item)}`;
+  return `${origin}/pay/${inv.id}?amt=${inv.amount}&item=${encodeURIComponent(inv.item)}&cur=${inv.currency}&chain=${inv.chain}&m=${encodeURIComponent(inv.merchantName)}&mw=${inv.merchantWallet}`;
 }
 
 export function InvoicePanel({ initial }: { initial: Invoice[] }) {
@@ -28,6 +28,8 @@ export function InvoicePanel({ initial }: { initial: Invoice[] }) {
         /* ignore */
       }
     };
+    // Refresh on mount and on focus
+    refresh();
     window.addEventListener("focus", refresh);
     return () => window.removeEventListener("focus", refresh);
   }, []);
