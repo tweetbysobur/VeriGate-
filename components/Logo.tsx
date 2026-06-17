@@ -8,32 +8,22 @@
  */
 
 /** The raw VG + check monogram strokes on a 64×64 grid. `color` = stroke. */
-function Monogram({ color, sw = 5.5, idp = "" }: { color: string; sw?: number; idp?: string }) {
-  const maskId = `vg-gmask-${idp}`;
+function Monogram({ color, sw = 5.5 }: { color: string; sw?: number; idp?: string }) {
   return (
-    <>
-      <defs>
-        <mask id={maskId}>
-          <rect width="64" height="64" fill="#fff" />
-          {/* mouth: cut the right of the ring so the O reads as a G */}
-          <rect x="47" y="28.5" width="18" height="9.5" rx="2" fill="#000" />
-        </mask>
-      </defs>
-      <g
-        stroke={color}
-        strokeWidth={sw}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      >
-        {/* V = checkmark, long arm bridging up into the G */}
-        <path d="M13 27 L24 39 L50.5 26" />
-        {/* G ring */}
-        <circle cx="40" cy="33" r="13" mask={`url(#${maskId})`} />
-        {/* G tongue */}
-        <path d="M53 33 L44 33" />
-      </g>
-    </>
+    <g
+      stroke={color}
+      strokeWidth={sw}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    >
+      {/* V = checkmark, long arm bridging up into the G */}
+      <path d="M13 27 L24 39 L50.65 25.54" />
+      {/* G = open ring (mouth on the right) */}
+      <path d="M50.65 25.54 A13 13 0 1 0 50.65 40.46" />
+      {/* G tongue */}
+      <path d="M52 33 L43 33" />
+    </g>
   );
 }
 
