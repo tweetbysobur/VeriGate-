@@ -30,7 +30,7 @@ export default async function DashboardPage() {
             </div>
             <p className="text-sm text-muted">Compliance &amp; settlement overview</p>
           </div>
-          <div className="hidden text-right sm:block">
+          <div className="text-right">
             <p className="text-[11px] text-muted">Payout address · no wallet needed</p>
             <p className="font-mono text-xs text-foreground">
               {MERCHANT.wallet.slice(0, 10)}…{MERCHANT.wallet.slice(-6)}

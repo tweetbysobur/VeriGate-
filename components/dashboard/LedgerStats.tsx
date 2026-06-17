@@ -40,6 +40,7 @@ export function LedgerStats() {
   const volume = settled.reduce((s, x) => s + x.amount, 0);
   const rate = list.length ? Math.round((settled.length / list.length) * 100) : 0;
   const total = list.length;
+  const received = settled.length > 0 ? fmtUsd(volume) : "$0.00";
 
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
