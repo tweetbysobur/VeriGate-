@@ -8,7 +8,9 @@ export const MERCHANT = {
   name: "Meridian Supply Co.",
   tagline: "Wholesale electronics · settles in compliant stablecoin",
   // Where settled funds land — echoed in the audit receipt.
-  wallet: "0x121C439ff356e806C3da108eE794c4Dd485984d3",
+  // MUST hold a valid A-Pass: A-Token transfers are compliant on BOTH sides, so
+  // the recipient is verified on-chain or the transfer reverts.
+  wallet: "0x888895E314BF33CEeBCF5320279061aed3a5E2bd",
   logoMark: "M",
 };
 

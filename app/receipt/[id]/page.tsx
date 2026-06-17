@@ -4,7 +4,7 @@ import { NetworkBadge } from "@/components/MonadMark";
 import { ReceiptActions } from "@/components/ReceiptActions";
 import { listAttempts } from "@/lib/attempts";
 import type { Chain } from "@/lib/cleanverse/types";
-import { chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
+import { MERCHANT, chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
 import { getInvoice } from "@/lib/invoices";
 
 export const dynamic = "force-dynamic";
@@ -52,8 +52,8 @@ async function resolve(
     return {
       amount: rec.amount,
       currency: rec.currency,
-      merchantName: "Meridian Supply Co.",
-      merchantWallet: "0x121C439ff356e806C3da108eE794c4Dd485984d3",
+      merchantName: MERCHANT.name,
+      merchantWallet: MERCHANT.wallet,
       customer: rec.customer,
       apassTier: rec.apassTier,
       chain: rec.chain,
