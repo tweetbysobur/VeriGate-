@@ -52,7 +52,7 @@ export const CHAINS: ChainMeta[] = [
     name: "Monad",
     short: "MON",
     tint: "bg-purple-500/10 text-purple-600 ring-purple-500/30",
-    explorerTx: (h) => `https://testnet.monadexplorer.com/tx/${h}`,
+    explorerTx: (h) => `https://monadexplorer.com/tx/${h}?chain=testnet`,
   },
 ];
 
