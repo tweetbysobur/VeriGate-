@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Chain, PaymentStepId, Persona } from "@/lib/cleanverse/types";
 import { MONAD_GAS_FAUCET, chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
 import { Logo } from "@/components/Logo";
+import { recordLocal, newTxnId } from "@/lib/localLedger";
 import { Receipt, type ReceiptData } from "./Receipt";
 import { StepRow } from "./StepRow";
 import {
@@ -15,7 +16,7 @@ import {
 
 type Phase = "review" | "running" | "success" | "failed";
 
-/** Fire-and-forget: record the payment outcome to the merchant ledger. */
+/** Record the payment outcome — browser ledger (reliable) + best-effort server. */
 function recordAttempt(body: {
   customer: string;
   chain: Chain;
@@ -28,6 +29,13 @@ function recordAttempt(body: {
   onChain?: boolean;
   receipt?: { fileName: string; downloadUrl: string };
 }) {
+  // Browser ledger — always works for the user's own activity (no KV needed).
+  recordLocal({
+    id: newTxnId(),
+    createdAt: Math.floor(Date.now() / 1000),
+    ...body,
+  });
+  // Server ledger — best effort (durable cross-device once Vercel KV is added).
   fetch("/api/attempts", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

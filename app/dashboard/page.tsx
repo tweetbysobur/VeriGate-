@@ -1,42 +1,14 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { InvoicePanel } from "@/components/dashboard/InvoicePanel";
-import { computeStats, getPayments } from "@/lib/cleanverse/client";
+import { LedgerStats } from "@/components/dashboard/LedgerStats";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
-import { MERCHANT, fmtUsd } from "@/lib/demo";
+import { MERCHANT } from "@/lib/demo";
 import { listInvoices } from "@/lib/invoices";
 
 export const dynamic = "force-dynamic";
 
-function StatCard({
-  label,
-  value,
-  sub,
-  accent,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  accent?: "brand" | "verify" | "danger";
-}) {
-  const ring =
-    accent === "verify"
-      ? "text-verify-600"
-      : accent === "danger"
-        ? "text-danger"
-        : "text-foreground";
-  return (
-    <div className="rounded-2xl border border-border bg-card p-5 shadow-sm">
-      <p className="text-xs text-muted">{label}</p>
-      <p className={`mt-1 text-2xl font-semibold tracking-tight ${ring}`}>{value}</p>
-      {sub && <p className="mt-0.5 text-[11px] text-muted">{sub}</p>}
-    </div>
-  );
-}
-
 export default async function DashboardPage() {
   const { mode } = getCleanverseConfig();
-  const payments = await getPayments(MERCHANT.wallet);
-  const stats = computeStats(payments);
   const invoices = await listInvoices();
 
   return (
@@ -78,32 +50,8 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          <StatCard
-            label="Settled volume"
-            value={fmtUsd(stats.volume)}
-            sub="Last 7 days"
-          />
-          <StatCard
-            label="Payments settled"
-            value={String(stats.settledCount)}
-            sub="Verified & auditable"
-            accent="verify"
-          />
-          <StatCard
-            label="Blocked attempts"
-            value={String(stats.blockedCount)}
-            sub="Stopped pre-settlement"
-            accent="danger"
-          />
-          <StatCard
-            label="Verified rate"
-            value={`${Math.round(stats.verifiedRate * 100)}%`}
-            sub="Settled ÷ total attempts"
-            accent="brand"
-          />
-        </div>
+        {/* Stats — reflect your real activity on this device */}
+        <LedgerStats />
 
         {/* Invoices */}
         <div className="mt-6">
@@ -113,9 +61,7 @@ export default async function DashboardPage() {
         {/* Link to full transaction history */}
         <div className="mt-6 flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
           <p className="text-xs text-muted">
-            {payments.length > 0
-              ? `${payments.length} real transaction${payments.length === 1 ? "" : "s"} recorded.`
-              : "No transactions yet — paid invoices appear in your history."}
+            Every payment you make is recorded with its Monad transaction.
           </p>
           <a
             href="/transactions"
