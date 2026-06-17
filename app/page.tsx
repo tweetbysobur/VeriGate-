@@ -75,7 +75,7 @@ export default function LandingPage() {
       <SiteHeader active="home" mode={mode} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-grid">
+      <section className="relative overflow-hidden bg-grid pt-8 sm:pt-6">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-brand-500/10 to-transparent" />
         <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-28">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted">
