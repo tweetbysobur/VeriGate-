@@ -144,8 +144,8 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
 
         {/* Step 2: test tokens (optional) */}
         {phase === "issued" ? (
-          <div className="mt-5">
-            <p className="mb-2 text-sm text-muted">
+          <div className="mt-5 space-y-2">
+            <p className="text-sm text-muted">
               Optionally grab some test aUSDC so you can make a payment:
             </p>
             <button
@@ -155,9 +155,17 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
             >
               {fauceting ? "Requesting test tokens…" : "Get test aUSDC"}
             </button>
+            <a
+              href="https://faucet.circle.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-brand-300 bg-brand-50/50 py-3 text-sm font-medium text-brand-600 transition hover:bg-brand-100"
+            >
+              Or use Circle faucet directly ↗
+            </a>
             <Link
               href="/dashboard"
-              className="mt-2 block text-center text-xs font-medium text-muted hover:text-foreground"
+              className="block text-center text-xs font-medium text-muted hover:text-foreground"
             >
               Skip — go to dashboard →
             </Link>
