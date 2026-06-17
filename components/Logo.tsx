@@ -1,63 +1,98 @@
 /**
- * VeriGate brandmark.
- * - The mark: a rounded "gate" badge in the brand gradient; the bold check
- *   reads as both a verification tick and the "V" of VeriGate.
- * - The wordmark: "Veri" in the foreground + "Gate" in a brand gradient.
+ * VeriGate brandmark — "VG" monogram.
+ *
+ * The checkmark IS the V: a verification tick whose long arm bridges up into
+ * the G ring (trust → payment rail → interoperability). The G is an open ring
+ * with a tongue; the V/check connects at its upper edge — one continuous,
+ * geometric mark. Colors: deep indigo #5B5BF7 → electric purple #7C4DFF.
  */
-export function VeriGateMark({ size = 32 }: { size?: number }) {
+
+/** The raw VG + check monogram strokes on a 64×64 grid. `color` = stroke. */
+function Monogram({ color, sw = 5.5, idp = "" }: { color: string; sw?: number; idp?: string }) {
+  const maskId = `vg-gmask-${idp}`;
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 36 36"
-      fill="none"
-      aria-hidden="true"
-    >
+    <>
       <defs>
-        <linearGradient
-          id="vg-grad"
-          x1="3"
-          y1="3"
-          x2="33"
-          y2="33"
-          gradientUnits="userSpaceOnUse"
-        >
-          <stop stopColor="#7b84fb" />
-          <stop offset="1" stopColor="#4a43c4" />
-        </linearGradient>
+        <mask id={maskId}>
+          <rect width="64" height="64" fill="#fff" />
+          {/* mouth: cut the right of the ring so the O reads as a G */}
+          <rect x="47" y="28.5" width="18" height="9.5" rx="2" fill="#000" />
+        </mask>
       </defs>
-      {/* badge */}
-      <rect x="3" y="3" width="30" height="30" rx="8.5" fill="url(#vg-grad)" />
-      {/* inner stroke for depth */}
-      <rect
-        x="3.6"
-        y="3.6"
-        width="28.8"
-        height="28.8"
-        rx="7.9"
-        stroke="#ffffff"
-        strokeOpacity="0.18"
-        strokeWidth="1.2"
-      />
-      {/* check = V */}
-      <path
-        d="M10.5 18.6l4.7 4.7L25.7 12.4"
-        stroke="#ffffff"
-        strokeWidth="3.1"
+      <g
+        stroke={color}
+        strokeWidth={sw}
         strokeLinecap="round"
         strokeLinejoin="round"
-      />
+        fill="none"
+      >
+        {/* V = checkmark, long arm bridging up into the G */}
+        <path d="M13 27 L24 39 L50.5 26" />
+        {/* G ring */}
+        <circle cx="40" cy="33" r="13" mask={`url(#${maskId})`} />
+        {/* G tongue */}
+        <path d="M53 33 L44 33" />
+      </g>
+    </>
+  );
+}
+
+/**
+ * App-icon / badge mark: gradient squircle with the white monogram.
+ * Scales cleanly from favicon to billboard.
+ */
+export function VeriGateMark({ size = 32, idp = "m" }: { size?: number; idp?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient
+          id={`vg-badge-${idp}`}
+          x1="4"
+          y1="2"
+          x2="60"
+          y2="62"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#5B5BF7" />
+          <stop offset="1" stopColor="#7C4DFF" />
+        </linearGradient>
+      </defs>
+      <rect x="2" y="2" width="60" height="60" rx="16" fill={`url(#vg-badge-${idp})`} />
+      <Monogram color="#ffffff" idp={`b${idp}`} />
     </svg>
   );
 }
 
+/** Monogram-only (no badge) in the brand gradient — for light/dark surfaces. */
+export function VeriGateGlyph({ size = 32, idp = "g" }: { size?: number; idp?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient
+          id={`vg-glyph-${idp}`}
+          x1="8"
+          y1="6"
+          x2="56"
+          y2="58"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#5B5BF7" />
+          <stop offset="1" stopColor="#7C4DFF" />
+        </linearGradient>
+      </defs>
+      <Monogram color={`url(#vg-glyph-${idp})`} sw={6} idp={`y${idp}`} />
+    </svg>
+  );
+}
+
+/** Horizontal lockup: VG badge + "VeriGate" wordmark. */
 export function Logo({ size = 30 }: { size?: number }) {
   return (
     <span className="inline-flex items-center gap-2.5 font-semibold tracking-tight">
-      <VeriGateMark size={size} />
+      <VeriGateMark size={size} idp="hdr" />
       <span className="text-[1.2rem] leading-none text-foreground">
         Veri
-        <span className="bg-gradient-to-r from-brand-400 to-brand-600 bg-clip-text text-transparent">
+        <span className="bg-gradient-to-r from-[#5B5BF7] to-[#7C4DFF] bg-clip-text text-transparent">
           Gate
         </span>
       </span>
