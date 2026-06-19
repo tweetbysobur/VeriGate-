@@ -92,23 +92,23 @@ export default function LandingPage() {
       <SiteHeader active="home" mode={mode} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-brand-50 to-background pt-8 sm:pt-6">
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-brand-ink pt-8 sm:pt-6">
         <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
-          <h1 className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="mx-auto text-balance text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
             The Compliance-First{" "}
-            <span className="text-brand-600">Payment Gateway</span> for Stablecoins
+            <span className="text-brand-200">Payment Gateway</span> for Stablecoins
           </h1>
 
-          <p className="mx-auto mt-6 max-w-3xl text-balance text-lg text-muted">
+          <p className="mx-auto mt-6 max-w-3xl text-balance text-lg text-brand-100">
             Accept verified stablecoin payments with built-in identity verification, compliance checks, and audit-ready transaction records.
           </p>
 
-          <p className="mx-auto mt-6 max-w-2xl text-sm text-foreground leading-relaxed">
+          <p className="mx-auto mt-6 max-w-2xl text-sm text-white/90 leading-relaxed">
             VeriGate helps merchants create invoices, verify customers through Cleanverse A-Pass, settle payments on Monad, and maintain a complete compliance trail from checkout to receipt.
           </p>
 
           {/* Trust Indicators */}
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 text-xs font-medium text-muted sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 text-xs font-medium text-brand-200 sm:flex-row">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
                 <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
