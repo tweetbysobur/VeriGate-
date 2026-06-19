@@ -92,42 +92,122 @@ export default function LandingPage() {
       <SiteHeader active="home" mode={mode} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-grid pt-8 sm:pt-6">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-brand-500/10 to-transparent" />
-        <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-28">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted">
-            <VeriGateMark size={15} />
-            Compliance-first payments · built on Monad
-          </span>
-          <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Get paid in stablecoin.{" "}
-            <span className="text-brand-500">No compliance headaches.</span>
+      <section className="relative overflow-hidden bg-gradient-to-br from-brand-50 to-background pt-8 sm:pt-6">
+        <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
+          <h1 className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            The Compliance-First{" "}
+            <span className="text-brand-600">Payment Gateway</span> for Stablecoins
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-muted">
-            VeriGate is the payment gateway for merchants, freelancers, and SaaS businesses who want to accept stablecoin payments without the legal risk. Identity verified, asset compliant, audit proof included.
+
+          <p className="mx-auto mt-6 max-w-3xl text-balance text-lg text-muted">
+            Accept verified stablecoin payments with built-in identity verification, compliance checks, and audit-ready transaction records.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+
+          <p className="mx-auto mt-6 max-w-2xl text-sm text-foreground leading-relaxed">
+            VeriGate helps merchants create invoices, verify customers through Cleanverse A-Pass, settle payments on Monad, and maintain a complete compliance trail from checkout to receipt.
+          </p>
+
+          {/* Trust Indicators */}
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 text-xs font-medium text-muted sm:flex-row">
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
+                <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Powered by Cleanverse A-Pass
+            </div>
+            <div className="hidden sm:block text-border">·</div>
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
+                <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Built on Monad
+            </div>
+            <div className="hidden sm:block text-border">·</div>
+            <div className="flex items-center gap-2">
+              <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
+                <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Audit-Ready Transactions
+            </div>
+          </div>
+
+          {/* CTAs */}
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/get-apass"
-              className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
+              href="/dashboard"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:bg-brand-700"
             >
-              <VeriGateMark size={18} />
-              Get your A-Pass
+              Create Invoice
             </Link>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
             >
-              Open the dashboard
+              Try Payment Demo
             </Link>
           </div>
-          <p className="mt-4 text-xs text-muted">
-            New here? Start by getting your A-Pass — verified identity in about a
-            minute. ·{" "}
-            <Link href="/dashboard" className="text-brand-500 hover:underline">
-              Merchant dashboard
-            </Link>
-          </p>
+        </div>
+      </section>
+
+      {/* Process Flow */}
+      <section className="border-t border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-semibold text-foreground">Merchant Creates Invoice</p>
+            </div>
+            <div className="hidden text-muted sm:block">↓</div>
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-semibold text-foreground">Customer Verifies Identity</p>
+            </div>
+            <div className="hidden text-muted sm:block">↓</div>
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-semibold text-foreground">Compliance Checks Pass</p>
+            </div>
+            <div className="hidden text-muted sm:block">↓</div>
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-semibold text-foreground">Payment Settles on Monad</p>
+            </div>
+            <div className="hidden text-muted sm:block">↓</div>
+            <div className="text-center sm:text-left">
+              <p className="text-sm font-semibold text-foreground">Receipt & Audit Log</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Cards */}
+      <section className="mx-auto max-w-5xl px-5 py-16">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="flex size-10 items-center justify-center rounded-lg bg-verify-500/10">
+              <svg viewBox="0 0 24 24" className="size-6 text-verify-600" fill="none">
+                <path d="M9 12.5l2 2 4-4.5M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Verified Identity</h3>
+            <p className="mt-2 text-sm text-muted">Every payer is verified through Cleanverse A-Pass before payment.</p>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="flex size-10 items-center justify-center rounded-lg bg-brand-500/10">
+              <svg viewBox="0 0 24 24" className="size-6 text-brand-600" fill="none">
+                <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Compliant Payments</h3>
+            <p className="mt-2 text-sm text-muted">Compliance requirements are enforced before funds move.</p>
+          </div>
+
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="flex size-10 items-center justify-center rounded-lg bg-foreground/5">
+              <svg viewBox="0 0 24 24" className="size-6 text-foreground/60" fill="none">
+                <path d="M9 12h6m-6 4h6M9 8h6M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h3 className="mt-4 text-lg font-semibold text-foreground">Audit-Ready Records</h3>
+            <p className="mt-2 text-sm text-muted">Every transaction produces a traceable receipt and transaction history.</p>
+          </div>
         </div>
       </section>
 
