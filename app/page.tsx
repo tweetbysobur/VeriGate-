@@ -92,7 +92,7 @@ export default function LandingPage() {
       <SiteHeader active="home" mode={mode} />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-white pt-8 sm:pt-6">
+      <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 to-slate-900 pt-8 sm:pt-6">
         <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
           <h1 className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Compliant stablecoin payments,{" "}
