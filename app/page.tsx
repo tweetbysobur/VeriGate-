@@ -95,12 +95,12 @@ export default function LandingPage() {
       <section className="relative overflow-hidden bg-white pt-8 sm:pt-6">
         <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
           <h1 className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            The Compliance-First{" "}
-            <span className="text-brand-600">Payment Gateway</span> for Stablecoins
+            Compliant stablecoin payments,{" "}
+            <span className="text-brand-600">finally usable.</span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted">
-            Accept verified stablecoin payments. Every customer verified, every transaction compliant, every settlement auditable.
+            VeriGate checks identity and asset compliance before money moves, then records proof — verified participants and compliant assets in, an auditable receipt out.
           </p>
 
           {/* Trust Indicators */}
