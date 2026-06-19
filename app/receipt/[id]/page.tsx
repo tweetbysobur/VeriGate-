@@ -153,10 +153,10 @@ export default async function ReceiptPage({
               </p>
               <ul className="space-y-1.5">
                 {[
-                  `Identity verified — A-Pass${r.apassTier ? ` · tier ${r.apassTier}` : ""}`,
-                  "Compliant asset — A-Token provenance tracked",
-                  "Transaction screened against the A-Token compliance rule",
-                  "Auditable Travel Rule receipt written",
+                  `You are verified — A-Pass${r.apassTier ? ` · tier ${r.apassTier}` : ""}`,
+                  "Asset is compliant — A-Token",
+                  "Payment passed all compliance checks",
+                  "Auditable receipt saved",
                 ].map((t) => (
                   <li key={t} className="flex items-start gap-2 text-xs text-foreground">
                     <svg viewBox="0 0 24 24" className="mt-0.5 size-3.5 shrink-0 text-verify-500" fill="none">

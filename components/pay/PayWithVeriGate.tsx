@@ -55,7 +55,9 @@ export function PayWithVeriGate({
 
   // Real on-chain settlement only when a wallet is connected (Monad-only app).
   const canSettleReal = live && !!wallet.account;
-  const canPay = live ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) : true;
+  const canPay = live
+    ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) && apass.status === "verified"
+    : true;
 
   // Inline A-Pass status for the active wallet (live mode).
   type ApassStatus = "verified" | "none" | "restricted" | "unknown";
