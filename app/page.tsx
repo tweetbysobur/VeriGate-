@@ -11,15 +11,15 @@ const PROBLEMS = [
   },
   {
     t: "Stablecoins have no compliance",
-    d: "Accept the wrong token from the wrong person, and you've got a legal problem.",
+    d: "Accept the wrong token from the wrong person, and you've got a legal problem (sanctions, AML/KYC failure).",
   },
   {
-    t: "Payment processors won't touch it",
-    d: "Traditional payment gateways don't support crypto. You're stuck.",
+    t: "No OFAC/sanctions screening",
+    d: "Unvetted wallets can expose you to regulatory risk. Traditional gateways screen. Crypto doesn't.",
   },
   {
     t: "You need proof you're compliant",
-    d: "Banks, accountants, and regulators want to see verified transactions and audit trails.",
+    d: "Banks, accountants, and regulators want auditable receipts, Travel Rule proof, and verified counterparties.",
   },
 ];
 
@@ -48,11 +48,13 @@ const LAYERS = [
 ];
 
 const COMPARE: Array<[string, string, string]> = [
-  ["Identity", "Anonymous wallets", "Verified with A-Pass"],
-  ["Asset origin", "Unknown provenance", "Tracked with A-Token"],
-  ["Compliance", "Manual or none", "Automated on every payment"],
-  ["Audit", "No usable record", "Auditable receipt per transaction"],
-  ["Institutions", "Locked out", "Able to participate"],
+  ["Identity verification", "Anonymous wallets", "KYC via A-Pass (Cleanverse verified)"],
+  ["Asset origin", "Unknown provenance", "Tracked with A-Token (compliant origin)"],
+  ["OFAC/Sanctions screening", "None", "Built-in via Cleanverse network"],
+  ["AML compliance", "Manual or none", "Automated tier rules + rule enforcement"],
+  ["Travel Rule receipts", "Not applicable", "Generated on every transaction"],
+  ["Audit trail", "No usable record", "On-chain proof per payment"],
+  ["Institutional acceptance", "Locked out", "Bank + accountant ready"],
 ];
 
 const USE_CASES = [
@@ -79,9 +81,9 @@ const USE_CASES = [
 ];
 
 const ROADMAP = [
-  { p: "Phase 1 · Build", d: "Integrate A-Pass and A-Token. Ship the core gateway on Monad." },
-  { p: "Phase 2 · Pilot", d: "Onboard first merchants and fintech partners. Prove the compliance flow." },
-  { p: "Phase 3 · Scale", d: "Expand to regulated institutions and cross-border commerce." },
+  { p: "Phase 1 · Live (Q3 2026)", d: "Core gateway on Monad mainnet. A-Pass + A-Token integration. SDK embed. Travel Rule receipts. Target: 10 pilot merchants." },
+  { p: "Phase 2 · Comply (Q4 2026)", d: "OFAC screening expansion. Multi-chain support (Ethereum, Solana). Webhook API for accounting integrations. Target: 100+ merchants." },
+  { p: "Phase 3 · Scale (2027)", d: "Institutional partnerships (banks, MSBs). Batch payment support. Advanced analytics. Target: Regulated payment corridor." },
 ];
 
 export default function LandingPage() {
@@ -257,6 +259,72 @@ export default function LandingPage() {
               </li>
             ))}
           </ol>
+        </div>
+      </section>
+
+      {/* Regulatory Framework */}
+      <section className="border-t border-border bg-card/40">
+        <div className="mx-auto max-w-5xl px-5 py-16">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Compliance framework
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            VeriGate enforces regulatory requirements automatically, so you don't have to worry.
+          </p>
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            {[
+              {
+                t: "Identity & KYC",
+                items: [
+                  "Cleanverse A-Pass: cryptographic proof of real identity",
+                  "Verified on-chain per customer per transaction",
+                  "Tied to regulatory-grade identity provider",
+                  "Immutable audit trail",
+                ],
+              },
+              {
+                t: "Sanctions & OFAC",
+                items: [
+                  "A-Pass network screening against OFAC SDN list",
+                  "Real-time detection of flagged jurisdictions",
+                  "Automatic payment blocking on risk",
+                  "Audit-ready rejection logs",
+                ],
+              },
+              {
+                t: "Asset Compliance",
+                items: [
+                  "A-Token provenance tracking (origin + custody)",
+                  "Tier-based rules enforcement (min tier 5+ for most assets)",
+                  "Prevention of sanctioned or stolen funds",
+                  "Stablecoin-to-stablecoin traceability",
+                ],
+              },
+              {
+                t: "Travel Rule & Reporting",
+                items: [
+                  "Travel Rule receipt on every cross-border payment",
+                  "Beneficiary + originator details recorded on-chain",
+                  "FATF-compliant transaction metadata",
+                  "Ready for FinCEN / regulatory submissions",
+                ],
+              },
+            ].map((section) => (
+              <div key={section.t} className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="text-lg font-semibold text-foreground">{section.t}</h3>
+                <ul className="mt-3 space-y-2">
+                  {section.items.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-xs text-muted">
+                      <svg viewBox="0 0 24 24" className="mt-0.5 size-3.5 shrink-0 text-verify-500" fill="none">
+                        <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -454,6 +522,54 @@ export default function LandingPage() {
                 <p className="mt-2 text-sm leading-relaxed text-muted">{r.d}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Commercial Model */}
+      <section className="mx-auto max-w-5xl px-5 py-16">
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Built for merchants and institutions
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted">
+          VeriGate removes compliance overhead. Merchants get instant settlement. Regulators get proof.
+        </p>
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <h3 className="text-lg font-semibold text-foreground">For Merchants</h3>
+            <ul className="mt-4 space-y-3">
+              {[
+                "Pay-per-transaction model (0.5% settlement fee)",
+                "No monthly minimums or long-term contracts",
+                "Instant Monad settlement to any wallet",
+                "White-glove onboarding for enterprises",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-muted">
+                  <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-verify-500" fill="none">
+                    <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <h3 className="text-lg font-semibold text-foreground">For Institutions</h3>
+            <ul className="mt-4 space-y-3">
+              {[
+                "Compliance-as-a-service (A-Pass + Travel Rule + audit trail)",
+                "API-first design for fintech partners",
+                "Multi-merchant dashboard and settlement",
+                "Regulatory reporting (OFAC, AML, cross-border tracking)",
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-2 text-sm text-muted">
+                  <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-verify-500" fill="none">
+                    <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
