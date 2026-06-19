@@ -142,6 +142,26 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
           </p>
         )}
 
+        {/* Next steps */}
+        <div className="mt-5 rounded-xl border border-border bg-background/60 p-4">
+          <p className="text-sm font-semibold text-foreground">Next Steps</p>
+          <ul className="mt-3 space-y-2">
+            {[
+              "Verify wallet connection",
+              "Ensure MON is available for gas",
+              "Ensure aUSDC is available for payment",
+              "Proceed to checkout or create an invoice",
+            ].map((step) => (
+              <li key={step} className="flex items-start gap-2 text-xs text-foreground">
+                <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-verify-500" fill="none">
+                  <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                {step}
+              </li>
+            ))}
+          </ul>
+        </div>
+
         {/* Step 2: test tokens (optional) */}
         {phase === "issued" ? (
           <div className="mt-5 space-y-2">

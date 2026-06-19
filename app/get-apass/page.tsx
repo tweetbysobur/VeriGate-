@@ -1,5 +1,7 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { GetApassForm } from "@/components/apass/GetApassForm";
+import { PaymentReadinessCard } from "@/components/PaymentReadinessCard";
+import { TestnetFundingSection } from "@/components/TestnetFundingSection";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 
 export const dynamic = "force-dynamic";
@@ -58,8 +60,10 @@ export default function GetApassPage() {
         </section>
 
         {/* Right — the form */}
-        <section className="lg:pt-12">
+        <section className="space-y-6 lg:pt-12">
           <GetApassForm mode={mode} />
+          <PaymentReadinessCard />
+          <TestnetFundingSection />
         </section>
       </main>
 

@@ -1,6 +1,8 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { InvoicePanel } from "@/components/dashboard/InvoicePanel";
 import { LedgerStats } from "@/components/dashboard/LedgerStats";
+import { PaymentReadinessCard } from "@/components/PaymentReadinessCard";
+import { TestnetFundingSection } from "@/components/TestnetFundingSection";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 import { MERCHANT } from "@/lib/demo";
 import { listInvoices } from "@/lib/invoices";
@@ -48,6 +50,12 @@ export default async function DashboardPage() {
             Generate a payment link, share it with customers, and receive verified stablecoin
             settlements instantly. No wallet setup, no crypto knowledge needed.
           </span>
+        </div>
+
+        {/* Payment Readiness */}
+        <div className="space-y-6">
+          <PaymentReadinessCard />
+          <TestnetFundingSection />
         </div>
 
         {/* Stats — reflect your real activity on this device */}
