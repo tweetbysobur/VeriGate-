@@ -86,10 +86,10 @@ export function MobileNav({
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="vg-rise absolute right-0 top-0 flex h-full w-72 max-w-[82%] flex-col bg-card shadow-2xl ring-1 ring-border"
+            className="vg-rise absolute right-0 top-0 flex h-full w-72 max-w-[90%] flex-col bg-card shadow-2xl ring-1 ring-border"
           >
-            <div className="flex items-center justify-between border-b border-border px-4 py-3.5">
-              <span className="text-sm font-semibold text-foreground">Menu</span>
+            <div className="flex items-center justify-between border-b border-border bg-background/50 px-5 py-4">
+              <span className="text-sm font-bold text-foreground">Menu</span>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Close navigation menu"
@@ -99,24 +99,24 @@ export function MobileNav({
                   <path
                     d="M6 6l12 12M18 6 6 18"
                     stroke="currentColor"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
                     strokeLinecap="round"
                   />
                 </svg>
               </button>
             </div>
 
-            <nav className="flex flex-col gap-1 p-3" aria-label="Primary">
+            <nav className="flex flex-col gap-0.5 p-4" aria-label="Primary">
               {tabs.map((t) => (
                 <Link
                   key={t.id}
                   href={t.href}
                   onClick={() => setOpen(false)}
                   aria-current={active === t.id ? "page" : undefined}
-                  className={`rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                  className={`rounded-lg px-4 py-3 text-sm font-medium transition ${
                     active === t.id
-                      ? "bg-brand-500/10 text-brand-600"
-                      : "text-foreground hover:bg-background"
+                      ? "bg-brand-500/15 text-brand-600 font-semibold"
+                      : "text-foreground hover:bg-background/60"
                   }`}
                 >
                   {t.label}
