@@ -461,7 +461,7 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="mt-8 border-t border-border pt-6 text-center text-xs text-muted">
-            <p>Built by Gentlesoul HUB · Powered by Cleanverse A-Pass + A-Token</p>
+            <p>Powered by Cleanverse A-Pass + A-Token</p>
             <p className="mt-1">© 2026 VeriGate. All rights reserved.</p>
           </div>
         </div>

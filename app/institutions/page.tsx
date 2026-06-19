@@ -109,7 +109,7 @@ export default async function InstitutionsPage() {
 
       <footer className="border-t border-border py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted sm:flex-row">
-          <span>Built by Gentlesoul HUB · Powered by Cleanverse A-Pass + A-Token</span>
+          <span>Powered by Cleanverse A-Pass + A-Token</span>
           <span className="font-mono">VeriGate · {mode === "live" ? "live · sandbox" : "demo mode"}</span>
         </div>
       </footer>
