@@ -3,6 +3,7 @@ import { InvoicePanel } from "@/components/dashboard/InvoicePanel";
 import { LedgerStats } from "@/components/dashboard/LedgerStats";
 import { PaymentReadinessCard } from "@/components/PaymentReadinessCard";
 import { TestnetFundingSection } from "@/components/TestnetFundingSection";
+import { MerchantSettings } from "@/components/dashboard/MerchantSettings";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 import { MERCHANT } from "@/lib/demo";
 import { listInvoices } from "@/lib/invoices";
@@ -56,6 +57,7 @@ export default async function DashboardPage() {
         <div className="space-y-6">
           <PaymentReadinessCard />
           <TestnetFundingSection />
+          <MerchantSettings />
         </div>
 
         {/* Stats — reflect your real activity on this device */}

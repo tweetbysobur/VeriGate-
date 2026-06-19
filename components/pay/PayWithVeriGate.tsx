@@ -101,11 +101,25 @@ export function PayWithVeriGate({
     } catch (e) {
       throw new Error(walletErrorMessage(e));
     }
+
+    // Fetch the merchant's payout address from settings
+    let payoutAddress = merchant;
+    try {
+      const res = await fetch("/api/merchant/settings");
+      const data = await res.json();
+      if (data.ok && data.result.payoutAddress) {
+        payoutAddress = data.result.payoutAddress;
+      }
+    } catch (e) {
+      // Fallback to default merchant address if fetch fails
+      console.warn("Failed to fetch payout address, using default:", e);
+    }
+
     const { address: token, decimals } = settlementAtoken();
     const txHash = await sendAtokenTransfer({
       from: wallet.account!,
       token,
-      to: merchant,
+      to: payoutAddress,
       amount,
       decimals,
     });
