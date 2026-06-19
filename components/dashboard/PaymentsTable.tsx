@@ -27,16 +27,20 @@ function receiptHref(p: PaymentRecord): string {
 function StatusBadge({ p }: { p: PaymentRecord }) {
   if (p.status === "settled") {
     return (
-      <span className="inline-flex items-center gap-1 rounded-full bg-verify-500/10 px-2 py-0.5 text-[11px] font-semibold text-verify-600 ring-1 ring-verify-500/20">
-        <span className="size-1.5 rounded-full bg-verify-500" />
-        Settled
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-verify-500/15 px-2.5 py-1 text-[11px] font-bold text-verify-600 ring-1.5 ring-verify-500/40">
+        <svg viewBox="0 0 24 24" className="size-3.5" fill="none">
+          <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+        ✓ Settled
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-danger/10 px-2 py-0.5 text-[11px] font-semibold text-danger ring-1 ring-danger/20">
-      <span className="size-1.5 rounded-full bg-danger" />
-      Blocked
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-danger/20 px-2.5 py-1 text-[11px] font-bold text-danger ring-1.5 ring-danger/50">
+      <svg viewBox="0 0 24 24" className="size-3.5" fill="none">
+        <path d="M12 9v4m0 4h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+      ✗ Blocked
     </span>
   );
 }

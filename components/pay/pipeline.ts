@@ -17,32 +17,32 @@ export interface StepDef {
 export const STEP_DEFS: StepDef[] = [
   {
     id: "identity",
-    label: "Verify identity",
-    blurb: "A-Pass confirms the customer is a real, verified participant.",
+    label: "Check who you are",
+    blurb: "A-Pass verifies you're a real participant.",
     endpoint: "POST /verify_apass",
   },
   {
     id: "asset",
-    label: "Check asset compliance",
-    blurb: "A-Token carries provenance and regulatory controls.",
+    label: "Check the asset",
+    blurb: "A-Token is compliant and valid.",
     endpoint: "POST /atoken/rules",
   },
   {
     id: "compliance",
-    label: "Run compliance",
-    blurb: "Automated rules screen the transaction on-chain.",
+    label: "Screen the payment",
+    blurb: "Compliance rules check this is allowed.",
     endpoint: "POST /validator/verify",
   },
   {
     id: "settle",
-    label: "Settle",
-    blurb: "Fast, low-cost on-chain settlement.",
+    label: "Settle on Monad",
+    blurb: "Fast, real on-chain settlement.",
     endpoint: "on-chain transfer",
   },
   {
     id: "audit",
-    label: "Write audit record",
-    blurb: "An auditable Travel Rule receipt is written.",
+    label: "Save receipt",
+    blurb: "Auditable record for compliance.",
     endpoint: "POST /download_travel_rule",
   },
 ];
