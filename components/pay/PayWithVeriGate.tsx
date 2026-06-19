@@ -48,6 +48,14 @@ export function PayWithVeriGate({
   const [open, setOpen] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  // Inline A-Pass status for the active wallet (live mode).
+  type ApassStatus = "verified" | "none" | "restricted" | "unknown";
+  const [apass, setApass] = useState<{
+    checking: boolean;
+    status: ApassStatus | null;
+    tier?: string;
+  }>({ checking: false, status: null });
+
   // Customer = connected wallet (live) > manual address (live) > persona (mock).
   const customer = live
     ? wallet.account ?? address.trim()
@@ -58,14 +66,6 @@ export function PayWithVeriGate({
   const canPay = live
     ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) && apass.status === "verified"
     : true;
-
-  // Inline A-Pass status for the active wallet (live mode).
-  type ApassStatus = "verified" | "none" | "restricted" | "unknown";
-  const [apass, setApass] = useState<{
-    checking: boolean;
-    status: ApassStatus | null;
-    tier?: string;
-  }>({ checking: false, status: null });
 
   useEffect(() => {
     if (!live || !customer || !isLikelyAddress(chain, customer)) {
