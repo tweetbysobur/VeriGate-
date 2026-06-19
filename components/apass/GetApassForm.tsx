@@ -109,16 +109,16 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
   /* ---- Success view ---- */
   if (phase === "issued" || phase === "done") {
     return (
-      <div className="vg-rise rounded-2xl border border-border bg-card p-6 shadow-sm">
+      <div className="vg-rise rounded-2xl border-2 border-verify-500/30 bg-verify-500/5 p-6 shadow-lg">
         <div className="flex items-center gap-3">
-          <span className="grid size-11 place-items-center rounded-full bg-verify-500 text-white vg-pop">
-            <svg viewBox="0 0 24 24" className="vg-check size-6" fill="none">
+          <span className="grid size-14 place-items-center rounded-full bg-verify-500 text-white vg-pop shadow-lg">
+            <svg viewBox="0 0 24 24" className="vg-check size-7" fill="none">
               <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </span>
           <div>
-            <h3 className="text-lg font-semibold text-foreground">A-Pass issued 🎉</h3>
-            <p className="text-sm text-muted">Your wallet is now a verified participant.</p>
+            <h3 className="text-xl font-bold text-verify-600">✓ A-Pass Verified</h3>
+            <p className="mt-0.5 text-sm font-medium text-foreground">You're now eligible to make compliant payments</p>
           </div>
         </div>
 

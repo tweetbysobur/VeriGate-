@@ -16,6 +16,7 @@ export function InvoicePanel({ initial }: { initial: Invoice[] }) {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
+  const [created, setCreated] = useState<string | null>(null);
 
   // Refresh on focus so the list reflects payments made on the pay page.
   useEffect(() => {
@@ -54,6 +55,8 @@ export function InvoicePanel({ initial }: { initial: Invoice[] }) {
       setInvoices((prev) => [inv, ...prev]);
       setItem("");
       setAmount("");
+      setCreated(inv.id);
+      setTimeout(() => setCreated(null), 2500);
       copy(inv);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed");
@@ -109,6 +112,14 @@ export function InvoicePanel({ initial }: { initial: Invoice[] }) {
         </div>
       </div>
       {error && <p className="px-4 pt-2 text-xs text-danger">{error}</p>}
+      {created && (
+        <div className="mx-4 mt-3 rounded-lg border border-verify-500/30 bg-verify-500/5 px-3 py-2 text-xs font-medium text-verify-600 flex items-center gap-2">
+          <svg viewBox="0 0 24 24" className="size-4" fill="none">
+            <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          ✓ Invoice created · link copied to clipboard
+        </div>
+      )}
 
       {/* Invoice list */}
       <ul className="divide-y divide-border">

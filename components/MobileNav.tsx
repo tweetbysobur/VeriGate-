@@ -86,7 +86,7 @@ export function MobileNav({
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="vg-rise absolute right-0 top-0 flex h-full w-72 max-w-[90%] flex-col bg-card shadow-2xl ring-1 ring-border"
+            className="vg-rise absolute inset-y-0 right-0 w-72 max-w-[85vw] flex flex-col bg-card shadow-2xl ring-1 ring-border"
           >
             <div className="flex items-center justify-between border-b border-border bg-background/50 px-5 py-4">
               <span className="text-sm font-bold text-foreground">Menu</span>

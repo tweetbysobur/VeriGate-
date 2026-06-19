@@ -53,10 +53,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 export function Receipt({ data }: { data: ReceiptData }) {
   const meta = chainMeta(data.chain);
   return (
-    <div className="vg-rise">
+    <div className="vg-rise rounded-2xl border-2 border-verify-500/30 bg-verify-500/5 p-6">
       <div className="flex flex-col items-center text-center">
-        <span className="grid size-14 place-items-center rounded-full bg-verify-500 text-white vg-pop">
-          <svg viewBox="0 0 24 24" className="vg-check size-7" fill="none">
+        <span className="grid size-16 place-items-center rounded-full bg-verify-500 text-white vg-pop shadow-lg">
+          <svg viewBox="0 0 24 24" className="vg-check size-8" fill="none">
             <path
               d="m5 13 4 4L19 7"
               stroke="currentColor"
@@ -66,11 +66,14 @@ export function Receipt({ data }: { data: ReceiptData }) {
             />
           </svg>
         </span>
-        <h3 className="mt-3 text-lg font-semibold text-foreground">
-          Payment verified &amp; settled
+        <h3 className="mt-4 text-2xl font-bold text-verify-600">
+          ✓ Payment Complete
         </h3>
+        <p className="mt-2 text-base font-semibold text-foreground">
+          {fmtUsd(data.amount)} {data.currency} settled
+        </p>
         <p className="mt-1 text-sm text-muted">
-          {fmtUsd(data.amount)} {data.currency} · compliant &amp; auditable
+          Verified on Monad · fully auditable
         </p>
       </div>
 
