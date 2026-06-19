@@ -130,18 +130,28 @@ export default function LandingPage() {
           {/* CTAs */}
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
-              href="/dashboard"
+              href="/get-apass"
               className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:bg-brand-700"
             >
-              Create Invoice
+              <svg viewBox="0 0 24 24" className="size-4" fill="none">
+                <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Get your A-Pass
             </Link>
             <Link
               href="/dashboard"
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
             >
-              Try Payment Demo
+              Open the dashboard
             </Link>
           </div>
+
+          <p className="mt-6 text-center text-sm text-muted">
+            New here? Start by getting your A-Pass — verified identity in about a minute.{" "}
+            <Link href="/dashboard" className="text-brand-400 hover:text-brand-300">
+              Merchant dashboard
+            </Link>
+          </p>
         </div>
       </section>
 
