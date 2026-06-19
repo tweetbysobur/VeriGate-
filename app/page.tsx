@@ -145,33 +145,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Process Flow */}
-      <section className="border-t border-border bg-card/40">
-        <div className="mx-auto max-w-5xl px-5 py-16">
-          <div className="space-y-4 sm:space-y-0 sm:flex sm:items-center sm:justify-between">
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-semibold text-foreground">Merchant Creates Invoice</p>
-            </div>
-            <div className="hidden text-muted sm:block">↓</div>
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-semibold text-foreground">Customer Verifies Identity</p>
-            </div>
-            <div className="hidden text-muted sm:block">↓</div>
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-semibold text-foreground">Compliance Checks Pass</p>
-            </div>
-            <div className="hidden text-muted sm:block">↓</div>
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-semibold text-foreground">Payment Settles on Monad</p>
-            </div>
-            <div className="hidden text-muted sm:block">↓</div>
-            <div className="text-center sm:text-left">
-              <p className="text-sm font-semibold text-foreground">Receipt & Audit Log</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Feature Cards */}
       <section className="mx-auto max-w-5xl px-5 py-16">
         <div className="grid gap-6 lg:grid-cols-3">
