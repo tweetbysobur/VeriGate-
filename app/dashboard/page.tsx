@@ -38,15 +38,15 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        {/* Non-crypto reassurance */}
+        {/* How it works */}
         <div className="mb-6 flex items-start gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs text-muted">
           <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-brand-500" fill="none">
             <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
           </svg>
           <span>
-            <span className="font-medium text-foreground">No wallet needed to get paid.</span>{" "}
-            Create invoices and receive compliant settlements straight to your
-            payout address — only customers connect a wallet, to sign their payment.
+            <span className="font-medium text-foreground">Simple: create invoice, get paid.</span>{" "}
+            Generate a payment link, share it with customers, and receive verified stablecoin
+            settlements instantly. No wallet setup, no crypto knowledge needed.
           </span>
         </div>
 

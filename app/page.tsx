@@ -6,38 +6,38 @@ import { getCleanverseConfig } from "@/lib/cleanverse/config";
 
 const PROBLEMS = [
   {
-    t: "No verified identity",
-    d: "Wallets are anonymous. Businesses can't confirm who they're paid by or who they pay.",
+    t: "Crypto is risky for business",
+    d: "You can't verify who you're getting paid by. No receipts. No way to prove it to accountants.",
   },
   {
-    t: "No asset provenance",
-    d: "Tokens carry no record of origin. Funds can come from unknown or sanctioned sources.",
+    t: "Stablecoins have no compliance",
+    d: "Accept the wrong token from the wrong person, and you've got a legal problem.",
   },
   {
-    t: "No audit trail",
-    d: "Regulators ask for proof. Most crypto rails produce nothing an auditor accepts.",
+    t: "Payment processors won't touch it",
+    d: "Traditional payment gateways don't support crypto. You're stuck.",
   },
   {
-    t: "Locked-out institutions",
-    d: "Banks and fintechs avoid digital assets because they can't meet their own rules.",
+    t: "You need proof you're compliant",
+    d: "Banks, accountants, and regulators want to see verified transactions and audit trails.",
   },
 ];
 
 const PILLARS = [
   {
     n: "1",
-    t: "Verify identity",
-    d: "A-Pass confirms both merchant and customer are real, verified participants.",
+    t: "Know who you're dealing with",
+    d: "A-Pass verifies that buyers and sellers are real people. No anonymous transactions.",
   },
   {
     n: "2",
-    t: "Move compliant assets",
-    d: "A-Token carries provenance and regulatory controls inside each transaction.",
+    t: "Use compliant money",
+    d: "A-Token stablecoins are tied to verified, auditable origins. You're not exposed to sanctions.",
   },
   {
     n: "3",
-    t: "Prove it happened",
-    d: "Every payment runs automated checks and writes an auditable record.",
+    t: "Get proof on paper",
+    d: "Every transaction generates a receipt that banks, accountants, and regulators accept.",
   },
 ];
 
@@ -55,10 +55,27 @@ const COMPARE: Array<[string, string, string]> = [
   ["Institutions", "Locked out", "Able to participate"],
 ];
 
-const AUDIENCE = [
-  { t: "Merchants", d: "Accept stablecoin payments without taking on compliance risk." },
-  { t: "Fintechs", d: "Add compliant digital-asset rails to existing products." },
-  { t: "Regulated institutions", d: "Move funds with identity and audit proof built in." },
+const USE_CASES = [
+  {
+    t: "E-commerce",
+    d: "Online stores that want to accept stablecoin payments from global customers. No chargebacks, instant settlement, verified buyers.",
+    icon: "🛍️"
+  },
+  {
+    t: "Freelancers & Agencies",
+    d: "Get paid instantly in stablecoin for design, dev, or marketing work. No payment processor fees, verified clients.",
+    icon: "💻"
+  },
+  {
+    t: "SaaS Subscriptions",
+    d: "Monthly subscriptions in stablecoin. Lower fees than credit cards, global reach, instant settlement.",
+    icon: "⚙️"
+  },
+  {
+    t: "Cross-border B2B",
+    d: "Pay suppliers and partners globally in stablecoin. Faster than wire transfers, verified counterparties, complete audit trail.",
+    icon: "🌍"
+  },
 ];
 
 const ROADMAP = [
@@ -83,13 +100,11 @@ export default function LandingPage() {
             Compliance-first payments · built on Monad
           </span>
           <h1 className="mx-auto mt-6 max-w-3xl text-balance text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
-            Compliant stablecoin payments,{" "}
-            <span className="text-brand-500">finally usable.</span>
+            Get paid in stablecoin.{" "}
+            <span className="text-brand-500">No compliance headaches.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-balance text-lg text-muted">
-            VeriGate checks identity and asset compliance before money moves, then
-            records proof — verified participants and compliant assets in, an
-            auditable receipt out.
+            VeriGate is the payment gateway for merchants, freelancers, and SaaS businesses who want to accept stablecoin payments without the legal risk. Identity verified, asset compliant, audit proof included.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
@@ -240,33 +255,22 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Audience + opportunity */}
+      {/* Use cases */}
       <section className="mx-auto max-w-5xl px-5 py-16">
-        <div className="grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-              Built for businesses that answer to regulators
-            </h2>
-            <div className="mt-6 space-y-3">
-              {AUDIENCE.map((a) => (
-                <div key={a.t} className="flex items-start gap-3">
-                  <svg viewBox="0 0 24 24" className="mt-0.5 size-5 shrink-0 text-verify-500" fill="none">
-                    <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                  <p className="text-sm text-foreground">
-                    <span className="font-semibold">{a.t}</span> — {a.d}
-                  </p>
-                </div>
-              ))}
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Who uses VeriGate tomorrow
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted">
+          Real businesses getting paid in stablecoin without the legal risk.
+        </p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {USE_CASES.map((u) => (
+            <div key={u.t} className="rounded-2xl border border-border bg-card p-5">
+              <p className="text-3xl">{u.icon}</p>
+              <h3 className="mt-3 text-sm font-semibold text-foreground">{u.t}</h3>
+              <p className="mt-2 text-xs leading-relaxed text-muted">{u.d}</p>
             </div>
-          </div>
-          <div className="rounded-2xl border border-brand-200 bg-gradient-to-br from-brand-500/10 to-transparent p-8 text-center">
-            <p className="text-4xl font-bold tracking-tight text-brand-600">$250B+</p>
-            <p className="mt-2 text-sm text-muted">
-              in stablecoins in circulation, but most businesses can&apos;t touch it
-              without compliance rails. VeriGate is the rail that lets them.
-            </p>
-          </div>
+          ))}
         </div>
       </section>
 

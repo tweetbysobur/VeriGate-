@@ -5,10 +5,10 @@ import { getCleanverseConfig } from "@/lib/cleanverse/config";
 export const dynamic = "force-dynamic";
 
 const STEPS = [
-  { t: "Tell us who you are", d: "Enter your wallet and a few identity details." },
-  { t: "Get your A-Pass", d: "We verify and mint your on-chain identity pass." },
-  { t: "Grab test tokens", d: "Receive test aUSDC so you have something to spend." },
-  { t: "Pay with VeriGate", d: "Make a fully compliant, auditable payment." },
+  { t: "Verify your identity", d: "Enter basic info (name, ID, location). Takes 1 minute." },
+  { t: "Get your A-Pass", d: "Your wallet is now verified as a real participant." },
+  { t: "Claim test stablecoin", d: "Get free test aUSDC to try out a payment." },
+  { t: "Start accepting payments", d: "Share invoice links with customers and get paid." },
 ];
 
 export default function GetApassPage() {
@@ -25,13 +25,12 @@ export default function GetApassPage() {
             Verified identity
           </span>
           <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
-            Get your A-Pass
+            Get verified in 60 seconds
           </h1>
           <p className="mt-3 text-balance text-muted">
-            An <strong className="text-foreground">A-Pass</strong> is your verified
-            identity on-chain — it proves your wallet belongs to a real, checked
-            participant. Wallets without one can&apos;t send or receive compliant
-            payments. Getting one takes about a minute.
+            An <strong className="text-foreground">A-Pass</strong> proves you're a real person.
+            Once verified, you can accept stablecoin payments with confidence — your customers
+            are verified too, and every transaction leaves an audit trail. Banks and accountants accept this.
           </p>
 
           <ol className="mt-8 space-y-4">
