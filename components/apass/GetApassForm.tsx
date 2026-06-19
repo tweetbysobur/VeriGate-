@@ -45,9 +45,9 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
   const [fauceting, setFauceting] = useState(false);
 
   const effectiveAddress = (wallet.account ?? address).trim();
-  const canSubmit =
-    /^0x[a-fA-F0-9]{40}$/.test(effectiveAddress) &&
-    fullName.trim().length > 1;
+  const validAddress = /^0x[a-fA-F0-9]{40}$/.test(effectiveAddress);
+  const validName = fullName.trim().length > 2;
+  const canSubmit = validAddress && validName;
 
   async function issue() {
     setPhase("issuing");
@@ -282,10 +282,16 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
         disabled={!canSubmit || phase === "issuing"}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-500 py-3 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {phase === "issuing" ? "Issuing your A-Pass…" : "Issue my A-Pass"}
+        {phase === "issuing" ? "Verifying with Cleanverse…" : "Issue my A-Pass"}
       </button>
-      <p className="mt-2 text-center text-[11px] text-muted">
-        {mode === "live" ? "Live · issues a real A-Pass on " + chain : "Demo mode · simulated"}
+
+      <div className="mt-3 rounded-lg border border-verify-500/20 bg-verify-500/5 p-2.5 text-[11px] text-muted">
+        <p className="font-medium text-verify-600">✓ Identity will be verified</p>
+        <p className="mt-1">Cleanverse validates your name, ID type, and country before issuing an A-Pass. Only verified participants can pay.</p>
+      </div>
+
+      <p className="mt-3 text-center text-[11px] text-muted">
+        {mode === "live" ? "Live · real identity verification via Cleanverse" : "Demo mode · simulated identity"}
       </p>
     </div>
   );
