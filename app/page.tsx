@@ -104,21 +104,21 @@ export default function LandingPage() {
           </p>
 
           {/* Trust Indicators */}
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 text-xs font-medium text-brand-200 sm:flex-row">
+          <div className="mt-8 inline-flex items-center gap-6 rounded-lg border border-brand-500/30 bg-brand-500/10 px-6 py-3 text-xs font-medium text-foreground sm:gap-8">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
                 <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Powered by Cleanverse A-Pass
             </div>
-            <div className="hidden sm:block text-border">·</div>
+            <div className="hidden text-border sm:block">·</div>
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
                 <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Built on Monad
             </div>
-            <div className="hidden sm:block text-border">·</div>
+            <div className="hidden text-border sm:block">·</div>
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
                 <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
