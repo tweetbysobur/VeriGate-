@@ -79,15 +79,23 @@ function fromVerify(
     // enforces real KYC. Only annotate live (real-API) sandbox calls.
     const sandboxNote =
       source === "live" && getCleanverseConfig().env === "sandbox"
-        ? " · sandbox (test verification)"
+        ? "sandbox (test verification)"
         : "";
+
+    // Build the detail from only the segments we actually have, so empty
+    // group/subGroup fields (common in sandbox) don't render as "group  /".
+    const parts: string[] = ["A-Pass active"];
+    if (apass?.tier) parts.push(`tier ${apass.tier}`);
+    const group = apass?.group?.trim();
+    const subGroup = apass?.subGroup?.trim();
+    if (group) parts.push(`group ${group}${subGroup ? "/" + subGroup : ""}`);
+    if (!apass?.tier) parts.push("transfer allowed");
+    if (sandboxNote) parts.push(sandboxNote);
+
     return {
       ok: true,
       title: "Identity verified",
-      detail:
-        (apass?.tier
-          ? `A-Pass active · tier ${apass.tier} · group ${apass.group ?? "—"}${apass.subGroup ? "/" + apass.subGroup : ""}`
-          : "A-Pass active · transfer allowed") + sandboxNote,
+      detail: parts.join(" · "),
       payload,
       source,
     };
