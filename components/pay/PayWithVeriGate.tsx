@@ -16,6 +16,7 @@ import {
 import { VeriGateMark } from "@/components/Logo";
 import { NetworkBadge } from "@/components/MonadMark";
 import { PayModal } from "./PayModal";
+import { TierRuleInfo } from "./TierRuleInfo";
 import { useWallet } from "./useWallet";
 
 const PERSONA_ORDER: Persona[] = ["verified", "no-apass", "frozen", "low-tier"];
@@ -317,6 +318,11 @@ export function PayWithVeriGate({
             </>
           )}
         </div>
+      )}
+
+      {/* Tier Rule Info: Show compliance limits */}
+      {live && apass.status === "verified" && apass.tier && (
+        <TierRuleInfo tier={apass.tier} paymentAmount={amount} />
       )}
 
       {/* Settlement mode hint */}
