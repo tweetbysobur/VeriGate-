@@ -310,7 +310,9 @@ export function PayModal({
           {phase === "review" ? (
             <ReviewPanel customer={customer} chain={chain} />
           ) : phase === "success" && receipt ? (
-            <Receipt data={receipt} />
+            <div className="vg-rise">
+              <Receipt data={receipt} />
+            </div>
           ) : (
             <>
               <ol className="mt-1">

@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { GetApassForm } from "@/components/apass/GetApassForm";
 import { PaymentReadinessCard } from "@/components/PaymentReadinessCard";
 import { TestnetFundingSection } from "@/components/TestnetFundingSection";
+import { Reveal } from "@/components/motion/Reveal";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 
 export const dynamic = "force-dynamic";
@@ -23,21 +24,21 @@ export default function GetApassPage() {
       <main className="mx-auto grid w-full max-w-5xl flex-1 gap-8 px-5 py-10 lg:grid-cols-[0.9fr_1.1fr] lg:py-14">
         {/* Left — explainer + steps */}
         <section>
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-brand-600">
+          <Reveal variant="left" className="inline-flex w-fit items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-brand-600">
             Verified identity
-          </span>
-          <h1 className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
+          </Reveal>
+          <Reveal as="h1" delay={80} variant="left" className="mt-4 text-3xl font-semibold tracking-tight text-foreground">
             Get verified in 60 seconds
-          </h1>
-          <p className="mt-3 text-balance text-muted">
+          </Reveal>
+          <Reveal as="p" delay={160} variant="left" className="mt-3 text-balance text-muted">
             An <strong className="text-foreground">A-Pass</strong> proves you're a real person.
             Once verified, you can accept stablecoin payments with confidence — your customers
             are verified too, and every transaction leaves an audit trail. Banks and accountants accept this.
-          </p>
+          </Reveal>
 
           <ol className="mt-8 space-y-4">
             {STEPS.map((s, i) => (
-              <li key={s.t} className="flex items-start gap-3">
+              <Reveal as="li" key={s.t} variant="left" delay={240 + i * 90} className="flex items-start gap-3">
                 <span className="grid size-7 shrink-0 place-items-center rounded-full bg-brand-500/10 text-xs font-bold text-brand-600">
                   {i + 1}
                 </span>
@@ -45,7 +46,7 @@ export default function GetApassPage() {
                   <p className="text-sm font-semibold text-foreground">{s.t}</p>
                   <p className="text-xs text-muted">{s.d}</p>
                 </div>
-              </li>
+              </Reveal>
             ))}
           </ol>
 
@@ -60,11 +61,11 @@ export default function GetApassPage() {
         </section>
 
         {/* Right — the form */}
-        <section className="space-y-6 lg:pt-12">
+        <Reveal as="section" variant="right" delay={120} className="space-y-6 lg:pt-12">
           <GetApassForm mode={mode} />
           <PaymentReadinessCard />
           <TestnetFundingSection />
-        </section>
+        </Reveal>
       </main>
 
       <footer className="border-t border-border py-5">

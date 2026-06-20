@@ -11,6 +11,7 @@
 function Monogram({ color, sw = 5.5 }: { color: string; sw?: number; idp?: string }) {
   return (
     <g
+      className="vg-mono"
       stroke={color}
       strokeWidth={sw}
       strokeLinecap="round"
@@ -31,9 +32,25 @@ function Monogram({ color, sw = 5.5 }: { color: string; sw?: number; idp?: strin
  * App-icon / badge mark: gradient squircle with the white monogram.
  * Scales cleanly from favicon to billboard.
  */
-export function VeriGateMark({ size = 32, idp = "m" }: { size?: number; idp?: string }) {
+export function VeriGateMark({
+  size = 32,
+  idp = "m",
+  animated = false,
+}: {
+  size?: number;
+  idp?: string;
+  /** Draws the monogram strokes + a soft badge breathe (see globals.css). */
+  animated?: boolean;
+}) {
   return (
-    <svg width={size} height={size} viewBox="0 0 64 64" fill="none" aria-hidden="true">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="none"
+      aria-hidden="true"
+      className={animated ? "vg-mark-animated" : undefined}
+    >
       <defs>
         <linearGradient
           id={`vg-badge-${idp}`}
@@ -47,7 +64,15 @@ export function VeriGateMark({ size = 32, idp = "m" }: { size?: number; idp?: st
           <stop offset="1" stopColor="#7C4DFF" />
         </linearGradient>
       </defs>
-      <rect x="2" y="2" width="60" height="60" rx="16" fill={`url(#vg-badge-${idp})`} />
+      <rect
+        className="vg-badge-rect"
+        x="2"
+        y="2"
+        width="60"
+        height="60"
+        rx="16"
+        fill={`url(#vg-badge-${idp})`}
+      />
       <Monogram color="#ffffff" idp={`b${idp}`} />
     </svg>
   );

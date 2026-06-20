@@ -154,3 +154,152 @@ body {
   stroke-dashoffset: 28;
   animation: vg-draw 0.4s ease 0.05s forwards;
 }
+
+/* ---------------------------------------------------------------------------
+   Motion design layer — scroll reveals, hero entrance, brand shimmer, lifts.
+   Everything below collapses to "no motion" under prefers-reduced-motion.
+   --------------------------------------------------------------------------- */
+
+/* Scroll-reveal: hidden until <Reveal> adds .is-in when it enters the viewport.
+   Per-element stagger via inline `--vg-delay`. */
+.vg-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 0.6s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: var(--vg-delay, 0ms);
+  will-change: opacity, transform;
+}
+.vg-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* Directional variants */
+.vg-reveal-left { transform: translateX(-22px); }
+.vg-reveal-right { transform: translateX(22px); }
+.vg-reveal-scale { transform: scale(0.94); }
+.vg-reveal-left.is-in,
+.vg-reveal-right.is-in,
+.vg-reveal-scale.is-in { transform: none; }
+
+/* Hover lift — premium card/CTA feel. Pair with a transition utility. */
+.vg-lift {
+  transition:
+    transform 0.25s cubic-bezier(0.22, 0.61, 0.36, 1),
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+.vg-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -12px color-mix(in srgb, var(--brand-700) 45%, transparent);
+  border-color: color-mix(in srgb, var(--brand-400) 50%, var(--border));
+}
+
+/* Brand gradient shimmer — for the wordmark and hero accents. */
+@keyframes vg-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+.vg-shimmer {
+  background-image: linear-gradient(
+    100deg,
+    #5b5bf7 0%, #7c4dff 25%, #a78bfa 40%, #7c4dff 55%, #5b5bf7 80%
+  );
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: vg-shimmer 5s linear infinite;
+}
+
+/* Sheen sweep across a primary CTA on hover. */
+.vg-sheen { position: relative; overflow: hidden; }
+.vg-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-130%) skewX(-18deg);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, #ffffff 38%, transparent),
+    transparent
+  );
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.vg-sheen:hover::after { transform: translateX(130%) skewX(-18deg); }
+
+/* Arrow nudge for "→" inside CTAs. */
+.vg-cta .vg-arrow { transition: transform 0.25s ease; }
+.vg-cta:hover .vg-arrow { transform: translateX(3px); }
+
+/* Logo: draw the monogram strokes, then a soft badge breathe. */
+@keyframes vg-breathe {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 transparent); }
+  50% { transform: scale(1.035); filter: drop-shadow(0 4px 14px color-mix(in srgb, var(--brand-500) 45%, transparent)); }
+}
+.vg-mark-animated .vg-mono path {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: vg-draw 1s ease forwards;
+}
+.vg-mark-animated .vg-mono path:nth-child(2) { animation-delay: 0.35s; }
+.vg-mark-animated .vg-mono path:nth-child(3) { animation-delay: 0.7s; }
+.vg-mark-animated .vg-badge-rect {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: vg-breathe 4.5s ease-in-out 1s infinite;
+}
+
+/* Animated flow connector — a pulse that travels the 5-step rail. */
+@keyframes vg-flow {
+  0% { background-position: -40% 0; }
+  100% { background-position: 140% 0; }
+}
+.vg-flow-rail {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--brand-500) 70%, transparent) 50%,
+    transparent 100%
+  );
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: vg-flow 2.4s linear infinite;
+}
+
+/* Floating idle motion for hero ornaments. */
+@keyframes vg-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.vg-float { animation: vg-float 6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .vg-reveal,
+  .vg-reveal-left,
+  .vg-reveal-right,
+  .vg-reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .vg-spin,
+  .vg-pop,
+  .vg-rise,
+  .vg-shimmer,
+  .vg-float,
+  .vg-flow-rail,
+  .vg-indeterminate::after,
+  .vg-mark-animated .vg-mono path,
+  .vg-mark-animated .vg-badge-rect,
+  .vg-pulse-ring,
+  .vg-check path {
+    animation: none !important;
+  }
+  .vg-mark-animated .vg-mono path { stroke-dashoffset: 0 !important; }
+  .vg-lift:hover { transform: none; }
+  .vg-sheen::after { display: none; }
+}

@@ -5,6 +5,7 @@ import { PaymentReadinessCard } from "@/components/PaymentReadinessCard";
 import { TestnetFundingSection } from "@/components/TestnetFundingSection";
 import { MerchantSettings } from "@/components/dashboard/MerchantSettings";
 import { ComplianceExport } from "@/components/dashboard/ComplianceExport";
+import { Reveal } from "@/components/motion/Reveal";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 import { MERCHANT } from "@/lib/demo";
 import { listInvoices } from "@/lib/invoices";
@@ -21,7 +22,7 @@ export default async function DashboardPage() {
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8">
         {/* Heading */}
-        <div className="mb-6 flex items-end justify-between gap-4">
+        <Reveal className="mb-6 flex items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-semibold text-foreground">{MERCHANT.name}</h1>
@@ -40,10 +41,10 @@ export default async function DashboardPage() {
               {MERCHANT.wallet.slice(0, 10)}…{MERCHANT.wallet.slice(-6)}
             </p>
           </div>
-        </div>
+        </Reveal>
 
         {/* How it works */}
-        <div className="mb-6 flex items-start gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs text-muted">
+        <Reveal delay={90} className="mb-6 flex items-start gap-2 rounded-xl border border-border bg-card px-4 py-2.5 text-xs text-muted">
           <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-brand-500" fill="none">
             <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
           </svg>
@@ -52,7 +53,7 @@ export default async function DashboardPage() {
             Generate a payment link, share it with customers, and receive verified stablecoin
             settlements instantly. No wallet setup, no crypto knowledge needed.
           </span>
-        </div>
+        </Reveal>
 
         {/* Payment Readiness */}
         <div className="space-y-6">

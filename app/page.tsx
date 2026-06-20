@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { VeriGateMark } from "@/components/Logo";
+import { Reveal } from "@/components/motion/Reveal";
 import { STEP_DEFS } from "@/components/pay/pipeline";
 import { getCleanverseConfig } from "@/lib/cleanverse/config";
 
@@ -95,18 +96,28 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-grid pt-8 sm:pt-6">
-        <div className="mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
-          <h1 className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Compliant stablecoin payments,{" "}
-            <span className="text-brand-600">finally usable.</span>
-          </h1>
+        {/* Floating ambient ornaments */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="vg-float absolute -left-16 top-24 size-64 rounded-full bg-brand-500/10 blur-3xl" />
+          <div className="vg-float absolute -right-10 top-40 size-72 rounded-full bg-[#7C4DFF]/10 blur-3xl" style={{ animationDelay: "1.5s" }} />
+        </div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted">
+        <div className="relative mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
+          <Reveal variant="scale" className="mx-auto mb-7 w-fit">
+            <VeriGateMark size={64} idp="hero" animated />
+          </Reveal>
+
+          <Reveal as="h1" delay={80} className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            Compliant stablecoin payments,{" "}
+            <span className="vg-shimmer">finally usable.</span>
+          </Reveal>
+
+          <Reveal as="p" delay={180} className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted">
             VeriGate checks identity and asset compliance before money moves, then records proof — verified participants and compliant assets in, an auditable receipt out.
-          </p>
+          </Reveal>
 
           {/* Trust Indicators */}
-          <div className="mt-8 inline-flex items-center gap-6 rounded-lg border border-brand-500/30 bg-brand-500/10 px-6 py-3 text-xs font-medium text-foreground sm:gap-8">
+          <Reveal delay={280} className="mt-8 inline-flex items-center gap-6 rounded-lg border border-brand-500/30 bg-brand-500/10 px-6 py-3 text-xs font-medium text-foreground sm:gap-8">
             <div className="flex items-center gap-2">
               <svg viewBox="0 0 24 24" className="size-4 text-verify-500" fill="none">
                 <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -127,26 +138,27 @@ export default function LandingPage() {
               </svg>
               Audit-Ready Transactions
             </div>
-          </div>
+          </Reveal>
 
           {/* CTAs */}
-          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Reveal delay={360} className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/get-apass"
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:bg-brand-700"
+              className="vg-cta vg-sheen inline-flex items-center gap-2 rounded-lg bg-brand-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-600/30 transition hover:bg-brand-700 hover:shadow-brand-600/40"
             >
               <svg viewBox="0 0 24 24" className="size-4" fill="none">
                 <path d="m5 13 4 4L19 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               Get your A-Pass
+              <span aria-hidden className="vg-arrow">→</span>
             </Link>
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition hover:bg-background"
+              className="vg-lift inline-flex items-center gap-2 rounded-lg border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground"
             >
               Open the dashboard
             </Link>
-          </div>
+          </Reveal>
 
           <p className="mt-6 text-center text-sm text-muted">
             New here? Start by getting your A-Pass — verified identity in about a minute.{" "}
@@ -160,7 +172,7 @@ export default function LandingPage() {
       {/* Feature Cards */}
       <section className="mx-auto max-w-5xl px-5 py-16">
         <div className="grid gap-6 lg:grid-cols-3">
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="vg-lift rounded-2xl border border-border bg-card p-6">
             <div className="flex size-10 items-center justify-center rounded-lg bg-verify-500/10">
               <svg viewBox="0 0 24 24" className="size-6 text-verify-600" fill="none">
                 <path d="M9 12.5l2 2 4-4.5M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -170,7 +182,7 @@ export default function LandingPage() {
             <p className="mt-2 text-sm text-muted">Every payer is verified through Cleanverse A-Pass before payment.</p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="vg-lift rounded-2xl border border-border bg-card p-6">
             <div className="flex size-10 items-center justify-center rounded-lg bg-brand-500/10">
               <svg viewBox="0 0 24 24" className="size-6 text-brand-600" fill="none">
                 <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -180,7 +192,7 @@ export default function LandingPage() {
             <p className="mt-2 text-sm text-muted">Compliance requirements are enforced before funds move.</p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="vg-lift rounded-2xl border border-border bg-card p-6">
             <div className="flex size-10 items-center justify-center rounded-lg bg-foreground/5">
               <svg viewBox="0 0 24 24" className="size-6 text-foreground/60" fill="none">
                 <path d="M9 12h6m-6 4h6M9 8h6M4 4h16a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -200,7 +212,7 @@ export default function LandingPage() {
           </h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {PROBLEMS.map((p) => (
-              <div key={p.t} className="rounded-2xl border border-border bg-card p-5">
+              <div key={p.t} className="vg-lift rounded-2xl border border-border bg-card p-5">
                 <span className="grid size-8 place-items-center rounded-lg bg-danger/10 text-danger">
                   <svg viewBox="0 0 24 24" className="size-4" fill="none">
                     <path d="M6 6l12 12M18 6 6 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
@@ -225,7 +237,7 @@ export default function LandingPage() {
         </p>
         <div className="mt-8 grid gap-4 lg:grid-cols-3">
           {PILLARS.map((p) => (
-            <div key={p.t} className="rounded-2xl border border-border bg-card p-6">
+            <div key={p.t} className="vg-lift rounded-2xl border border-border bg-card p-6">
               <span className="grid size-9 place-items-center rounded-xl bg-brand-500/10 text-sm font-bold text-brand-600">
                 {p.n}
               </span>
@@ -239,26 +251,39 @@ export default function LandingPage() {
       {/* How it works — 5 steps */}
       <section className="border-y border-border bg-card/40">
         <div className="mx-auto max-w-5xl px-5 py-16">
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          <Reveal as="h2" className="text-2xl font-semibold tracking-tight text-foreground">
             How a payment moves through VeriGate
-          </h2>
-          <p className="mt-2 text-sm text-muted">
+          </Reveal>
+          <Reveal as="p" delay={80} className="mt-2 text-sm text-muted">
             Verified participants and compliant assets in. Proof out. No step is skipped.
-          </p>
-          <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {STEP_DEFS.map((s, i) => (
-              <li key={s.id} className="relative rounded-2xl border border-border bg-card p-5">
-                <span className="text-xs font-semibold uppercase tracking-wide text-brand-500">
-                  Step {i + 1}
-                </span>
-                <h3 className="mt-2 text-sm font-semibold text-foreground">{s.label}</h3>
-                <p className="mt-1 text-xs leading-relaxed text-muted">{s.blurb}</p>
-                <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-muted/70">
-                  {s.endpoint}
-                </p>
-              </li>
-            ))}
-          </ol>
+          </Reveal>
+          <div className="relative mt-8">
+            {/* Animated flow rail behind the steps (desktop) */}
+            <div
+              aria-hidden
+              className="vg-flow-rail absolute left-0 right-0 top-[26px] hidden h-px lg:block"
+            />
+            <ol className="relative grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              {STEP_DEFS.map((s, i) => (
+                <Reveal
+                  as="li"
+                  key={s.id}
+                  variant="up"
+                  delay={i * 110}
+                  className="vg-lift relative rounded-2xl border border-border bg-card p-5"
+                >
+                  <span className="text-xs font-semibold uppercase tracking-wide text-brand-500">
+                    Step {i + 1}
+                  </span>
+                  <h3 className="mt-2 text-sm font-semibold text-foreground">{s.label}</h3>
+                  <p className="mt-1 text-xs leading-relaxed text-muted">{s.blurb}</p>
+                  <p className="mt-3 font-mono text-[10px] uppercase tracking-wide text-muted/70">
+                    {s.endpoint}
+                  </p>
+                </Reveal>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
@@ -310,7 +335,7 @@ export default function LandingPage() {
                 ],
               },
             ].map((section) => (
-              <div key={section.t} className="rounded-2xl border border-border bg-card p-6">
+              <div key={section.t} className="vg-lift rounded-2xl border border-border bg-card p-6">
                 <h3 className="text-lg font-semibold text-foreground">{section.t}</h3>
                 <ul className="mt-3 space-y-2">
                   {section.items.map((item) => (
@@ -335,7 +360,7 @@ export default function LandingPage() {
         </h2>
         <div className="mt-8 grid gap-4 lg:grid-cols-3">
           {LAYERS.map((l) => (
-            <div key={l.t} className="rounded-2xl border border-border bg-card p-6">
+            <div key={l.t} className="vg-lift rounded-2xl border border-border bg-card p-6">
               <h3 className="text-lg font-semibold text-foreground">{l.t}</h3>
               <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
                 {l.s}
@@ -392,7 +417,7 @@ export default function LandingPage() {
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {USE_CASES.map((u) => (
-            <div key={u.t} className="rounded-2xl border border-border bg-card p-5">
+            <div key={u.t} className="vg-lift rounded-2xl border border-border bg-card p-5">
               <p className="text-3xl">{u.icon}</p>
               <h3 className="mt-3 text-sm font-semibold text-foreground">{u.t}</h3>
               <p className="mt-2 text-xs leading-relaxed text-muted">{u.d}</p>
@@ -412,7 +437,7 @@ export default function LandingPage() {
             the merchant and the customer — every payment, both ends.
           </p>
           <div className="mt-8 grid gap-4 lg:grid-cols-2">
-            <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="vg-lift rounded-2xl border border-border bg-card p-6">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-600">
                 For merchants
               </span>
@@ -434,7 +459,7 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-border bg-card p-6">
+            <div className="vg-lift rounded-2xl border border-border bg-card p-6">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-verify-500/10 px-2.5 py-1 text-xs font-semibold text-verify-600">
                 For customers
               </span>
@@ -517,7 +542,7 @@ export default function LandingPage() {
           </h2>
           <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {ROADMAP.map((r) => (
-              <div key={r.p} className="rounded-2xl border border-border bg-card p-6">
+              <div key={r.p} className="vg-lift rounded-2xl border border-border bg-card p-6">
                 <h3 className="text-sm font-semibold text-brand-600">{r.p}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{r.d}</p>
               </div>
@@ -535,7 +560,7 @@ export default function LandingPage() {
           VeriGate removes compliance overhead. Merchants get instant settlement. Regulators get proof.
         </p>
         <div className="mt-8 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="vg-lift rounded-2xl border border-border bg-card p-6">
             <h3 className="text-lg font-semibold text-foreground">For Merchants</h3>
             <ul className="mt-4 space-y-3">
               {[
@@ -553,7 +578,7 @@ export default function LandingPage() {
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
+          <div className="vg-lift rounded-2xl border border-border bg-card p-6">
             <h3 className="text-lg font-semibold text-foreground">For Institutions</h3>
             <ul className="mt-4 space-y-3">
               {[
@@ -586,10 +611,11 @@ export default function LandingPage() {
         <div className="mt-8 flex justify-center">
           <Link
             href="/dashboard"
-            className="inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
+            className="vg-cta vg-sheen inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
           >
             <VeriGateMark size={18} />
             Try the demo
+            <span aria-hidden className="vg-arrow">→</span>
           </Link>
         </div>
       </section>
