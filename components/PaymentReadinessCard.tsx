@@ -27,10 +27,6 @@ async function checkApassStatus(address: string): Promise<{ verified: boolean; t
   }
 }
 
-async function getBalances(_address: string): Promise<{ mon: number; ausdc: number }> {
-  return { mon: 0.5, ausdc: 100 };
-}
-
 export function PaymentReadinessCard() {
   const wallet = useWallet();
   const [status, setStatus] = useState<ReadinessStatus>({
@@ -50,17 +46,14 @@ export function PaymentReadinessCard() {
       }
 
       setLoading(true);
-      const [apass, balances] = await Promise.all([
-        checkApassStatus(wallet.account),
-        getBalances(wallet.account),
-      ]);
+      const apass = await checkApassStatus(wallet.account);
 
-      const ready = apass.verified && balances.mon > 0 && balances.ausdc > 0;
+      const ready = apass.verified;
       setStatus({
         walletConnected: true,
         apassVerified: apass.verified,
-        monBalance: balances.mon,
-        ausducBalance: balances.ausdc,
+        monBalance: 0,
+        ausducBalance: 0,
         apassTier: apass.tier,
         isReady: ready,
       });
@@ -80,16 +73,6 @@ export function PaymentReadinessCard() {
       label: "A-Pass Status",
       status: status.apassVerified,
       value: status.apassVerified ? `Verified · Tier ${status.apassTier}` : "Not verified",
-    },
-    {
-      label: "MON Balance",
-      status: status.monBalance > 0,
-      value: `${status.monBalance} MON`,
-    },
-    {
-      label: "aUSDC Balance",
-      status: status.ausducBalance > 0,
-      value: `${status.ausducBalance} aUSDC`,
     },
     {
       label: "Network",
