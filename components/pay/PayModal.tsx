@@ -141,12 +141,22 @@ export function PayModal({
               payload: { txHash: res.txHash, blockNumber: res.blockNumber },
             });
           } catch (e) {
+            const reason =
+              e instanceof Error ? e.message : "Wallet transaction failed.";
             patch("settle", {
               status: "failed",
               title: "Settlement failed",
-              detail:
-                e instanceof Error ? e.message : "Wallet transaction failed.",
+              detail: reason,
               source: "live",
+            });
+            recordAttempt({
+              customer,
+              chain,
+              amount,
+              currency,
+              status: "blocked",
+              blockReason: "Settlement failed",
+              apassTier,
             });
             setPhase("failed");
             runningRef.current = false;

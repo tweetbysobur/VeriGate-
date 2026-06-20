@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { PaymentRecord, PaymentStatus } from "@/lib/cleanverse/types";
 import { chainMeta, fmtUsd, shortAddr, timeAgo } from "@/lib/demo";
+import { MonadMark } from "@/components/MonadMark";
 
 type Filter = "all" | PaymentStatus;
 
@@ -22,6 +23,19 @@ function receiptHref(p: PaymentRecord): string {
       : {}),
   });
   return `/receipt/${p.id}?${q.toString()}`;
+}
+
+/** Network chip — shows the Monad mark alongside the chain name. */
+function NetworkPill({ p }: { p: PaymentRecord }) {
+  const meta = chainMeta(p.chain);
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[11px] font-semibold ring-1 ${meta.tint}`}
+    >
+      {p.chain === "monad" && <MonadMark size={12} />}
+      {meta.name}
+    </span>
+  );
 }
 
 function StatusBadge({ p }: { p: PaymentRecord }) {
@@ -135,7 +149,6 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
       {/* Mobile: stacked cards */}
       <ul className="divide-y divide-border sm:hidden">
         {rows.map((p) => {
-          const meta = chainMeta(p.chain);
           return (
             <li key={p.id} className="p-4">
               <div className="flex items-center justify-between gap-2">
@@ -156,9 +169,7 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
               </div>
               <div className="mt-2 flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-2">
-                  <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ring-1 ${meta.tint}`}>
-                    {meta.name}
-                  </span>
+                  <NetworkPill p={p} />
                   {p.status === "settled" ? (
                     <span className="text-[11px] text-muted">
                       A-Pass{p.apassTier ? ` · t${p.apassTier}` : ""}
@@ -200,7 +211,6 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
           </thead>
           <tbody className="divide-y divide-border">
             {rows.map((p) => {
-              const meta = chainMeta(p.chain);
               return (
                 <tr key={p.id} className="hover:bg-background/50">
                   <td className="px-4 py-3">
@@ -223,9 +233,7 @@ export function PaymentsTable({ payments }: { payments: PaymentRecord[] }) {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-md px-1.5 py-0.5 text-[11px] font-semibold ring-1 ${meta.tint}`}>
-                      {meta.name}
-                    </span>
+                    <NetworkPill p={p} />
                   </td>
                   <td className="px-4 py-3 text-right font-medium text-foreground">
                     {fmtUsd(p.amount)}
