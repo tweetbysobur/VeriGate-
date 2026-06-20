@@ -94,10 +94,6 @@ export default function InstitutionsPage() {
                       ))}
                     </ul>
                   </div>
-
-                  <button className="mt-4 w-full rounded-lg bg-brand-500/10 px-3 py-2.5 text-xs font-semibold text-brand-600 transition hover:bg-brand-500/20">
-                    Learn more →
-                  </button>
                 </div>
               ))}
             </div>
