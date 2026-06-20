@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { StepDef, StepState } from "./pipeline";
+import { ComplianceDetails } from "./ComplianceDetails";
 
 function StatusIcon({ status }: { status: StepState["status"] }) {
   if (status === "passed") {
@@ -91,6 +92,11 @@ export function StepRow({
         <p className="mt-0.5 text-xs text-muted">
           {state.detail ?? def.blurb}
         </p>
+
+        {/* Compliance details — show what was screened */}
+        {state.status !== "idle" && state.status !== "running" && (
+          <ComplianceDetails step={state.id} payload={state.payload} detail={state.detail} />
+        )}
 
         {/* running progress bar */}
         {state.status === "running" && (
