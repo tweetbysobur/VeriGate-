@@ -1,30 +1,36 @@
 import { monadConfig } from "@/lib/web3/monad";
 
 /**
- * Monad brand mark — official logo with the characteristic "M" design
- * in Monad purple #A78BFA (official brand color).
+ * Monad brand mark — purple diamond with circular counter
+ * Official color: #A78BFA (Monad purple)
  */
 export function MonadMark({ size = 16 }: { size?: number }) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox="0 0 32 32"
+      viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
     >
-      {/* Monad official "M" logo */}
-      <path
-        d="M8 10L16 22L24 10M12 10V18M20 10V18M12 18H20"
-        stroke="#A78BFA"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
+      <defs>
+        <mask id="monad-hole">
+          <rect width="24" height="24" fill="white" />
+          <circle cx="12" cy="12" r="2" fill="black" />
+        </mask>
+      </defs>
+      {/* Rounded diamond shape (rotated square) */}
+      <rect
+        x="5"
+        y="5"
+        width="14"
+        height="14"
+        rx="2"
+        transform="rotate(45 12 12)"
+        fill="#A78BFA"
+        mask="url(#monad-hole)"
       />
-      {/* Circle frame */}
-      <circle cx="16" cy="16" r="14" stroke="#A78BFA" strokeWidth="1.5" fill="none" opacity="0.6" />
     </svg>
   );
 }
