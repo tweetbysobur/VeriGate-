@@ -83,11 +83,14 @@ function fromVerify(
         : "";
 
     // Build the detail from only the segments we actually have, so empty
-    // group/subGroup fields (common in sandbox) don't render as "group  /".
+    // group/subGroup fields don't render as "group  /". Cleanverse returns these
+    // as NUL bytes when unset — and String.trim() does NOT
+    // strip NUL (it isn't whitespace), so strip control chars explicitly.
+    const clean = (s?: string) => (s ?? "").replace(/[\u0000-\u001f]/g, "").trim();
     const parts: string[] = ["A-Pass active"];
     if (apass?.tier) parts.push(`tier ${apass.tier}`);
-    const group = apass?.group?.trim();
-    const subGroup = apass?.subGroup?.trim();
+    const group = clean(apass?.group);
+    const subGroup = clean(apass?.subGroup);
     if (group) parts.push(`group ${group}${subGroup ? "/" + subGroup : ""}`);
     if (!apass?.tier) parts.push("transfer allowed");
     if (sandboxNote) parts.push(sandboxNote);
