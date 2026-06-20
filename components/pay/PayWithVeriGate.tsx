@@ -63,8 +63,11 @@ export function PayWithVeriGate({
 
   // Real on-chain settlement only when a wallet is connected (Monad-only app).
   const canSettleReal = live && !!wallet.account;
+
+  // In LIVE mode: require wallet connection + A-Pass for real settlement
+  // In DEMO mode: allow any persona/address
   const canPay = live
-    ? !!customer && (wallet.account ? true : isLikelyAddress(chain, address)) && apass.status === "verified"
+    ? !!wallet.account && apass.status === "verified"  // Must have wallet + verified A-Pass
     : true;
 
   useEffect(() => {
@@ -324,10 +327,8 @@ export function PayWithVeriGate({
           />
           <span className="text-muted">
             {canSettleReal
-              ? `Real settlement on ${monadConfig().name}`
-              : wallet.account
-                ? "Connect on Monad for real settlement (other chains simulate)"
-                : "Simulated settlement — connect a wallet on Monad to settle for real"}
+              ? `✓ Real settlement on ${monadConfig().name} — ready to sign`
+              : "⚠ Connect wallet + verify A-Pass to proceed"}
           </span>
         </div>
       )}
