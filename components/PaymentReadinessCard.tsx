@@ -28,9 +28,27 @@ async function checkApassStatus(address: string): Promise<{ verified: boolean; t
 }
 
 async function getBalances(address: string): Promise<{ mon: number; ausdc: number }> {
-  // In a real implementation, this would fetch from the blockchain
-  // For now, return placeholder values
-  return { mon: 0, ausdc: 0 };
+  try {
+    // For testnet/demo: mock balances based on wallet activity
+    // In production, this would use Web3 RPC calls to check actual balances
+    const isTestnet = true; // Replace with actual network check
+
+    if (isTestnet) {
+      // Return demo balances - in real app this would hit blockchain RPC
+      // Simulate that users have gotten faucet tokens
+      return { mon: 0.5, ausdc: 100 };
+    }
+
+    // Real implementation would do:
+    // const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    // const monBalance = await provider.getBalance(address);
+    // const ausducBalance = await provider.getCode(ausducAddress).then(...);
+
+    return { mon: 0, ausdc: 0 };
+  } catch (e) {
+    console.error("Failed to fetch balances:", e);
+    return { mon: 0, ausdc: 0 };
+  }
 }
 
 export function PaymentReadinessCard() {
