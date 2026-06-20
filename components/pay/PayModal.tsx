@@ -232,21 +232,31 @@ export function PayModal({
         onChain: realSettle && txHash !== "0x0",
         receipt: report,
       });
+
+      // Mark invoice as paid and ensure it persists
       if (invoiceId) {
-        fetch(`/api/invoices/${invoiceId}/pay`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            customer,
-            apassTier,
-            txHash: txHash !== "0x0" ? txHash : undefined,
-            onChain: realSettle && txHash !== "0x0",
-            receipt: report,
-            item: invoiceItem,
-            amount,
-            currency,
-          }),
-        }).catch(() => {});
+        try {
+          const res = await fetch(`/api/invoices/${invoiceId}/pay`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              customer,
+              apassTier,
+              txHash: txHash !== "0x0" ? txHash : undefined,
+              onChain: realSettle && txHash !== "0x0",
+              receipt: report,
+              item: invoiceItem,
+              amount,
+              currency,
+              chain,
+            }),
+          });
+          if (!res.ok) {
+            console.error("Failed to mark invoice as paid:", await res.text());
+          }
+        } catch (e) {
+          console.error("Error marking invoice as paid:", e);
+        }
       }
       setPhase("success");
     } catch (err) {

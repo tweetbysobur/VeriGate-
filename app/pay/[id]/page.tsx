@@ -13,11 +13,16 @@ async function buildInvoice(
   id: string,
   sp: { amt?: string; item?: string },
 ): Promise<Invoice | null> {
+  // Always try to get the stored invoice first — it has the true status (paid or open)
   const stored = await getInvoice(id);
   if (stored) return stored;
-  // Reconstruct from link query params (cold-instance resilience).
+
+  // Fallback: reconstruct from query params only if not in storage (cold-instance resilience)
   const amount = Number(sp.amt);
   if (!amount || amount <= 0) return null;
+
+  // Return a fresh invoice (status: "open") — but this should rarely happen
+  // since the invoice should have been stored when created
   return {
     id,
     merchantName: MERCHANT.name,
