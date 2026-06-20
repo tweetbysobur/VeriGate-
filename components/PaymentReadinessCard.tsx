@@ -29,22 +29,49 @@ async function checkApassStatus(address: string): Promise<{ verified: boolean; t
 
 async function getBalances(address: string): Promise<{ mon: number; ausdc: number }> {
   try {
-    // For testnet/demo: mock balances based on wallet activity
-    // In production, this would use Web3 RPC calls to check actual balances
-    const isTestnet = true; // Replace with actual network check
+    // Fetch REAL on-chain balances from Monad testnet RPC
+    const rpcUrl = "https://testnet-rpc.monad.xyz";
 
-    if (isTestnet) {
-      // Return demo balances - in real app this would hit blockchain RPC
-      // Simulate that users have gotten faucet tokens
-      return { mon: 0.5, ausdc: 100 };
-    }
+    // Fetch MON balance (native token)
+    const monRes = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "eth_getBalance",
+        params: [address, "latest"],
+        id: 1,
+      }),
+    });
+    const monData = await monRes.json();
+    const monWei = monData.result ? BigInt(monData.result) : 0n;
+    const mon = Number(monWei) / 1e18; // Convert wei to MON
 
-    // Real implementation would do:
-    // const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    // const monBalance = await provider.getBalance(address);
-    // const ausducBalance = await provider.getCode(ausducAddress).then(...);
+    // Fetch aUSDC balance (ERC-20 token)
+    // Using the aUSDC contract on Monad: 0xaC0893567D43C3E7e6e35a72803df05416C1f20D
+    const ausducAddress = "0xaC0893567D43C3E7e6e35a72803df05416C1f20D";
+    const balanceOfSelector = "0x70a08231"; // balanceOf(address)
+    const paddedAddress = address.slice(2).padStart(64, "0");
+    const calldata = balanceOfSelector + paddedAddress;
 
-    return { mon: 0, ausdc: 0 };
+    const ausducRes = await fetch(rpcUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        method: "eth_call",
+        params: [
+          { to: ausducAddress, data: calldata },
+          "latest",
+        ],
+        id: 2,
+      }),
+    });
+    const ausducData = await ausducRes.json();
+    const ausducWei = ausducData.result ? BigInt(ausducData.result) : 0n;
+    const ausdc = Number(ausducWei) / 1e6; // aUSDC has 6 decimals
+
+    return { mon, ausdc };
   } catch (e) {
     console.error("Failed to fetch balances:", e);
     return { mon: 0, ausdc: 0 };
