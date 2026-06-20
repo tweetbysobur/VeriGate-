@@ -103,11 +103,7 @@ export default function LandingPage() {
         </div>
 
         <div className="relative mx-auto max-w-5xl px-5 py-20 text-center lg:py-32">
-          <Reveal variant="scale" className="mx-auto mb-7 w-fit">
-            <VeriGateMark size={64} idp="hero" animated />
-          </Reveal>
-
-          <Reveal as="h1" delay={80} className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <Reveal as="h1" className="mx-auto text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Compliant stablecoin payments,{" "}
             <span className="vg-shimmer">finally usable.</span>
           </Reveal>
