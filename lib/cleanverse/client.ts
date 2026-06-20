@@ -403,9 +403,18 @@ export async function issueApass(
 export type ApassStatus = "verified" | "none" | "restricted" | "unknown";
 
 /**
- * Authoritative A-Pass status for a wallet against the merchant's A-Token,
- * via verify_apass (more reliable than query_apass on some chains). Drives the
- * inline checkout prompt.
+ * Authoritative A-Pass status for a wallet. Recognition is an *identity*
+ * question — "does this wallet hold a valid A-Pass?" — so it is driven primarily
+ * by query_apass (the A-Pass record itself), with verify_apass as a secondary
+ * signal.
+ *
+ * verify_apass is an *asset-transfer* gate against one specific A-Token: it
+ * returns CANNOT_TRANSFER when the wallet's tier/group doesn't satisfy that
+ * token's rule, even though the wallet genuinely holds an A-Pass. Keying
+ * recognition solely on verify_apass==SUCCESS therefore mis-reports a
+ * previously-issued A-Pass as "not verified". We treat the wallet as verified
+ * when it holds an active A-Pass OR verify_apass succeeds; the asset-level
+ * transfer rule is still enforced separately at the compliance step.
  */
 export async function checkApass(
   chain: Chain,
@@ -414,33 +423,33 @@ export async function checkApass(
   if (!isLive()) return { status: "verified", tier: "26" };
 
   const atoken = DEMO_ATOKENS[chain].atoken;
-  try {
-    const v = await live.verifyApass(chain, atoken, address);
-    let status: ApassStatus;
-    switch (v.code) {
-      case VerifyCode.SUCCESS:
-        status = "verified";
-        break;
-      case VerifyCode.NO_APASS:
-        status = "none";
-        break;
-      case VerifyCode.CANNOT_TRANSFER:
-        status = "restricted";
-        break;
-      default:
-        status = "unknown";
-    }
-    // Best-effort tier (non-fatal if unavailable on this chain).
-    let tier: string | undefined;
-    try {
-      tier = (await live.queryApass(chain, address))?.tier;
-    } catch {
-      /* ignore */
-    }
-    return { status, tier };
-  } catch {
-    return { status: "unknown" };
+  const [verify, apass] = await Promise.all([
+    live.verifyApass(chain, atoken, address).catch(() => null),
+    live.queryApass(chain, address).catch(() => null),
+  ]);
+
+  // If neither call returned anything, the network/credentials are the problem.
+  if (!verify && !apass) return { status: "unknown" };
+
+  // query_apass: status 1 = active, 2 = frozen.
+  const hasActivePass = !!apass && Number(apass.status) === 1;
+  const isFrozen = !!apass && Number(apass.status) === 2;
+  const tier = apass?.tier;
+
+  // A wallet that holds an active A-Pass is recognized, regardless of whether it
+  // can transfer this particular merchant A-Token.
+  if (verify?.code === VerifyCode.SUCCESS || hasActivePass) {
+    return { status: "verified", tier };
   }
+  // Holds an A-Pass but can't transfer this asset (or it's frozen/expired).
+  if (verify?.code === VerifyCode.CANNOT_TRANSFER || isFrozen) {
+    return { status: "restricted", tier };
+  }
+  // Cleanverse explicitly reports no A-Pass on file.
+  if (verify?.code === VerifyCode.NO_APASS) {
+    return { status: "none" };
+  }
+  return { status: "unknown" };
 }
 
 export async function requestFaucet(
