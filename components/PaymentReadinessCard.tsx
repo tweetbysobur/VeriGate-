@@ -28,52 +28,70 @@ async function checkApassStatus(address: string): Promise<{ verified: boolean; t
 }
 
 async function getBalances(address: string): Promise<{ mon: number; ausdc: number }> {
+  if (!address || !address.startsWith("0x")) {
+    return { mon: 0, ausdc: 0 };
+  }
+
   try {
     // Fetch REAL on-chain balances from Monad testnet RPC
     const rpcUrl = "https://testnet-rpc.monad.xyz";
 
     // Fetch MON balance (native token)
-    const monRes = await fetch(rpcUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "eth_getBalance",
-        params: [address, "latest"],
-        id: 1,
-      }),
-    });
-    const monData = await monRes.json();
-    const monWei = monData.result ? BigInt(monData.result) : 0n;
-    const mon = Number(monWei) / 1e18; // Convert wei to MON
+    let mon = 0;
+    try {
+      const monRes = await fetch(rpcUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "eth_getBalance",
+          params: [address, "latest"],
+          id: 1,
+        }),
+      });
+      const monData = await monRes.json();
+      if (monData.result) {
+        const monWei = BigInt(monData.result);
+        mon = Number(monWei) / 1e18;
+      }
+    } catch (e) {
+      console.warn("MON balance fetch failed:", e);
+    }
 
     // Fetch aUSDC balance (ERC-20 token)
-    // Using the aUSDC contract on Monad: 0xaC0893567D43C3E7e6e35a72803df05416C1f20D
-    const ausducAddress = "0xaC0893567D43C3E7e6e35a72803df05416C1f20D";
-    const balanceOfSelector = "0x70a08231"; // balanceOf(address)
-    const paddedAddress = address.slice(2).padStart(64, "0");
-    const calldata = balanceOfSelector + paddedAddress;
+    let ausdc = 0;
+    try {
+      const ausducAddress = "0xaC0893567D43C3E7e6e35a72803df05416C1f20D";
+      const balanceOfSelector = "0x70a08231"; // balanceOf(address)
+      const paddedAddress = address.slice(2).padStart(64, "0");
+      const calldata = balanceOfSelector + paddedAddress;
 
-    const ausducRes = await fetch(rpcUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "eth_call",
-        params: [
-          { to: ausducAddress, data: calldata },
-          "latest",
-        ],
-        id: 2,
-      }),
-    });
-    const ausducData = await ausducRes.json();
-    const ausducWei = ausducData.result ? BigInt(ausducData.result) : 0n;
-    const ausdc = Number(ausducWei) / 1e6; // aUSDC has 6 decimals
+      const ausducRes = await fetch(rpcUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "eth_call",
+          params: [
+            { to: ausducAddress, data: calldata },
+            "latest",
+          ],
+          id: 2,
+        }),
+      });
+      const ausducData = await ausducRes.json();
+      if (ausducData.result) {
+        const ausducWei = BigInt(ausducData.result);
+        ausdc = Number(ausducWei) / 1e6;
+      }
+    } catch (e) {
+      console.warn("aUSDC balance fetch failed:", e);
+    }
 
+    console.log(`Fetched balances - MON: ${mon}, aUSDC: ${ausdc}`);
     return { mon, ausdc };
   } catch (e) {
-    console.error("Failed to fetch balances:", e);
+    console.error("Critical error fetching balances:", e);
     return { mon: 0, ausdc: 0 };
   }
 }
