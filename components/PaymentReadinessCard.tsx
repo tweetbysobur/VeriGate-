@@ -11,9 +11,12 @@ interface ReadinessStatus {
   ausducBalance: number;
   apassTier?: string;
   isReady: boolean;
+  sandbox: boolean;
 }
 
-async function checkApassStatus(address: string): Promise<{ verified: boolean; tier?: string }> {
+async function checkApassStatus(
+  address: string,
+): Promise<{ verified: boolean; tier?: string; sandbox: boolean }> {
   try {
     const res = await fetch("/api/apass/status", {
       method: "POST",
@@ -21,9 +24,13 @@ async function checkApassStatus(address: string): Promise<{ verified: boolean; t
       body: JSON.stringify({ chain: "monad", address }),
     });
     const data = await res.json();
-    return { verified: data.status === "verified", tier: data.tier };
+    return {
+      verified: data.status === "verified",
+      tier: data.tier,
+      sandbox: Boolean(data.sandbox),
+    };
   } catch {
-    return { verified: false };
+    return { verified: false, sandbox: false };
   }
 }
 
@@ -35,6 +42,7 @@ export function PaymentReadinessCard() {
     monBalance: 0,
     ausducBalance: 0,
     isReady: false,
+    sandbox: false,
   });
   const [loading, setLoading] = useState(false);
 
@@ -56,6 +64,7 @@ export function PaymentReadinessCard() {
         ausducBalance: 0,
         apassTier: apass.tier,
         isReady: ready,
+        sandbox: apass.sandbox,
       });
       setLoading(false);
     }
@@ -72,7 +81,9 @@ export function PaymentReadinessCard() {
     {
       label: "A-Pass Status",
       status: status.apassVerified,
-      value: status.apassVerified ? `Verified · Tier ${status.apassTier}` : "Not verified",
+      value: status.apassVerified
+        ? `Verified · Tier ${status.apassTier}${status.sandbox ? " · sandbox" : ""}`
+        : "Not verified",
     },
     {
       label: "Network",
@@ -130,6 +141,19 @@ export function PaymentReadinessCard() {
           </div>
         ))}
       </div>
+
+      {status.walletConnected && status.sandbox && (
+        <p className="mt-4 flex items-start gap-1.5 rounded-lg border border-border bg-background/60 px-3 py-2 text-[11px] leading-relaxed text-muted">
+          <svg viewBox="0 0 24 24" className="mt-px size-3.5 shrink-0 text-brand-500" fill="none" aria-hidden>
+            <path d="M12 8v4m0 4h.01M12 3l9 16H3l9-16Z" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          <span>
+            Running on the <span className="font-medium text-foreground">Cleanverse sandbox</span>,
+            which verifies all test wallets. In production, A-Pass enforces real
+            KYC and rejects unverified wallets.
+          </span>
+        </p>
+      )}
     </div>
   );
 }

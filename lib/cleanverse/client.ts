@@ -75,12 +75,19 @@ function fromVerify(
   source: "live" | "simulated",
 ): StepOutcome {
   if (verify.code === VerifyCode.SUCCESS) {
+    // Be transparent that the sandbox verifies all test wallets; production
+    // enforces real KYC. Only annotate live (real-API) sandbox calls.
+    const sandboxNote =
+      source === "live" && getCleanverseConfig().env === "sandbox"
+        ? " · sandbox (test verification)"
+        : "";
     return {
       ok: true,
       title: "Identity verified",
-      detail: apass?.tier
-        ? `A-Pass active · tier ${apass.tier} · group ${apass.group ?? "—"}${apass.subGroup ? "/" + apass.subGroup : ""}`
-        : "A-Pass active · transfer allowed",
+      detail:
+        (apass?.tier
+          ? `A-Pass active · tier ${apass.tier} · group ${apass.group ?? "—"}${apass.subGroup ? "/" + apass.subGroup : ""}`
+          : "A-Pass active · transfer allowed") + sandboxNote,
       payload,
       source,
     };
