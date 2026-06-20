@@ -17,7 +17,7 @@ async function buildInvoice(
   if (stored) return stored;
   // Reconstruct from link query params (cold-instance resilience).
   const amount = Number(sp.amt);
-  if (!amount) return null;
+  if (!amount || amount <= 0) return null;
   return {
     id,
     merchantName: MERCHANT.name,
