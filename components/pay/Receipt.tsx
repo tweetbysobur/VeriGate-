@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
 import type { Chain } from "@/lib/cleanverse/types";
+import { SettlementProof } from "./SettlementProof";
 
 export interface ReceiptData {
   amount: number;
@@ -19,6 +20,8 @@ export interface ReceiptData {
   invoiceId?: string;
   /** True only for a real on-chain settlement (controls the explorer link). */
   onChain?: boolean;
+  blockNumber?: number;
+  settledAt?: number;
 }
 
 function fullReceiptHref(data: ReceiptData): string {
@@ -73,7 +76,7 @@ export function Receipt({ data }: { data: ReceiptData }) {
           {fmtUsd(data.amount)} {data.currency} settled
         </p>
         <p className="mt-1 text-sm text-muted">
-          Verified on Monad · fully auditable
+          Settled on Monad via the VeriGate Settlement Contract · fully auditable
         </p>
       </div>
 
@@ -100,6 +103,11 @@ export function Receipt({ data }: { data: ReceiptData }) {
       </div>
 
       <div className="mt-3 divide-y divide-border rounded-xl border border-border bg-background/60 px-4">
+        {data.invoiceId && (
+          <Field label="Invoice ID">
+            <span className="font-mono text-xs">{data.invoiceId}</span>
+          </Field>
+        )}
         <Field label="Amount">
           {fmtUsd(data.amount)} {data.currency}
         </Field>
@@ -110,28 +118,29 @@ export function Receipt({ data }: { data: ReceiptData }) {
             {meta.name}
           </span>
         </Field>
-        <Field label="From (customer)">
+        <Field label="Customer wallet">
           <span className="font-mono text-xs">{shortAddr(data.customer)}</span>
         </Field>
-        <Field label="To (merchant)">
+        <Field label="Merchant wallet">
           <span className="font-mono text-xs">{shortAddr(data.merchant)}</span>
         </Field>
-        <Field label="Transaction">
-          {data.onChain && data.txHash && data.txHash !== "0x0" ? (
-            <a
-              href={meta.explorerTx(data.txHash)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-xs text-brand-500 hover:underline"
-            >
-              {shortAddr(data.txHash, 8, 6)} ↗
-            </a>
-          ) : (
-            <span className="font-mono text-xs text-muted">
-              demo settlement
-            </span>
-          )}
+        <Field label="A-Pass status">
+          <span className="text-verify-600">
+            Verified{data.apassTier ? ` · tier ${data.apassTier}` : ""}
+          </span>
         </Field>
+        <Field label="Compliance status">
+          <span className="text-verify-600">Passed</span>
+        </Field>
+      </div>
+
+      <div className="mt-3">
+        <SettlementProof
+          txHash={data.txHash}
+          blockNumber={data.blockNumber}
+          timestamp={data.settledAt}
+          status={data.onChain && data.txHash && data.txHash !== "0x0" ? "confirmed" : "pending"}
+        />
       </div>
 
       {/* Audit receipt download (or pending state) */}

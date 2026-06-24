@@ -1,6 +1,7 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { InvoicePanel } from "@/components/dashboard/InvoicePanel";
 import { LedgerStats } from "@/components/dashboard/LedgerStats";
+import { SettlementCenter } from "@/components/dashboard/SettlementCenter";
 import { PaymentReadinessCard } from "@/components/PaymentReadinessCard";
 import { TestnetFundingSection } from "@/components/TestnetFundingSection";
 import { MerchantSettings } from "@/components/dashboard/MerchantSettings";
@@ -66,6 +67,11 @@ export default async function DashboardPage() {
         {/* Stats — reflect your real activity on this device */}
         <LedgerStats />
 
+        {/* Settlement Center — on-chain proof of every settlement */}
+        <div className="mt-6">
+          <SettlementCenter />
+        </div>
+
         {/* Invoices */}
         <div className="mt-6">
           <InvoicePanel initial={invoices} />
@@ -88,7 +94,7 @@ export default async function DashboardPage() {
       <footer className="border-t border-border py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted sm:flex-row">
           <span>Powered by Cleanverse A-Pass + A-Token</span>
-          <span className="font-mono">VeriGate · {mode === "live" ? "live · sandbox" : "demo mode"}</span>
+          <span className="font-mono">VeriGate · {mode === "live" ? "live · sandbox" : "Monad testnet"}</span>
         </div>
       </footer>
     </div>

@@ -6,6 +6,7 @@ import { listAttempts } from "@/lib/attempts";
 import type { Chain } from "@/lib/cleanverse/types";
 import { MERCHANT, chainMeta, fmtUsd, shortAddr } from "@/lib/demo";
 import { getInvoice } from "@/lib/invoices";
+import { SettlementProof } from "@/components/pay/SettlementProof";
 
 export const dynamic = "force-dynamic";
 
@@ -196,23 +197,25 @@ export default async function ReceiptPage({
               <Row label="Network">
                 <NetworkBadge />
               </Row>
-              <Row label="Transaction">
-                {r.onChain && r.txHash ? (
-                  <a
-                    href={meta.explorerTx(r.txHash)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-mono text-xs text-brand-500 hover:underline"
-                  >
-                    {shortAddr(r.txHash, 8, 6)} ↗
-                  </a>
-                ) : (
-                  <span className="font-mono text-xs text-muted">demo settlement</span>
-                )}
+              <Row label="A-Pass status">
+                <span className="text-verify-600">
+                  Verified{r.apassTier ? ` · tier ${r.apassTier}` : ""}
+                </span>
               </Row>
-              <Row label="Date">
+              <Row label="Compliance status">
+                <span className="text-verify-600">Passed</span>
+              </Row>
+              <Row label="Settlement timestamp">
                 {new Date(r.at * 1000).toLocaleString()}
               </Row>
+            </div>
+
+            <div className="mt-3">
+              <SettlementProof
+                txHash={r.txHash}
+                timestamp={r.at}
+                status={r.onChain && r.txHash ? "confirmed" : "pending"}
+              />
             </div>
 
             {/* Travel Rule download */}
@@ -244,7 +247,8 @@ export default async function ReceiptPage({
             </div>
 
             <p className="mt-4 text-center text-[11px] text-muted">
-              Powered by Cleanverse A-Pass + A-Token · settled on Monad
+              Powered by Cleanverse A-Pass + A-Token · settled via the VeriGate
+              Settlement Contract on Monad Testnet
             </p>
           </div>
         )}

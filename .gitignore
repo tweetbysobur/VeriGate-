@@ -41,6 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# hardhat build output
+/artifacts
+/cache
+/typechain-types
+
 # confidential — never commit
 business plan - VeriGate.pdf
 *.pdf

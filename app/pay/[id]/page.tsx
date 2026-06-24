@@ -128,7 +128,8 @@ export default async function PayInvoicePage({
                 </span>
                 <h2 className="mt-3 text-lg font-semibold text-foreground">Invoice paid</h2>
                 <p className="mt-1 text-sm text-muted">
-                  This invoice was settled compliantly on Monad.
+                  This invoice was settled on-chain via the VeriGate Settlement
+                  Contract on Monad.
                 </p>
               </div>
             ) : (
@@ -145,7 +146,8 @@ export default async function PayInvoicePage({
             )}
 
             <p className="text-center text-[11px] text-muted">
-              Powered by Cleanverse A-Pass + A-Token · settles on Monad
+              Powered by Cleanverse A-Pass + A-Token · settles through the VeriGate
+              Settlement Contract on Monad Testnet
             </p>
           </div>
         )}

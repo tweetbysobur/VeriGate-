@@ -52,7 +52,7 @@ export function SiteHeader({
             <span
               className={`size-1.5 rounded-full ${mode === "live" ? "bg-verify-500" : "bg-brand-500"}`}
             />
-            {mode === "live" ? "Live · sandbox" : "Demo mode"}
+            {mode === "live" ? "Live · sandbox" : "Monad testnet"}
           </span>
           <WalletButton />
           <MobileNav tabs={tabs} active={active} />

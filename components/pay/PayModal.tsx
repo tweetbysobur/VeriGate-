@@ -7,6 +7,7 @@ import { Logo } from "@/components/Logo";
 import { recordLocal, newTxnId } from "@/lib/localLedger";
 import { Receipt, type ReceiptData } from "./Receipt";
 import { StepRow } from "./StepRow";
+import { StatusTimeline, timelineFromSteps } from "./StatusTimeline";
 import {
   STEP_DEFS,
   callStep,
@@ -118,6 +119,7 @@ export function PayModal({
     setSteps(initialSteps());
 
     let txHash = "0x0";
+    let blockNumber: number | undefined;
     let apassTier: string | undefined;
     let report: { fileName: string; downloadUrl: string } | undefined;
     try {
@@ -133,6 +135,7 @@ export function PayModal({
           try {
             const res = await settleOnChain();
             txHash = res.txHash;
+            blockNumber = res.blockNumber;
             patch("settle", {
               status: "passed",
               title: "Settled on Monad",
@@ -228,6 +231,8 @@ export function PayModal({
             assetSymbol: "aUSDC",
             invoiceId,
             onChain: realSettle && txHash !== "0x0",
+            blockNumber,
+            settledAt: Math.floor(Date.now() / 1000),
           });
         }
       }
@@ -325,6 +330,12 @@ export function PayModal({
             </div>
           ) : (
             <>
+              <div className="mb-4 rounded-xl border border-border bg-background/50 p-3">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted">
+                  Settlement status
+                </p>
+                <StatusTimeline stages={timelineFromSteps(steps, phase)} />
+              </div>
               <ol className="mt-1">
                 {STEP_DEFS.map((def, i) => (
                   <StepRow
@@ -424,9 +435,10 @@ export function PayModal({
             </button>
           )}
           <p className="mt-3 text-center text-[11px] text-muted">
-            Powered by Cleanverse A-Pass + A-Token ·{" "}
+            Powered by Cleanverse A-Pass + A-Token · settled via the VeriGate
+            Settlement Contract on{" "}
             <span className="font-mono">
-              {mode === "live" ? "live · sandbox" : "demo mode"}
+              {mode === "live" ? "Monad Testnet · live sandbox" : "Monad Testnet"}
             </span>
           </p>
         </div>

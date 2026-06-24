@@ -112,6 +112,10 @@ export default function LandingPage() {
             VeriGate checks identity and asset compliance before money moves, then records proof — verified participants and compliant assets in, an auditable receipt out.
           </Reveal>
 
+          <Reveal as="p" delay={230} className="mx-auto mt-3 max-w-xl text-balance text-sm font-medium text-brand-600">
+            Payments settle through the VeriGate Settlement Contract on Monad Testnet.
+          </Reveal>
+
           {/* Trust Indicators */}
           <Reveal delay={280} className="mt-8 inline-flex items-center gap-6 rounded-lg border border-brand-500/30 bg-brand-500/10 px-6 py-3 text-xs font-medium text-foreground sm:gap-8">
             <div className="flex items-center gap-2">
@@ -610,7 +614,7 @@ export default function LandingPage() {
             className="vg-cta vg-sheen inline-flex items-center gap-2 rounded-xl bg-brand-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-brand-500/20 transition hover:bg-brand-600"
           >
             <VeriGateMark size={18} />
-            Try the demo
+            Open the dashboard
             <span aria-hidden className="vg-arrow">→</span>
           </Link>
         </div>
@@ -653,7 +657,7 @@ export default function LandingPage() {
               <div>
                 <p className="text-[11px] font-semibold text-foreground">VeriGate</p>
                 <p className="text-[10px] text-muted">Compliance-first payments</p>
-                <p className="mt-2 text-[10px] text-muted">{mode === "live" ? "Live · Sandbox" : "Demo mode"}</p>
+                <p className="mt-2 text-[10px] text-muted">{mode === "live" ? "Live · Sandbox" : "Monad Testnet"}</p>
               </div>
             </div>
           </div>

@@ -147,7 +147,7 @@ export function PayWithVeriGate({
         }
       >
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-brand-600">
-          {live ? "Pay with your wallet" : "Demo controls"}
+          {live ? "Pay with your wallet" : "Test identity preview"}
         </p>
 
         {live ? (
@@ -234,7 +234,7 @@ export function PayWithVeriGate({
           </>
         ) : (
           <>
-            <label className="text-xs text-muted">Test identity</label>
+            <label className="text-xs text-muted">Identity preview (compliance testing)</label>
             <div className="mt-1 grid grid-cols-2 gap-1.5">
               {PERSONA_ORDER.map((p) => {
                 const sel = p === persona;

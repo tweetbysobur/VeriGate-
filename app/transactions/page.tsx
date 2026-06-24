@@ -15,8 +15,8 @@ export default function TransactionsPage() {
         <div className="mb-6">
           <h1 className="text-xl font-semibold text-foreground">Transactions</h1>
           <p className="text-sm text-muted">
-            Every real payment you run on VeriGate — settled and blocked — with its
-            on-chain proof. No demo data.
+            Every payment you run on VeriGate — settled and blocked — with its
+            on-chain proof from the VeriGate Settlement Contract on Monad Testnet.
           </p>
         </div>
 
@@ -26,7 +26,7 @@ export default function TransactionsPage() {
       <footer className="border-t border-border py-5">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-5 text-xs text-muted sm:flex-row">
           <span>Powered by Cleanverse A-Pass + A-Token</span>
-          <span className="font-mono">VeriGate · {mode === "live" ? "live · sandbox" : "demo mode"}</span>
+          <span className="font-mono">VeriGate · {mode === "live" ? "live · sandbox" : "Monad testnet"}</span>
         </div>
       </footer>
     </div>

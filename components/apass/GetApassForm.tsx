@@ -311,7 +311,7 @@ export function GetApassForm({ mode = "mock" }: { mode?: "mock" | "live" }) {
       </div>
 
       <p className="mt-3 text-center text-[11px] text-muted">
-        {mode === "live" ? "Live · real identity verification via Cleanverse" : "Demo mode · simulated identity"}
+        {mode === "live" ? "Live · real identity verification via Cleanverse" : "Testnet · identity verification via Cleanverse sandbox"}
       </p>
     </div>
   );

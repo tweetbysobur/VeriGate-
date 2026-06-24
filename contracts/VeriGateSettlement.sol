@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-
 /**
  * VeriGate Settlement Contract
  *
@@ -16,10 +11,10 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
  * - Batch payment support
  */
 
-interface IATtoken is IERC20 {
-    function balanceOf(address account) external view returns (uint256);
+interface IERC20 {
     function transferFrom(address from, address to, uint256 amount) external returns (bool);
     function transfer(address to, uint256 amount) external returns (bool);
+    function balanceOf(address account) external view returns (uint256);
 }
 
 interface IComplianceRule {
@@ -30,49 +25,50 @@ interface IComplianceRule {
     ) external view returns (bool);
 }
 
-event SettlementCreated(
-    bytes32 indexed settlementId,
-    address indexed customer,
-    address indexed merchant,
-    uint256 amount,
-    string currency,
-    uint256 timestamp
-);
+contract VeriGateSettlement {
+    event SettlementCreated(
+        bytes32 indexed settlementId,
+        address indexed customer,
+        address indexed merchant,
+        uint256 amount,
+        string currency,
+        uint256 timestamp
+    );
 
-event SettlementCompleted(
-    bytes32 indexed settlementId,
-    address indexed merchant,
-    uint256 amount,
-    string txHash,
-    uint256 timestamp
-);
+    event SettlementCompleted(
+        bytes32 indexed settlementId,
+        address indexed merchant,
+        uint256 amount,
+        string txHash,
+        uint256 timestamp
+    );
 
-event SettlementFailed(
-    bytes32 indexed settlementId,
-    string reason,
-    uint256 timestamp
-);
+    event SettlementFailed(
+        bytes32 indexed settlementId,
+        string reason,
+        uint256 timestamp
+    );
 
-event AuditRecordCreated(
-    bytes32 indexed settlementId,
-    address indexed customer,
-    address indexed merchant,
-    uint256 amount,
-    string receiptUrl,
-    uint256 timestamp
-);
+    event AuditRecordCreated(
+        bytes32 indexed settlementId,
+        address indexed customer,
+        address indexed merchant,
+        uint256 amount,
+        string receiptUrl,
+        uint256 timestamp
+    );
+    address public owner;
+    address public aUsdcToken;
+    address public complianceRule;
+    address public treasuryAddress;
+    bool public paused;
 
-contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
-    // Configuration
-    address public aUsdcToken; // A-Token contract on Monad
-    address public complianceRule; // A-Token compliance enforcer
-    address public treasuryAddress; // Fee recipient
+    uint256 public settlementFeePercentage = 10;
+    uint256 public minSettlementAmount = 1e6;
+    uint256 public maxSettlementAmount = 1e8;
 
-    uint256 public settlementFeePercentage = 10; // 0.1% (basis points)
-    uint256 public minSettlementAmount = 1e6; // 1 aUSDC (6 decimals)
-    uint256 public maxSettlementAmount = 1e8; // 100 aUSDC
+    uint256 private locked;
 
-    // State
     mapping(bytes32 => Settlement) public settlements;
     mapping(address => uint256) public merchantVolume;
     mapping(address => uint256) public merchantSettledCount;
@@ -82,9 +78,9 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         address customer;
         address merchant;
         uint256 amount;
-        string currency; // "aUSDC"
+        string currency;
         uint256 timestamp;
-        SettlementStatus status; // pending, completed, failed
+        SettlementStatus status;
         string failureReason;
     }
 
@@ -93,7 +89,7 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         address customer;
         address merchant;
         uint256 amount;
-        string receiptUrl; // IPFS or Cleanverse API response
+        string receiptUrl;
         uint256 travelRuleVersion;
         string compliancePool;
         uint256 createdAt;
@@ -105,38 +101,49 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         Failed
     }
 
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner");
+        _;
+    }
+
+    modifier whenNotPaused() {
+        require(!paused, "Contract is paused");
+        _;
+    }
+
+    modifier nonReentrant() {
+        require(locked == 0, "Reentrancy guard");
+        locked = 1;
+        _;
+        locked = 0;
+    }
+
     constructor(
         address _aUsdcToken,
         address _complianceRule,
         address _treasuryAddress
     ) {
-        require(_aUsdcToken != address(0), "Invalid A-Token address");
-        require(_treasuryAddress != address(0), "Invalid treasury address");
+        require(_aUsdcToken != address(0), "Invalid A-Token");
+        require(_treasuryAddress != address(0), "Invalid treasury");
 
+        owner = msg.sender;
         aUsdcToken = _aUsdcToken;
         complianceRule = _complianceRule;
         treasuryAddress = _treasuryAddress;
+        locked = 0;
+        paused = false;
     }
 
-    /**
-     * Initiate a payment settlement
-     *
-     * @param customer Customer wallet (verified via A-Pass)
-     * @param merchant Merchant settlement address
-     * @param amount Amount in A-Token base units
-     * @return settlementId Unique settlement identifier
-     */
     function settlePayment(
         address customer,
         address merchant,
         uint256 amount
-    ) external whenNotPaused nonReentrant returns (bytes32) {
+    ) public whenNotPaused nonReentrant returns (bytes32) {
         require(customer != address(0), "Invalid customer");
         require(merchant != address(0), "Invalid merchant");
         require(amount >= minSettlementAmount, "Amount too small");
         require(amount <= maxSettlementAmount, "Amount too large");
 
-        // Verify compliance rule allows this transfer
         if (complianceRule != address(0)) {
             require(
                 IComplianceRule(complianceRule).checkTransferAllowed(
@@ -148,12 +155,10 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
             );
         }
 
-        // Generate unique settlement ID
         bytes32 settlementId = keccak256(
             abi.encodePacked(customer, merchant, amount, block.timestamp)
         );
 
-        // Record settlement
         settlements[settlementId] = Settlement({
             customer: customer,
             merchant: merchant,
@@ -176,12 +181,6 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         return settlementId;
     }
 
-    /**
-     * Execute a settlement (transfer A-Token from customer to merchant)
-     *
-     * @param settlementId Settlement ID from settlePayment()
-     * @param txHash On-chain transaction hash (for audit)
-     */
     function executeSettlement(
         bytes32 settlementId,
         string memory txHash
@@ -197,49 +196,34 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         address merchant = settlement.merchant;
         uint256 amount = settlement.amount;
 
-        // Calculate fee
         uint256 fee = (amount * settlementFeePercentage) / 10000;
         uint256 merchantAmount = amount - fee;
 
-        try
-            IATtoken(aUsdcToken).transferFrom(customer, merchant, merchantAmount)
-        returns (bool success) {
-            require(success, "A-Token transfer failed");
+        require(
+            IERC20(aUsdcToken).transferFrom(customer, merchant, merchantAmount),
+            "Transfer to merchant failed"
+        );
 
-            // Send fee to treasury
-            if (fee > 0) {
-                require(
-                    IATtoken(aUsdcToken).transferFrom(customer, treasuryAddress, fee),
-                    "Fee transfer failed"
-                );
-            }
-
-            settlement.status = SettlementStatus.Completed;
-            merchantVolume[merchant] += merchantAmount;
-            merchantSettledCount[merchant] += 1;
-
-            emit SettlementCompleted(
-                settlementId,
-                merchant,
-                merchantAmount,
-                txHash,
-                block.timestamp
+        if (fee > 0) {
+            require(
+                IERC20(aUsdcToken).transferFrom(customer, treasuryAddress, fee),
+                "Fee transfer failed"
             );
-        } catch Error(string memory reason) {
-            settlement.status = SettlementStatus.Failed;
-            settlement.failureReason = reason;
-            emit SettlementFailed(settlementId, reason, block.timestamp);
-            revert(reason);
         }
+
+        settlement.status = SettlementStatus.Completed;
+        merchantVolume[merchant] += merchantAmount;
+        merchantSettledCount[merchant] += 1;
+
+        emit SettlementCompleted(
+            settlementId,
+            merchant,
+            merchantAmount,
+            txHash,
+            block.timestamp
+        );
     }
 
-    /**
-     * Record audit/Travel Rule receipt
-     *
-     * @param settlementId Settlement ID
-     * @param receiptUrl IPFS hash or Cleanverse API response
-     * @param compliancePool Compliance pool used for screening
-     */
     function recordAudit(
         bytes32 settlementId,
         string memory receiptUrl,
@@ -269,11 +253,6 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         );
     }
 
-    /**
-     * Batch settle multiple payments
-     *
-     * For institutional partners settling multiple customers at once
-     */
     function batchSettle(
         address[] calldata customers,
         address merchant,
@@ -291,17 +270,12 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
         return settlementIds;
     }
 
-    // ---- Admin functions ----
-
     function setFeePercentage(uint256 _percentage) external onlyOwner {
-        require(_percentage <= 1000, "Fee too high"); // Max 10%
+        require(_percentage <= 1000, "Fee too high");
         settlementFeePercentage = _percentage;
     }
 
-    function setSettlementLimits(
-        uint256 _min,
-        uint256 _max
-    ) external onlyOwner {
+    function setSettlementLimits(uint256 _min, uint256 _max) external onlyOwner {
         require(_min < _max, "Invalid limits");
         minSettlementAmount = _min;
         maxSettlementAmount = _max;
@@ -317,14 +291,12 @@ contract VeriGateSettlement is Ownable, Pausable, ReentrancyGuard {
     }
 
     function pause() external onlyOwner {
-        _pause();
+        paused = true;
     }
 
     function unpause() external onlyOwner {
-        _unpause();
+        paused = false;
     }
-
-    // ---- View functions ----
 
     function getSettlement(bytes32 settlementId)
         external
